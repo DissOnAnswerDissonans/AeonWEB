@@ -14,6 +14,16 @@ namespace AeonCore
 			Player2 = pl2;
 		}
 
+		int Start()
+		{
+			while (!Player1.IsWinner && !Player2.IsWinner) {
+				// Закуп 1 [асинх?]
+				// Закуп 2 [асинх?]
+				// Бой
+			}
+			return Player1.IsWinner	? 1 : Player2.IsWinner ? 2 : 0;
+		}
+
 		static void Main(string[] args)
 		{ 
             Console.WriteLine("Hello Aeon!");
@@ -22,7 +32,7 @@ namespace AeonCore
 			Player player2 = new Player(new Hero());
 
 			Instance = new(player1, player2);
-
+			//Instance.Start();
         }
     }
 }

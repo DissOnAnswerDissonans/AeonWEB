@@ -22,6 +22,8 @@ namespace AeonCore
 			Stats.Register<Block>        (1); // броня
 			Stats.Register<Armor>        (0); // защита
 			Stats.Register<Regen>        (1); // регенерация
+
+			
 		}
 
 		internal int Spend(int amount)

@@ -5,11 +5,9 @@ namespace AeonCore
 {
 	abstract public class Stat : ICloneable
 	{
-		public delegate double ConvertorFunc(int value);
-
 		public event EventHandler OnChanged = null;
 
-		public ConvertorFunc Convertor { get; protected set; }
+		public Func<int, double> Convertor { get; protected set; }
 		public int MinValue { get; protected set; }
 		public int MaxValue { get; protected set; }
 
@@ -50,6 +48,22 @@ namespace AeonCore
 			stat.Value = value;
 			return stat;
 		}
+
+		internal Stat Add(Stat stat)
+		{
+			if (StatID != stat.StatID)
+				throw new ArgumentException("", nameof(stat));
+
+			Value += stat.Value;
+			return this;
+		}
+	}
+
+	abstract public class DynamicStat : Stat
+	{
+		public int DynamicValue { get; internal set; }
+		public void SetMax() => DynamicValue = Value;
+		public void SetZero() => DynamicValue = 0;
 	}
 
 	/**
@@ -60,7 +74,7 @@ namespace AeonCore
 	В Магазине игрок может улучшить только максимальное здоровье героя.
 </summary>
 */
-	public class Health : Stat { }
+	public class Health : DynamicStat { }
 
 	/**
 <summary>
@@ -122,7 +136,7 @@ namespace AeonCore
 	В Магазине можно улучшить только разовый прирост.
 </summary>
 */
-	public class Multiplier : Stat {
+	public class Multiplier : DynamicStat {
 		protected override void Init() {
 			Convertor = a => 1 + a / 100.0;
 		}

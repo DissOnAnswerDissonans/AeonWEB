@@ -56,7 +56,7 @@ namespace AeonCore
 
 		internal void AddStat(Stat stat)
 		{
-			throw new NotImplementedException();
+			_stats[stat.StatID].Add(stat);
 		}
 	}
 }
