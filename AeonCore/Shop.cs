@@ -3,11 +3,20 @@ using System.Collections.Generic;
 
 namespace AeonCore
 {
-	abstract public class Shop
+	abstract public class Shop : ICloneable
 	{
 		List<Offer> offers;
 
 		public IReadOnlyList<Offer> Offers => offers;
+
+		public object Clone()
+		{
+			Shop s = (Shop) this.MemberwiseClone();
+			s.offers = new List<Offer>();
+			foreach (Offer offer in offers)
+				s.offers.Add((Offer) offer.Clone());
+			return s;
+		}
 
 		protected void AddOffer<T>(int amount, int cost) 
 			where T : Stat, new() => 
@@ -44,7 +53,7 @@ namespace AeonCore
 		}
 	}
 
-	public class Offer
+	public struct Offer : ICloneable
 	{
 		Stat Stat { get; }
 		int Cost { get; }
@@ -59,7 +68,15 @@ namespace AeonCore
 
 		public bool TryToBuy(Hero hero)
 		{
-			return false;
+			if (hero.Money < Cost) return false;
+			hero.Spend(Cost);
+			hero.AddStat(Stat);
+			return true;
+		}
+
+		public object Clone()
+		{
+			return new Offer((Stat) Stat.Clone(), Cost, IsOpt);
 		}
 	}
 }

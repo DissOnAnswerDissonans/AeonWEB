@@ -21,12 +21,12 @@ namespace AeonCore
 			} catch (Exception e) {
 #if DEBUG
 				throw new InvalidOperationException(
-					$"Stat {stat.StatName} is already registered", e);
+					$"Stat {stat.StatID} is already registered", e);
 #endif
 				return false;
 			}
-			if (!_strNames.ContainsKey(stat.StatName))
-				_strNames[stat.StatName] = typeof(TStat);
+			if (!_strNames.ContainsKey(stat.StatID.Name)) // HACK: эту хню со строками надо потом порешать
+				_strNames[stat.StatID.Name] = typeof(TStat);
 			return true;
 		}
 
@@ -53,5 +53,10 @@ namespace AeonCore
 
 		public int Value<TStat>() where TStat : Stat => Get<TStat>().Value;
 		public double Converted<TStat>() where TStat : Stat => Get<TStat>().Converted;
+
+		internal void AddStat(Stat stat)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

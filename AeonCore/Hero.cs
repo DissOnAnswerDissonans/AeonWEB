@@ -4,9 +4,12 @@ namespace AeonCore
 {
 	public class Hero
 	{
-		public int CurrentHealth { get; }
+		//public int CurrentHealth { get; private set; }
 
 		protected StatsContainer Stats { get; }
+
+		public int Money { get; private set; }
+		public Shop Shop { get; }
 
 		internal protected Hero()
 		{
@@ -20,7 +23,15 @@ namespace AeonCore
 			Stats.Register<Armor>        (0); // защита
 			Stats.Register<Regen>        (1); // регенерация
 		}
-		
+
+		internal int Spend(int amount)
+		{
+			if (Money < amount)
+				throw new ArgumentException("Not enough money", nameof(amount));
+			return Money -= amount;
+		}
+
+		internal void AddStat(Stat stat) => Stats.AddStat(stat);
 
 	}
 }

@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Reflection;
 
 namespace AeonCore
 {
-	abstract public class Stat
+	abstract public class Stat : ICloneable
 	{
 		public delegate double ConvertorFunc(int value);
 
 		public event EventHandler OnChanged = null;
 
-		public ConvertorFunc Convertor { get; protected init; }
-		public int MinValue { get; protected init; }
-		public int MaxValue { get; protected init; }
+		public ConvertorFunc Convertor { get; protected set; }
+		public int MinValue { get; protected set; }
+		public int MaxValue { get; protected set; }
 
-		public virtual string StatName => this.GetType().Name;
+		public Type StatID { get; private set; }
 
 		private int _value;
 		public int Value {
@@ -29,6 +30,25 @@ namespace AeonCore
 			Convertor = a => (double) a;
 			MinValue = 0;
 			MaxValue = int.MaxValue;
+			Init();
+		}
+
+		virtual protected void Init() { }
+
+		public object Clone()
+		{
+			var stat = (Stat) Activator.CreateInstance(StatID);
+			stat.StatID = StatID;
+			stat._value = _value;
+			return stat;
+		}
+
+		public static T MakeStat<T>(int value) where T : Stat
+		{
+			T stat = Activator.CreateInstance<T>();
+			stat.StatID = typeof(T);
+			stat.Value = value;
+			return stat;
 		}
 	}
 
@@ -40,9 +60,7 @@ namespace AeonCore
 	В Магазине игрок может улучшить только максимальное здоровье героя.
 </summary>
 */
-	public class Health : Stat { 
-		public Health() { }
-	}
+	public class Health : Stat { }
 
 	/**
 <summary>
@@ -50,9 +68,7 @@ namespace AeonCore
 	Характеристика влияет на скорость уменьшения здоровья оппонента.
 </summary>
 */
-	public class Attack : Stat {
-		public Attack() { }
-	}
+	public class Attack : Stat { }
 
 	/**
 <summary>
@@ -62,9 +78,7 @@ namespace AeonCore
 	свойствами.
 </summary>
 */
-	public class Magic : Stat { 
-		public Magic() { }
-	}
+	public class Magic : Stat { }
 
 	/**
 <summary>
@@ -75,7 +89,7 @@ namespace AeonCore
 </summary>
 */
 	public class CritChance : Stat {
-		public CritChance() { 
+		protected override void Init() {
 			Convertor = (a) => a / 100.0;
 			MaxValue = 100;
 		}
@@ -91,7 +105,7 @@ namespace AeonCore
 </summary>
 */
 	public class CritDamage : Stat {
-		public CritDamage() {
+		protected override void Init() {
 			Convertor = (a) => a / 100.0;
 			MinValue = 100;
 		}
@@ -109,7 +123,7 @@ namespace AeonCore
 </summary>
 */
 	public class Multiplier : Stat {
-		public Multiplier() {
+		protected override void Init() {
 			Convertor = a => 1 + a / 100.0;
 		}
 	}
@@ -122,9 +136,7 @@ namespace AeonCore
 	получить герой — урон предотвращается.
 </summary>
 */
-	public class Block : Stat {
-		public Block() { }
-	}
+	public class Block : Stat { }
 
 	/**
 <summary>
@@ -136,7 +148,7 @@ namespace AeonCore
 */
 	public class Armor : Stat {
 		const double COEFF = 0.0075;
-		public Armor() {
+		protected override void Init() {
 			MaxValue = 300;
 			Convertor = t => COEFF * t / (1 + COEFF * Math.Exp(0.9 * Math.Log(t)));
 		}
@@ -151,7 +163,5 @@ namespace AeonCore
 	случае, если его Броня предотвратила получение Урона.
 </summary>
 */
-	public class Regen : Stat {
-		public Regen() { }
-	}
+	public class Regen : Stat { }
 }
