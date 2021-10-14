@@ -1,4 +1,6 @@
-﻿namespace AeonCore
+﻿using System;
+
+namespace AeonCore
 {
 	public class Hero
 	{
@@ -6,7 +8,7 @@
 
 		protected StatsContainer Stats { get; }
 
-		protected Hero()
+		internal protected Hero()
 		{
 			Stats.Register<Health>	   (100); // здоровье
 			Stats.Register<Attack>      (15); // атака

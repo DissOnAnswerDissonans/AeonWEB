@@ -1,11 +1,24 @@
-﻿namespace AeonCore
+﻿using System;
+
+namespace AeonCore
 {
 	public class Player
 	{
 		public int Score { get; }
 
-		public Hero Hero { get; init; }
+		public int Money { get; }
 
-		public Shop Shop { get; init; }
+		public Hero Hero { get; }
+
+		public Shop Shop { get; }
+
+		
+		public Player(Hero hero)
+		{
+			Score = 0;
+			Money = 100;
+			Hero = hero;
+			Shop = new Shop();
+		}
 	}
 }
