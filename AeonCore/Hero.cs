@@ -7,6 +7,7 @@ namespace AeonCore
 		//public int CurrentHealth { get; private set; }
 
 		protected StatsContainer Stats { get; }
+		public IReadOnlyStats StatsRO => Stats;
 
 		public int Money { get; private set; }
 		public Shop Shop { get; }
@@ -18,12 +19,10 @@ namespace AeonCore
 			Stats.Register<Magic>        (0); // магия
 			Stats.Register<CritChance>   (0); // критический шанс
 			Stats.Register<CritDamage> (150); // критический урон
-			Stats.Register<Multiplier>   (0); // прирост
+			Stats.Register<Income>       (0); // прирост
 			Stats.Register<Block>        (1); // броня
 			Stats.Register<Armor>        (0); // защита
 			Stats.Register<Regen>        (1); // регенерация
-
-			
 		}
 
 		internal int Spend(int amount)
@@ -35,5 +34,11 @@ namespace AeonCore
 
 		internal void AddStat(Stat stat) => Stats.AddStat(stat);
 
+
+		internal virtual void OnBattleStart(Hero enemy)
+		{
+			Stats.Get<Health>().OnBattleStart(); // TODO: обходить динамически
+			Stats.Get<Income>().OnBattleStart();
+		}
 	}
 }

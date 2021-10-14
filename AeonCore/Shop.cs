@@ -36,7 +36,7 @@ namespace AeonCore
 			AddOffer<Magic>(7, 15);
 			AddOffer<CritChance>(5, 15);
 			AddOffer<CritDamage>(50, 50);
-			AddOffer<Multiplier>(2, 13);
+			AddOffer<Income>(2, 13);
 			AddOffer<Block>(2, 4);
 			AddOffer<Armor>(15, 30);
 			AddOffer<Regen>(5, 11);
@@ -46,7 +46,7 @@ namespace AeonCore
 			AddOptOffer<Magic>(46, 90);
 			AddOptOffer<CritChance>(40, 104);
 			AddOptOffer<CritDamage>(120, 105);
-			AddOptOffer<Multiplier>(20, 120);
+			AddOptOffer<Income>(20, 120);
 			AddOptOffer<Block>(80, 130);
 			AddOptOffer<Armor>(66, 120);
 			AddOptOffer<Regen>(62, 115);

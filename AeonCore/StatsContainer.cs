@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace AeonCore
 {
-	public class StatsContainer
+
+	public class StatsContainer : IReadOnlyStats
 	{
 		static Dictionary<string, Type> _strNames = new();
 
@@ -50,9 +51,6 @@ namespace AeonCore
 					$"Stat {typeof(TStat).Name} is not registered", e);
 			}
 		}
-
-		public int Value<TStat>() where TStat : Stat => Get<TStat>().Value;
-		public double Converted<TStat>() where TStat : Stat => Get<TStat>().Converted;
 
 		internal void AddStat(Stat stat)
 		{

@@ -5,7 +5,7 @@ namespace AeonCore
 {
 	abstract public class Stat : ICloneable
 	{
-		public event EventHandler OnChanged = null;
+		public event EventHandler<int> OnChanged = null;
 
 		public Func<int, double> Convertor { get; protected set; }
 		public int MinValue { get; protected set; }
@@ -18,7 +18,7 @@ namespace AeonCore
 			get => _value;
 			internal set { 
 				_value = Math.Clamp(value, MinValue, MaxValue);
-				OnChanged?.Invoke(this, new EventArgs()); // UNDONE нужен нормальный ивент
+				OnChanged?.Invoke(this, _value);
 			}
 		}
 
@@ -57,13 +57,31 @@ namespace AeonCore
 			Value += stat.Value;
 			return this;
 		}
+
+
+		virtual public void OnBattleStart() { }
+		virtual public void AfterHit(Hero hero) { }
+
+
 	}
 
 	abstract public class DynamicStat : Stat
 	{
-		public int DynamicValue { get; internal set; }
-		public void SetMax() => DynamicValue = Value;
-		public void SetZero() => DynamicValue = 0;
+		public event EventHandler<int> OnDynamicChanged;
+
+		protected virtual int TopLimit => int.MaxValue;
+		protected virtual int BotLimit => 0;
+
+		public int DynamicValue { 
+			get => _dynValue; 
+			protected set {
+				_dynValue = Math.Clamp(value, BotLimit, TopLimit);
+				OnDynamicChanged?.Invoke(this, _dynValue);
+			} 
+		}
+		protected int _dynValue;
+
+		public double DynConverted => Convertor(DynamicValue);
 	}
 
 	/**
@@ -74,7 +92,16 @@ namespace AeonCore
 	В Магазине игрок может улучшить только максимальное здоровье героя.
 </summary>
 */
-	public class Health : DynamicStat { }
+	public class Health : DynamicStat {
+		protected override int TopLimit => Value;
+
+		public override void OnBattleStart() => DynamicValue = Value;
+
+		public override void AfterHit(Hero hero)
+		{
+			DynamicValue += hero.StatsRO.ConvInt<Regen>();
+		}
+	}
 
 	/**
 <summary>
@@ -136,7 +163,20 @@ namespace AeonCore
 	В Магазине можно улучшить только разовый прирост.
 </summary>
 */
-	public class Multiplier : DynamicStat {
+	public class Income : DynamicStat {
+		int _power;
+
+		public override void OnBattleStart() {
+			_power = 0;
+			DynamicValue = 0;
+		}
+
+		public override void AfterHit(Hero hero)
+		{
+			++_power;
+			DynamicValue = (int) ((Math.Pow(Converted, _power) - 1) * 100);
+		}
+
 		protected override void Init() {
 			Convertor = a => 1 + a / 100.0;
 		}
