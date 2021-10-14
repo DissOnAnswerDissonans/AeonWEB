@@ -4,10 +4,10 @@ namespace AeonCore
 {
 	public class Hero
 	{
-		//public int CurrentHealth { get; private set; }
-
 		protected StatsContainer Stats { get; }
 		public IReadOnlyStats StatsRO => Stats;
+
+		public bool IsAlive => StatsRO.DynamicValue<Health>() > 0;
 
 		public int Money { get; private set; }
 		public Shop Shop { get; }
@@ -25,6 +25,8 @@ namespace AeonCore
 			Stats.Register<Regen>        (1); // регенерация
 		}
 
+		internal int Wage(int amount) => Money += amount;
+
 		internal int Spend(int amount)
 		{
 			if (Money < amount)
@@ -39,6 +41,38 @@ namespace AeonCore
 		{
 			Stats.Get<Health>().OnBattleStart(); // TODO: обходить динамически
 			Stats.Get<Income>().OnBattleStart();
+		}
+
+		internal virtual Damage GetDamageTo(Hero enemy)
+		{
+			int phys = StatsRO.ConvInt<Attack>();
+			int magic = StatsRO.ConvInt<Magic>();
+			bool procCrit = Game.RNG.NextDouble() < StatsRO.Converted<CritChance>();
+			return new Damage {
+				Instigator = this,
+				Phys = procCrit ? (int) (phys * StatsRO.Converted<CritDamage>()) : phys,
+				Magic = magic,
+				IsCrit = procCrit,
+			};
+		}
+
+		internal virtual Damage ReceiveDamage(Damage damage)
+		{
+			int phys = (int)(damage.Phys * (1 - StatsRO.Converted<Armor>()) - StatsRO.Converted<Block>());
+			var d = new Damage {
+				Instigator = damage.Instigator,
+				Phys = phys < 0 ? 0 : phys,
+				Magic = damage.Magic,
+				IsCrit = damage.IsCrit,
+			};
+			Stats.Get<Health>().Value -= (d.Phys + d.Magic); // hack
+			return d;
+		}
+
+		internal virtual void AfterHit(Damage enemyHit)
+		{
+			Stats.Get<Health>().AfterHit(this, enemyHit);
+			Stats.Get<Income>().AfterHit(this, enemyHit);
 		}
 	}
 }

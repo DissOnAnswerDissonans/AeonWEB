@@ -7,6 +7,7 @@ namespace AeonCore
 		public Player Player1 { get; }
 		public Player Player2 { get; }
 		public static Game Instance { get; private set; }
+		public static Random RNG { get; } = new Random();
 
 		private Game(Player pl1, Player pl2) 
 		{
@@ -19,7 +20,10 @@ namespace AeonCore
 			while (!Player1.IsWinner && !Player2.IsWinner) {
 				// Закуп 1 [асинх?]
 				// Закуп 2 [асинх?]
-				// Бой
+				var battle = new Battle(this);
+				var winner = battle.Start();
+				Player1.End(winner == 1);
+				Player2.End(winner == 2);		
 			}
 			return Player1.IsWinner	? 1 : Player2.IsWinner ? 2 : 0;
 		}

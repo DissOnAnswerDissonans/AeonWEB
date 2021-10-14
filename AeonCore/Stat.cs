@@ -60,7 +60,7 @@ namespace AeonCore
 
 
 		virtual public void OnBattleStart() { }
-		virtual public void AfterHit(Hero hero) { }
+		virtual public void AfterHit(Hero hero, Damage damage) { }
 
 
 	}
@@ -97,9 +97,10 @@ namespace AeonCore
 
 		public override void OnBattleStart() => DynamicValue = Value;
 
-		public override void AfterHit(Hero hero)
+		public override void AfterHit(Hero hero, Damage damage)
 		{
-			DynamicValue += hero.StatsRO.ConvInt<Regen>();
+			if (damage.Phys > 0)
+				DynamicValue += hero.StatsRO.ConvInt<Regen>();
 		}
 	}
 
@@ -171,7 +172,7 @@ namespace AeonCore
 			DynamicValue = 0;
 		}
 
-		public override void AfterHit(Hero hero)
+		public override void AfterHit(Hero hero, Damage damage)
 		{
 			++_power;
 			DynamicValue = (int) ((Math.Pow(Converted, _power) - 1) * 100);
