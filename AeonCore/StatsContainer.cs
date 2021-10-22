@@ -8,13 +8,13 @@ namespace AeonCore
 	{
 		static Dictionary<string, Type> _strNames = new();
 
-		Dictionary<Type, Stat> _stats = new();
+		Dictionary<Type, StatBehaviour> _stats = new();
 
-		public Stat this[string s] => _stats[_strNames[s]];
+		public StatBehaviour this[string s] => _stats[_strNames[s]];
 
-		public bool Register<TStat>(int value) where TStat : Stat, new()
+		public bool Register<TStat>(int value) where TStat : StatBehaviour, new()
 		{
-			Stat stat = new TStat {
+			StatBehaviour stat = new TStat {
 				Value = value
 			};
 			try {
@@ -31,7 +31,7 @@ namespace AeonCore
 			return true;
 		}
 
-		public void Set<TStat>(int value) where TStat : Stat
+		public void Set<TStat>(int value) where TStat : StatBehaviour
 		{
 			try {
 				_stats[typeof(TStat)].Value = value;
@@ -41,7 +41,7 @@ namespace AeonCore
 			}
 		}
 
-		public TStat Get<TStat>() where TStat : Stat
+		public TStat Get<TStat>() where TStat : StatBehaviour
 		{
 			try {
 				return (TStat) _stats[typeof(TStat)];
@@ -52,7 +52,7 @@ namespace AeonCore
 			}
 		}
 
-		internal void AddStat(Stat stat)
+		internal void AddStat(StatBehaviour stat)
 		{
 			_stats[stat.StatID].Add(stat);
 		}

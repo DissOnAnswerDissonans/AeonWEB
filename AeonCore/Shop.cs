@@ -19,11 +19,11 @@ namespace AeonCore
 		}
 
 		protected void AddOffer<T>(int amount, int cost) 
-			where T : Stat, new() => 
+			where T : StatBehaviour, new() => 
 			offers.Add(new Offer(new T() { Value = amount }, cost, false));
 
 		protected void AddOptOffer<T>(int amount, int cost) 
-			where T : Stat, new() =>
+			where T : StatBehaviour, new() =>
 			offers.Add(new Offer(new T() { Value = amount }, cost, true));
 	}
 
@@ -55,11 +55,11 @@ namespace AeonCore
 
 	public struct Offer : ICloneable
 	{
-		Stat Stat { get; }
+		StatBehaviour Stat { get; }
 		int Cost { get; }
 		bool IsOpt { get; }
 
-		internal Offer(Stat stat, int cost, bool opt = false)
+		internal Offer(StatBehaviour stat, int cost, bool opt = false)
 		{
 			Stat = stat;
 			Cost = cost;
@@ -76,7 +76,7 @@ namespace AeonCore
 
 		public object Clone()
 		{
-			return new Offer((Stat) Stat.Clone(), Cost, IsOpt);
+			return new Offer((StatBehaviour) Stat.Clone(), Cost, IsOpt);
 		}
 	}
 }
