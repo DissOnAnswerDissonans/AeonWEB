@@ -17,6 +17,11 @@ namespace AeonCore
 	abstract public class StatType
 	{
 
+		static StatType()
+		{
+			_instances = new Dictionary<Type, StatType>();
+		}
+
 		static Dictionary<Type, StatType> _instances;
 		internal static T Instance<T>() where T : StatType, new()
 		{
@@ -39,8 +44,8 @@ namespace AeonCore
 
 
 
-		virtual public void OnBattleStart(ref Stat stat) { }
-		virtual public void AfterHit(ref Stat stat, Hero hero, Damage damage) { }
+		virtual public bool OnBattleStart(ref Stat stat, in Hero hero, in Hero enemy) => false;
+		virtual public bool AfterHit(ref Stat stat, in Hero hero, in Damage damage) => false;
 	}
 
 
@@ -50,8 +55,8 @@ namespace AeonCore
 		public virtual int BotLimit => 0;
 
 
-		virtual public void OnBattleStart(ref Stat stat, ref DynStat dynStat) { }
-		virtual public void AfterHit(ref Stat stat, ref DynStat dynStat, Hero hero, Damage damage) { }
+		virtual public bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy) => false;
+		virtual public bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage) => false;
 
 		//public int DynamicValue { 
 		//	get => _dynValue; 
@@ -75,13 +80,17 @@ namespace AeonCore
 */
 	public class Health : StatTypeDynamic {
 
-		public override void OnBattleStart(ref Stat stat, ref DynStat dynStat) 
-			=> dynStat.Value = stat.Value;
+		public override bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy)
+		{
+			dynStat.Value = hero.StatsRO.ConvInt<Health>();
+			return true;
+		}
 
-		public override void AfterHit(ref Stat stat, ref DynStat dynStat, Hero hero, Damage damage)
+		public override bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage)
 		{
 			if (damage.Phys > 0)
 				dynStat.Value += hero.StatsRO.ConvInt<Regen>();
+			return true;
 		}
 	}
 
@@ -146,17 +155,18 @@ namespace AeonCore
 </summary>
 */
 	public class Income : StatTypeDynamic {
-		int _power;
 
-		public override void OnBattleStart(ref Stat stat, ref DynStat dynStat) {
-			_power = 0;
+		public override bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy) 
+		{
 			dynStat.Value = 0;
+			return true;
 		}
 
-		public override void AfterHit(ref Stat stat, ref DynStat dynStat, Hero hero, Damage damage)
+		public override bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage)
 		{
-			++_power;
-			dynStat.Value = (int) ((Math.Pow(stat.Converted, _power) - 1) * 100);
+			var v = hero.StatsRO.Converted<Income>();
+			dynStat.Value = (int) ((100 + dynStat.Value) * v - 100);
+			return true;
 		}
 
 		protected override void Init() {

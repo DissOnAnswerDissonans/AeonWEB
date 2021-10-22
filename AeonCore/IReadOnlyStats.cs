@@ -13,13 +13,16 @@
 		public int ConvInt<TStat>() where TStat : StatType, new() => 
 			(int) Converted<TStat>();
 
-		//public int DynamicValue<TStat>() where TStat : DynamicStat => 
-		//	Get<TStat>().DynamicValue;
 
-		//public double DynConverted<TStat>() where TStat : DynamicStat =>
-		//	Get<TStat>().DynConverted;
+		public DynStat GetDyn<TStat>() where TStat : StatTypeDynamic, new();
 
-		//public int DynConvInt<TStat>() where TStat : DynamicStat =>
-		//	(int) DynConverted<TStat>();
+		public int DynamicValue<TStat>() where TStat : StatTypeDynamic, new() =>
+			GetDyn<TStat>().Value;
+
+		public double DynConverted<TStat>() where TStat : StatTypeDynamic, new() =>
+			GetDyn<TStat>().Converted;
+
+		public int DynConvInt<TStat>() where TStat : StatTypeDynamic, new() =>
+			(int) DynConverted<TStat>();
 	}
 }

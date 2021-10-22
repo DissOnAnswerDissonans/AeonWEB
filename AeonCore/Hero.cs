@@ -14,12 +14,12 @@ namespace AeonCore
 
 		internal protected Hero()
 		{
-			Stats.Register<Health>	   (100); // здоровье
+			Stats.RegisterDyn<Health>  (100); // здоровье
 			Stats.Register<Attack>      (15); // атака
 			Stats.Register<Magic>        (0); // магия
 			Stats.Register<CritChance>   (0); // критический шанс
 			Stats.Register<CritDamage> (150); // критический урон
-			Stats.Register<Income>       (0); // прирост
+			Stats.RegisterDyn<Income>    (0); // прирост
 			Stats.Register<Block>        (1); // броня
 			Stats.Register<Armor>        (0); // защита
 			Stats.Register<Regen>        (1); // регенерация
@@ -39,13 +39,12 @@ namespace AeonCore
 
 		internal virtual void OnBattleStart(Hero enemy)
 		{
-			Stats.Get<Health>().OnBattleStart(); // TODO: обходить динамически
-			Stats.Get<Income>().OnBattleStart();
+			Stats.OnBattleStart(this, enemy); // TODO: обходить динамически
 		}
 
 		internal virtual Damage GetDamageTo(Hero enemy)
 		{
-			int phys = StatsRO.ConvInt<Attack>();
+			int phys = (int)(StatsRO.ConvInt<Attack>() * StatsRO.DynConverted<Income>());
 			int magic = StatsRO.ConvInt<Magic>();
 			bool procCrit = Game.RNG.NextDouble() < StatsRO.Converted<CritChance>();
 			return new Damage {
@@ -65,14 +64,14 @@ namespace AeonCore
 				Magic = damage.Magic,
 				IsCrit = damage.IsCrit,
 			};
-			Stats.Get<Health>().Value -= (d.Phys + d.Magic); // hack
+
+			Stats.Modify<Health>(-(d.Phys + d.Magic));
 			return d;
 		}
 
 		internal virtual void AfterHit(Damage enemyHit)
 		{
-			Stats.Get<Health>().AfterHit(this, enemyHit);
-			Stats.Get<Income>().AfterHit(this, enemyHit);
+			Stats.AfterHit(this, enemyHit);
 		}
 	}
 }

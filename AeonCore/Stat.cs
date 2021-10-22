@@ -2,9 +2,16 @@
 
 namespace AeonCore
 {
-	public struct Stat
+	//interface IStat
+	//{
+	//	StatType StatType { get; }
+	//	int Value { get; }
+	//}
+
+	public struct Stat //: IStat
 	{
 		internal StatType Behaviour { get; init; }
+		public StatType StatType => Behaviour;
 
 		private int _value;
 		public int Value {
@@ -16,7 +23,6 @@ namespace AeonCore
 		}
 
 		public double Converted => Behaviour.Convertor(_value);
-
 
 		public static Stat Make<T>(int value) where T : StatType, new()
 		{
@@ -40,9 +46,10 @@ namespace AeonCore
 		public static Stat operator +(Stat s1, Stat s2) => s1.Add(s2);
 	}
 
-	public struct DynStat
+	public struct DynStat //: IStat
 	{
 		internal StatTypeDynamic Behaviour { get; init; }
+		public StatType StatType => Behaviour;
 
 		private int _value;
 		public int Value {
@@ -53,6 +60,15 @@ namespace AeonCore
 			}
 		}
 
+		public static DynStat Make<T>(int value) where T : StatTypeDynamic, new()
+		{
+			return new DynStat {
+				Behaviour = StatType.Instance<T>(),
+				Value = value,
+			};
+		}
+
+		public double Converted => Behaviour.Convertor(_value);
 
 	}
 }
