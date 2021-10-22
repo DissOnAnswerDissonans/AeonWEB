@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("AeonCore.Tests")]
 namespace AeonCore
 {
 	/// <summary>
@@ -14,8 +15,10 @@ namespace AeonCore
 	/// быть наследуемый одиночка (1 экз. на каждый подкласс)
 	/// 
 	/// </summary>
+
 	abstract public class StatType
 	{
+
 
 		static StatType()
 		{
@@ -25,7 +28,13 @@ namespace AeonCore
 		static Dictionary<Type, StatType> _instances;
 		internal static T Instance<T>() where T : StatType, new()
 		{
-			return (T) (_instances[typeof(T)] ??= new T());
+			if (_instances.TryGetValue(typeof(T), out StatType stat))
+				return (T) stat;
+			else {
+				var inst = new T();
+				_instances[typeof(T)] = inst;
+				return inst;
+			};
 		}
 
 
