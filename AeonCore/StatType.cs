@@ -14,11 +14,11 @@ namespace AeonCore
 	/// быть наследуемый одиночка (1 экз. на каждый подкласс)
 	/// 
 	/// </summary>
-	abstract public class StatBehaviour
+	abstract public class StatType
 	{
 
-		static Dictionary<Type, StatBehaviour> _instances;
-		internal static T Instance<T>() where T : StatBehaviour, new()
+		static Dictionary<Type, StatType> _instances;
+		internal static T Instance<T>() where T : StatType, new()
 		{
 			return (T) (_instances[typeof(T)] ??= new T());
 		}
@@ -28,7 +28,7 @@ namespace AeonCore
 		public int MinValue { get; protected set; }
 		public int MaxValue { get; protected set; }
 
-		protected StatBehaviour() { 
+		protected StatType() { 
 			Convertor = a => (double) a;
 			MinValue = 0;
 			MaxValue = int.MaxValue;
@@ -39,28 +39,30 @@ namespace AeonCore
 
 
 
-		virtual public void OnBattleStart() { }
-		virtual public void AfterHit(Hero hero, Damage damage) { }
+		virtual public void OnBattleStart(ref Stat stat) { }
+		virtual public void AfterHit(ref Stat stat, Hero hero, Damage damage) { }
 	}
 
 
-	abstract public class DynamicStat : StatBehaviour
+	abstract public class StatTypeDynamic : StatType
 	{
-		public event EventHandler<int> OnDynamicChanged;
+		public virtual int TopLimit => int.MaxValue;
+		public virtual int BotLimit => 0;
 
-		protected virtual int TopLimit => int.MaxValue;
-		protected virtual int BotLimit => 0;
 
-		public int DynamicValue { 
-			get => _dynValue; 
-			protected set {
-				_dynValue = Math.Clamp(value, BotLimit, TopLimit);
-				OnDynamicChanged?.Invoke(this, _dynValue);
-			} 
-		}
-		protected int _dynValue;
+		virtual public void OnBattleStart(ref Stat stat, ref DynStat dynStat) { }
+		virtual public void AfterHit(ref Stat stat, ref DynStat dynStat, Hero hero, Damage damage) { }
 
-		public double DynConverted => Convertor(DynamicValue);
+		//public int DynamicValue { 
+		//	get => _dynValue; 
+		//	protected set {
+		//		_dynValue = Math.Clamp(value, BotLimit, TopLimit);
+		//		OnDynamicChanged?.Invoke(this, _dynValue);
+		//	} 
+		//}
+		//protected int _dynValue;
+
+		//public double DynConverted => Convertor(DynamicValue);
 	}
 
 	/**
@@ -71,15 +73,15 @@ namespace AeonCore
 	В Магазине игрок может улучшить только максимальное здоровье героя.
 </summary>
 */
-	public class Health : DynamicStat {
-		protected override int TopLimit => Value;
+	public class Health : StatTypeDynamic {
 
-		public override void OnBattleStart() => DynamicValue = Value;
+		public override void OnBattleStart(ref Stat stat, ref DynStat dynStat) 
+			=> dynStat.Value = stat.Value;
 
-		public override void AfterHit(Hero hero, Damage damage)
+		public override void AfterHit(ref Stat stat, ref DynStat dynStat, Hero hero, Damage damage)
 		{
 			if (damage.Phys > 0)
-				DynamicValue += hero.StatsRO.ConvInt<Regen>();
+				dynStat.Value += hero.StatsRO.ConvInt<Regen>();
 		}
 	}
 
@@ -89,7 +91,7 @@ namespace AeonCore
 	Характеристика влияет на скорость уменьшения здоровья оппонента.
 </summary>
 */
-	public class Attack : StatBehaviour { }
+	public class Attack : StatType { }
 
 	/**
 <summary>
@@ -99,7 +101,7 @@ namespace AeonCore
 	свойствами.
 </summary>
 */
-	public class Magic : StatBehaviour { }
+	public class Magic : StatType { }
 
 	/**
 <summary>
@@ -109,7 +111,7 @@ namespace AeonCore
 	признан критическим.
 </summary>
 */
-	public class CritChance : StatBehaviour {
+	public class CritChance : StatType {
 		protected override void Init() {
 			Convertor = (a) => a / 100.0;
 			MaxValue = 100;
@@ -125,7 +127,7 @@ namespace AeonCore
 	ударом к урону не критического удара.
 </summary>
 */
-	public class CritDamage : StatBehaviour {
+	public class CritDamage : StatType {
 		protected override void Init() {
 			Convertor = (a) => a / 100.0;
 			MinValue = 100;
@@ -143,18 +145,18 @@ namespace AeonCore
 	В Магазине можно улучшить только разовый прирост.
 </summary>
 */
-	public class Income : DynamicStat {
+	public class Income : StatTypeDynamic {
 		int _power;
 
-		public override void OnBattleStart() {
+		public override void OnBattleStart(ref Stat stat, ref DynStat dynStat) {
 			_power = 0;
-			DynamicValue = 0;
+			dynStat.Value = 0;
 		}
 
-		public override void AfterHit(Hero hero, Damage damage)
+		public override void AfterHit(ref Stat stat, ref DynStat dynStat, Hero hero, Damage damage)
 		{
 			++_power;
-			DynamicValue = (int) ((Math.Pow(Converted, _power) - 1) * 100);
+			dynStat.Value = (int) ((Math.Pow(stat.Converted, _power) - 1) * 100);
 		}
 
 		protected override void Init() {
@@ -170,7 +172,7 @@ namespace AeonCore
 	получить герой — урон предотвращается.
 </summary>
 */
-	public class Block : StatBehaviour { }
+	public class Block : StatType { }
 
 	/**
 <summary>
@@ -180,7 +182,7 @@ namespace AeonCore
 	значения не меньше 0% и не больше 99%.
 </summary>
 */
-	public class Armor : StatBehaviour {
+	public class Armor : StatType {
 		const double COEFF = 0.0075;
 		protected override void Init() {
 			MaxValue = 300;
@@ -197,5 +199,5 @@ namespace AeonCore
 	случае, если его Броня предотвратила получение Урона.
 </summary>
 */
-	public class Regen : StatBehaviour { }
+	public class Regen : StatType { }
 }

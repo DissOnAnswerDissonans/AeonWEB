@@ -6,45 +6,37 @@ namespace AeonCore
 
 	public class StatsContainer : IReadOnlyStats
 	{
-		static Dictionary<string, Type> _strNames = new();
+		Dictionary<StatType, Stat> _stats = new();
 
-		Dictionary<Type, StatBehaviour> _stats = new();
-
-		public StatBehaviour this[string s] => _stats[_strNames[s]];
-
-		public bool Register<TStat>(int value) where TStat : StatBehaviour, new()
+		public bool Register<TStat>(int value) where TStat : StatType, new()
 		{
-			StatBehaviour stat = new TStat {
-				Value = value
-			};
+			Stat stat = Stat.Make<TStat>(value);
 			try {
-				_stats.Add(typeof(TStat), stat);
+				_stats.Add(stat.Behaviour, stat);
 			} catch (Exception e) {
 #if DEBUG
 				throw new InvalidOperationException(
-					$"Stat {stat.StatID} is already registered", e);
+					$"Stat {stat.Behaviour} is already registered", e);
 #endif
 				return false;
 			}
-			if (!_strNames.ContainsKey(stat.StatID.Name)) // HACK: эту хню со строками надо потом порешать
-				_strNames[stat.StatID.Name] = typeof(TStat);
 			return true;
 		}
 
-		public void Set<TStat>(int value) where TStat : StatBehaviour
+		public void Set<TStat>(int value) where TStat : StatType, new()
 		{
 			try {
-				_stats[typeof(TStat)].Value = value;
+				_stats[StatType.Instance<TStat>()] = Stat.Make<TStat>(value);
 			} catch (Exception e) {
 				throw new InvalidOperationException(
 					$"Stat {typeof(TStat).Name} is not registered", e);
 			}
 		}
 
-		public TStat Get<TStat>() where TStat : StatBehaviour
+		public Stat Get<TStat>() where TStat : StatType, new()
 		{
 			try {
-				return (TStat) _stats[typeof(TStat)];
+				return _stats[StatType.Instance<TStat>()];
 			}
 			catch (Exception e) {
 				throw new InvalidOperationException(
@@ -52,9 +44,9 @@ namespace AeonCore
 			}
 		}
 
-		internal void AddStat(StatBehaviour stat)
+		internal void AddStat(Stat stat)
 		{
-			_stats[stat.StatID].Add(stat);
+			_stats[stat.Behaviour] += stat;
 		}
 	}
 }

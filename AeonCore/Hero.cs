@@ -34,7 +34,7 @@ namespace AeonCore
 			return Money -= amount;
 		}
 
-		internal void AddStat(StatBehaviour stat) => Stats.AddStat(stat);
+		internal void AddStat(Stat stat) => Stats.AddStat(stat);
 
 
 		internal virtual void OnBattleStart(Hero enemy)
