@@ -38,12 +38,13 @@ namespace AeonCore
 
 		public void Set<TStat>(int value) where TStat : StatType, new()
 		{
-			try {
-				_stats[StatType.Instance<TStat>()] = Stat.Make<TStat>(value);
-			} catch (Exception e) {
+			if (!_stats.ContainsKey(StatType.Instance<TStat>())) {
+#if DEBUG
 				throw new InvalidOperationException(
-					$"Stat {typeof(TStat).Name} is not registered", e);
+					$"Stat {typeof(TStat).Name} is not registered");
+#endif
 			}
+			_stats[StatType.Instance<TStat>()] = Stat.Make<TStat>(value);
 		}
 
 		public Stat Get<TStat>() where TStat : StatType, new()
@@ -83,7 +84,12 @@ namespace AeonCore
 
 		internal void AddStat(Stat stat)
 		{
-			_stats[stat.Behaviour] += stat;
+			try {
+				_stats[stat.Behaviour] += stat;
+			} catch (KeyNotFoundException) {
+				throw new InvalidOperationException(
+					$"Stat {stat.StatType.GetType()} is not registered");
+			}
 		}
 
 		internal DynStat Modify<TStat>(int delta) where TStat : StatTypeDynamic, new()

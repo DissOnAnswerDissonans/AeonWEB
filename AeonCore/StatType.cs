@@ -18,7 +18,13 @@ namespace AeonCore
 
 	abstract public class StatType
 	{
-
+		public struct Names
+		{
+			public string FullNameEN { get; init; }
+			public string FullNameRU { get; init; }
+			public string AliasEN { get; init; }
+			public string AliasRU { get; init; }
+		}
 
 		static StatType()
 		{
@@ -41,6 +47,8 @@ namespace AeonCore
 		public Func<int, double> Convertor { get; protected set; }
 		public int MinValue { get; protected set; }
 		public int MaxValue { get; protected set; }
+
+		public Names DebugNames { get; protected set; }
 
 		protected StatType() { 
 			Convertor = a => (double) a;
@@ -83,8 +91,17 @@ namespace AeonCore
 </summary>
 */
 	public class Health : StatTypeDynamic {
-
 		public override int TopLimit(IReadOnlyStats stats) => stats.ConvInt<Health>();
+
+		protected override void Init()
+		{
+			DebugNames = new Names() {
+				FullNameEN = "Health",
+				FullNameRU = "Здоровье",
+				AliasEN = "HP",
+				AliasRU = "ЗДР",
+			};		
+		}
 
 		//public override bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy)
 		//{
@@ -106,7 +123,17 @@ namespace AeonCore
 	Характеристика влияет на скорость уменьшения здоровья оппонента.
 </summary>
 */
-	public class Attack : StatType { }
+	public class Attack : StatType {
+		protected override void Init()
+		{
+			DebugNames = new Names() {
+				FullNameEN = "Attack",
+				FullNameRU = "Атака",
+				AliasEN = "ATT",
+				AliasRU = "АТК",
+			};
+		}
+	}
 
 	/**
 <summary>
@@ -116,7 +143,17 @@ namespace AeonCore
 	свойствами.
 </summary>
 */
-	public class Magic : StatType { }
+	public class Magic : StatType {
+		protected override void Init()
+		{
+			DebugNames = new Names() {
+				FullNameEN = "Magic",
+				FullNameRU = "Магия",
+				AliasEN = "MAG",
+				AliasRU = "МАГ",
+			};
+		}
+	}
 
 	/**
 <summary>
@@ -130,6 +167,12 @@ namespace AeonCore
 		protected override void Init() {
 			Convertor = (a) => a / 100.0;
 			MaxValue = 100;
+			DebugNames = new Names() {
+				FullNameEN = "Critical Chance",
+				FullNameRU = "Критический Шанс",
+				AliasEN = "CRC",
+				AliasRU = "КША",
+			};
 		}
 	}
 
@@ -146,6 +189,12 @@ namespace AeonCore
 		protected override void Init() {
 			Convertor = (a) => a / 100.0;
 			MinValue = 100;
+			DebugNames = new Names() {
+				FullNameEN = "Critical Attack",
+				FullNameRU = "Критический Урон",
+				AliasEN = "CAT",
+				AliasRU = "КУР",
+			};
 		}
 	}
 
@@ -177,6 +226,12 @@ namespace AeonCore
 
 		protected override void Init() {
 			Convertor = a => 1 + a / 100.0;
+			DebugNames = new Names() {
+				FullNameEN = "Income",
+				FullNameRU = "Прирост",
+				AliasEN = "INC",
+				AliasRU = "ПРС",
+			};
 		}
 	}
 
@@ -188,7 +243,17 @@ namespace AeonCore
 	получить герой — урон предотвращается.
 </summary>
 */
-	public class Block : StatType { }
+	public class Block : StatType {
+		protected override void Init()
+		{
+			DebugNames = new Names() {
+				FullNameEN = "Block",
+				FullNameRU = "Броня",
+				AliasEN = "BLK",
+				AliasRU = "БРН",
+			};
+		}
+	}
 
 	/**
 <summary>
@@ -203,6 +268,12 @@ namespace AeonCore
 		protected override void Init() {
 			MaxValue = 300;
 			Convertor = t => COEFF * t / (1 + COEFF * Math.Exp(0.9 * Math.Log(t)));
+			DebugNames = new Names() {
+				FullNameEN = "Armor",
+				FullNameRU = "Защита",
+				AliasEN = "ARM",
+				AliasRU = "ЩИТ",
+			};
 		}
 	}
 
@@ -215,13 +286,16 @@ namespace AeonCore
 	случае, если его Броня предотвратила получение Урона.
 </summary>
 */
-	public class Regen : StatType { }
-
-	/**
-<summary>
-Деньги:
-	А почему бы и деньги не внести в систему статов?
-</summary>
-*/
-	public class Money : StatType { }
+	public class Regen : StatType
+	{
+		protected override void Init()
+		{
+			DebugNames = new Names() { 
+				FullNameEN = "Regeneration", 
+				FullNameRU = "Регенерация", 
+				AliasEN = "REG", 
+				AliasRU = "РЕГ" 
+			};
+		}
+	}
 }

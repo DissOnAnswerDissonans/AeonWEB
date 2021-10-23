@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AeonCore
 {
-    public class Game : Battle.IBattlersProv
+    public class Game : IBattle.IBattlersProv
 	{
 		public Player Player1 { get; }
 		public Player Player2 { get; }

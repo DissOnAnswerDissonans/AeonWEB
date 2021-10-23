@@ -3,8 +3,16 @@
 namespace AeonCore
 {
 
+	interface IShopper
+	{
+		int Money { get; }
+		Shop Shop { get; }
 
-	public class Hero : IBattler
+		bool TryBuyOffer(Offer offer);
+	}
+
+
+	public class Hero : IBattler, IShopper
 	{
 		protected StatsContainer Stats { get; }
 		public IReadOnlyStats StatsRO => Stats;
@@ -29,14 +37,20 @@ namespace AeonCore
 
 		internal int Wage(int amount) => Money += amount;
 
-		internal int Spend(int amount)
+		private int Spend(int amount)
 		{
 			if (Money < amount)
 				throw new ArgumentException("Not enough money", nameof(amount));
 			return Money -= amount;
 		}
 
-		internal void AddStat(Stat stat) => Stats.AddStat(stat);
+		public virtual bool TryBuyOffer(Offer offer)
+		{
+			if (offer.Cost > Money) return false;
+			Stats.AddStat(offer.Stat);
+			Spend(offer.Cost);
+			return true;
+		}
 
 
 		public virtual void OnBattleStart(IBattler enemy)
@@ -77,5 +91,7 @@ namespace AeonCore
 			if (enemyHit.Phys > 0)
 				Stats.Modify<Health>(StatsRO.ConvInt<Regen>());
 		}
+
+
 	}
 }

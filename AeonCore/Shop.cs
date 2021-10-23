@@ -55,9 +55,9 @@ namespace AeonCore
 
 	public struct Offer : ICloneable
 	{
-		Stat Stat { get; }
-		int Cost { get; }
-		bool IsOpt { get; }
+		public Stat Stat { get; }
+		public int Cost { get; }
+		public bool IsOpt { get; }
 
 		internal Offer(Stat stat, int cost, bool opt = false)
 		{
@@ -66,13 +66,13 @@ namespace AeonCore
 			IsOpt = opt;
 		}
 
-		public bool TryToBuy(Hero hero)
-		{
-			if (hero.Money < Cost) return false;
-			hero.Spend(Cost);
-			hero.AddStat(Stat);
-			return true;
-		}
+		//public bool TryToBuy(Hero hero)
+		//{
+		//	if (hero.Money < Cost) return false;
+		//	hero.Spend(Cost);
+		//	hero.AddStat(Stat);
+		//	return true;
+		//}
 
 		public object Clone()
 		{
