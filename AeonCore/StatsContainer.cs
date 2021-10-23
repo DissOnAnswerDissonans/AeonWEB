@@ -89,40 +89,8 @@ namespace AeonCore
 		internal DynStat Modify<TStat>(int delta) where TStat : StatTypeDynamic, new()
 		{
 			DynStat stat = GetDyn<TStat>();
-			stat.Value += delta;
+			stat.SetValue(stat.Value + delta, this);
 			return _dynStats[StatType.Instance<TStat>()] = stat;
 		}
-
-		internal void OnBattleStart(Hero hero, Hero enemy)
-		{
-			foreach (StatType tStat in _stats.Keys) {
-				Stat k = _stats[tStat];
-				if (tStat.OnBattleStart(ref k, hero, enemy))
-					_stats[tStat] = k;
-			}
-
-			foreach (StatTypeDynamic tStat in _dynStats.Keys) {
-				DynStat k = _dynStats[tStat];
-				if (tStat.OnBattleStart(ref k, hero, enemy))
-					_dynStats[tStat] = k;
-			}
-		}
-
-		internal void AfterHit(Hero hero, Damage enemyHit)
-		{
-			foreach (StatType tStat in _stats.Keys) {
-				Stat k = _stats[tStat];
-				if (tStat.AfterHit(ref k, hero, enemyHit))
-					_stats[tStat] = k;
-			}
-
-			foreach (StatTypeDynamic tStat in _dynStats.Keys) {
-				DynStat k = _dynStats[tStat];
-				if (tStat.AfterHit(ref k, hero, enemyHit))
-					_dynStats[tStat] = k;
-			}
-		}
-
-
 	}
 }

@@ -50,22 +50,17 @@ namespace AeonCore
 		}
 
 		virtual protected void Init() { }
-
-
-
-		virtual public bool OnBattleStart(ref Stat stat, in Hero hero, in Hero enemy) => false;
-		virtual public bool AfterHit(ref Stat stat, in Hero hero, in Damage damage) => false;
 	}
 
 
 	abstract public class StatTypeDynamic : StatType
 	{
-		public virtual int TopLimit => int.MaxValue;
-		public virtual int BotLimit => 0;
+		public virtual int TopLimit(IReadOnlyStats stats) => int.MaxValue;
+		public virtual int BotLimit(IReadOnlyStats stats) => 0;
 
 
-		virtual public bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy) => false;
-		virtual public bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage) => false;
+		//virtual public bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy) => false;
+		//virtual public bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage) => false;
 
 		//public int DynamicValue { 
 		//	get => _dynValue; 
@@ -89,18 +84,20 @@ namespace AeonCore
 */
 	public class Health : StatTypeDynamic {
 
-		public override bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy)
-		{
-			dynStat.Value = hero.StatsRO.ConvInt<Health>();
-			return true;
-		}
+		public override int TopLimit(IReadOnlyStats stats) => stats.ConvInt<Health>();
 
-		public override bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage)
-		{
-			if (damage.Phys > 0)
-				dynStat.Value += hero.StatsRO.ConvInt<Regen>();
-			return true;
-		}
+		//public override bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy)
+		//{
+		//	dynStat.Value = hero.StatsRO.ConvInt<Health>();
+		//	return true;
+		//}
+
+		//public override bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage)
+		//{
+		//	if (damage.Phys > 0)
+		//		dynStat.Value += hero.StatsRO.ConvInt<Regen>();
+		//	return true;
+		//}
 	}
 
 	/**
@@ -165,18 +162,18 @@ namespace AeonCore
 */
 	public class Income : StatTypeDynamic {
 
-		public override bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy) 
-		{
-			dynStat.Value = 0;
-			return true;
-		}
+		//public override bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy) 
+		//{
+		//	dynStat.Value = 0;
+		//	return true;
+		//}
 
-		public override bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage)
-		{
-			var v = hero.StatsRO.Converted<Income>();
-			dynStat.Value = (int) ((100 + dynStat.Value) * v - 100);
-			return true;
-		}
+		//public override bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage)
+		//{
+		//	var v = hero.StatsRO.Converted<Income>();
+		//	dynStat.Value = (int) ((100 + dynStat.Value) * v - 100);
+		//	return true;
+		//}
 
 		protected override void Init() {
 			Convertor = a => 1 + a / 100.0;
@@ -219,4 +216,12 @@ namespace AeonCore
 </summary>
 */
 	public class Regen : StatType { }
+
+	/**
+<summary>
+Деньги:
+	А почему бы и деньги не внести в систему статов?
+</summary>
+*/
+	public class Money : StatType { }
 }

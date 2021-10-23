@@ -2,7 +2,9 @@
 
 namespace AeonCore
 {
-	public class Hero
+
+
+	public class Hero : IBattler
 	{
 		protected StatsContainer Stats { get; }
 		public IReadOnlyStats StatsRO => Stats;
@@ -37,12 +39,13 @@ namespace AeonCore
 		internal void AddStat(Stat stat) => Stats.AddStat(stat);
 
 
-		internal virtual void OnBattleStart(Hero enemy)
+		public virtual void OnBattleStart(IBattler enemy)
 		{
-			Stats.OnBattleStart(this, enemy); // TODO: обходить динамически
+			Stats.SetDyn<Health>(StatsRO.ConvInt<Health>());
+			Stats.SetDyn<Income>(0);
 		}
 
-		internal virtual Damage GetDamageTo(Hero enemy)
+		public virtual Damage GetDamageTo(IBattler enemy)
 		{
 			int phys = (int)(StatsRO.ConvInt<Attack>() * StatsRO.DynConverted<Income>());
 			int magic = StatsRO.ConvInt<Magic>();
@@ -55,7 +58,7 @@ namespace AeonCore
 			};
 		}
 
-		internal virtual Damage ReceiveDamage(Damage damage)
+		public virtual Damage ReceiveDamage(Damage damage)
 		{
 			int phys = (int)(damage.Phys * (1 - StatsRO.Converted<Armor>()) - StatsRO.Converted<Block>());
 			var d = new Damage {
@@ -69,9 +72,10 @@ namespace AeonCore
 			return d;
 		}
 
-		internal virtual void AfterHit(Damage enemyHit)
+		public virtual void AfterHit(Damage enemyHit)
 		{
-			Stats.AfterHit(this, enemyHit);
+			if (enemyHit.Phys > 0)
+				Stats.Modify<Health>(StatsRO.ConvInt<Regen>());
 		}
 	}
 }

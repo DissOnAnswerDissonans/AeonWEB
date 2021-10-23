@@ -8,18 +8,19 @@ namespace AeonCore
 {
 	public class Battle
 	{
-		Player _p1;
-		Player _p2;
-
-		Hero _h1;
-		Hero _h2;
-
-		public Battle(Game game)
+		public interface IBattlersProv
 		{
-			_p1 = game.Player1;
-			_p2 = game.Player2;
-			_h1 = _p1.Hero;
-			_h2 = _p2.Hero;
+			IEnumerable<IBattler> GetBattlers();
+		}
+
+		IBattler _h1;
+		IBattler _h2;
+
+		public Battle(IBattlersProv provider)
+		{
+			var list = provider.GetBattlers().ToList();
+			_h1 = list[0];
+			_h2 = list[1];
 		}
 
 		public int Start()

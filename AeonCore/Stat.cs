@@ -51,16 +51,16 @@ namespace AeonCore
 		internal StatTypeDynamic Behaviour { get; init; }
 		public StatType StatType => Behaviour;
 
-		private int _value;
-		public int Value {
-			get => _value;
-			internal set {
-				_value = Math.Clamp(value, Behaviour.TopLimit, Behaviour.BotLimit);
-				//OnChanged?.Invoke(this, _value);
-			}
+		public int Value { get; private set; }
+
+		internal int SetValue(int value, IReadOnlyStats context) {
+			return Value = Math.Clamp(value, Behaviour.TopLimit(context), Behaviour.BotLimit(context));
+			//OnChanged?.Invoke(this, _value);
 		}
 
-		public static DynStat Make<T>(int value) where T : StatTypeDynamic, new()
+
+
+	public static DynStat Make<T>(int value) where T : StatTypeDynamic, new()
 		{
 			return new DynStat {
 				Behaviour = StatType.Instance<T>(),
@@ -68,7 +68,7 @@ namespace AeonCore
 			};
 		}
 
-		public double Converted => Behaviour.Convertor(_value);
+		public double Converted => Behaviour.Convertor(Value);
 
 	}
 }

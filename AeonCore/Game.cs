@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AeonCore
 {
-    public class Game
+    public class Game : Battle.IBattlersProv
 	{
 		public Player Player1 { get; }
 		public Player Player2 { get; }
@@ -38,5 +39,12 @@ namespace AeonCore
 			Instance = new(player1, player2);
 			//Instance.Start();
         }
-    }
+
+		public IEnumerable<IBattler> GetBattlers()
+		{
+			yield return Player1.Hero;
+			yield return Player2.Hero;
+			yield break;
+		}
+	}
 }
