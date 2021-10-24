@@ -1,4 +1,4 @@
-﻿namespace AeonCore
+﻿namespace Aeon.Core
 {
 	public struct Damage
 	{

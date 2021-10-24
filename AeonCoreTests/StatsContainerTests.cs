@@ -1,12 +1,7 @@
 ﻿using Xunit;
-using AeonCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AeonCore.Tests
+namespace Aeon.Core.Tests
 {
 	public class StatsContainerTests
 	{

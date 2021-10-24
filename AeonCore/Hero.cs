@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AeonCore
+namespace Aeon.Core
 {
 
 	interface IShopper
@@ -24,6 +24,9 @@ namespace AeonCore
 
 		internal protected Hero()
 		{
+			Stats = new StatsContainer();
+			Shop = new StandardShop();
+
 			Stats.RegisterDyn<Health>  (100); // здоровье
 			Stats.Register<Attack>      (15); // атака
 			Stats.Register<Magic>        (0); // магия

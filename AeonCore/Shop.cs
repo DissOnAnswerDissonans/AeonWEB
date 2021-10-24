@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AeonCore
+namespace Aeon.Core
 {
 	abstract public class Shop : ICloneable
 	{
-		List<Offer> offers;
+		List<Offer> offers = new();
 
 		public IReadOnlyList<Offer> Offers => offers;
 
@@ -64,6 +64,12 @@ namespace AeonCore
 			Stat = stat;
 			Cost = cost;
 			IsOpt = opt;
+		}
+
+		public override string ToString()
+		{
+			return IsOpt ? $"опт {Cost,3}$ => {Stat.Value,-3} {Stat.StatType.DebugNames.AliasRU,-3}"
+						 : $"{Cost,2}$ => {Stat.Value,-2} {Stat.StatType.DebugNames.AliasRU,-3}";
 		}
 
 		//public bool TryToBuy(Hero hero)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("AeonCore.Tests")]
-namespace AeonCore
+namespace Aeon.Core
 {
 	/// <summary>
 	/// 
@@ -188,7 +188,6 @@ namespace AeonCore
 	public class CritDamage : StatType {
 		protected override void Init() {
 			Convertor = (a) => a / 100.0;
-			MinValue = 100;
 			DebugNames = new Names() {
 				FullNameEN = "Critical Attack",
 				FullNameRU = "Критический Урон",

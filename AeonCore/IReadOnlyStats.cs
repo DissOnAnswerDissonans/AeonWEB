@@ -1,7 +1,9 @@
-﻿namespace AeonCore
+﻿namespace Aeon.Core
 {
 	public interface IReadOnlyStats
 	{
+		public Stat this[StatType type] { get; }
+
 		public Stat Get<TStat>() where TStat : StatType, new();
 
 		public int RawValue<TStat>() where TStat : StatType, new() => 

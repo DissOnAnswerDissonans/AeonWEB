@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace AeonCore
+namespace Aeon.Core
 {
 
 	public class StatsContainer : IReadOnlyStats
@@ -10,6 +10,7 @@ namespace AeonCore
 		Dictionary<StatType, Stat> _stats = new();
 		Dictionary<StatTypeDynamic, DynStat> _dynStats = new();
 
+		public Stat this[StatType type] => _stats[type];
 
 		public bool Register<TStat>(int value) where TStat : StatType, new()
 		{

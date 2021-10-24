@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 
-namespace AeonCore
+namespace Aeon.Core
 {
 	public class Player
 	{
@@ -12,12 +13,14 @@ namespace AeonCore
 
 		public Hero Hero { get; }
 
-		
+
 		public Player(Hero hero)
 		{
 			Score = 0;
 			Hero = hero;
 		}
+
+		public Player() : this(new Hero()) { }
 
 		internal int End(bool isWin) => isWin ? Win() : Lose();
 
@@ -32,6 +35,11 @@ namespace AeonCore
 		{
 			Hero.Wage(WAGE_LOSER);
 			return Score;
+		}
+
+		internal void Shopping()
+		{
+
 		}
 	}
 }

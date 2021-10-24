@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Aeon.BasicApp</RootNamespace>
+    <StartupObject></StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AeonCore\AeonCore.csproj" />
+    <ProjectReference Include="..\DrawingCLI\DrawingCLI.csproj" />
+  </ItemGroup>
+
+</Project>
