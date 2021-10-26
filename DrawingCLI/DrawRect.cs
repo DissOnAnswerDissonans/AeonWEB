@@ -2,7 +2,7 @@
 
 namespace DrawingCLI
 {
-    public struct Point
+	public struct Point
     {
         public int Column { get; init; }
         public int Row { get; init; }
@@ -66,7 +66,8 @@ namespace DrawingCLI
                 Print.Pos(Column, row, "█" + "".PadRight(Width - 2) + "█");
             Print.Pos(Column, Bottom, "█" + "".PadRight(Width - 2, '▄') + "█");
             Console.SetCursorPosition(Column + 2, Row + 1);
-        }
+			Console.ResetColor();
+		}
 
         public static DrawRect Random(Random random) {
             int width = random.Next(6, Console.WindowWidth - 3),
@@ -82,6 +83,46 @@ namespace DrawingCLI
             };
         }
     }
+
+	public class ProgressBar : DrawRect
+	{
+		private int _value;
+		public int Value { get => _value; set => _value = Math.Clamp(value, 0, MaxValue); }
+		public int MaxValue { get; set; } = 100;
+
+		public ConsoleColor FillColor { get; set; }
+		private Colors FillColors => new() { Color = Colors.Color, BGColor = FillColor };
+
+		public void SetValues(int value, int max)
+		{
+			MaxValue = max;
+			Value = value;
+		}
+
+		public new void Draw()
+		{
+			int widthA = (Width - 2)*Value/MaxValue;
+			int widthB = (Width - 2) - widthA;
+
+			FillColors.Set();
+			Print.Pos(Column, Row, "█" + "".PadRight(widthA, '▀'));
+			for (int row = Top + 1; row < Bottom; ++row)
+				Print.Pos(Column, row, "█" + "".PadRight(widthA));
+			Print.Pos(Column, Bottom, "█" + "".PadRight(widthA, '▄'));
+
+			Colors.Set();
+			Print.Pos(Column + widthA + 1, Row, "".PadRight(widthB, '▀') + "█");
+			for (int row = Top + 1; row < Bottom; ++row)
+				Print.Pos(Column + widthA + 1, row, "".PadRight(widthB) + "█");
+			Print.Pos(Column + widthA + 1, Bottom, "".PadRight(widthB, '▄') + "█");
+
+			Console.SetCursorPosition(Column + 2, Row + 1);
+			string s = $"{Value}/{MaxValue}";
+			Console.Write(s);
+
+			Console.ResetColor();
+		}
+	}
 
 	public class DrawTextRect : DrawRect, IDrawableCLI
     {
@@ -102,9 +143,10 @@ namespace DrawingCLI
                 Width = Rect.Width - PADDING_LEFT - PADDING_RIGHT,
                 Height = Rect.Height - PADDING_TOP - PADDING_BOT
             };
-            Console.ForegroundColor = TextColor;
+			Print.Colors(TextColor, Colors.BGColor);
             Print.Text(printArea, Text);
-        }
+			Console.ResetColor();
+		}
 
         public DrawTextRect(DrawRect drawRect, string text)
         {

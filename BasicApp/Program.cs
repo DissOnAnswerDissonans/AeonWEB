@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using Aeon.Core;
+using DrawingCLI;
 
 namespace Aeon.BasicApp
 {
@@ -8,9 +10,14 @@ namespace Aeon.BasicApp
 		static void Main(string[] args)
 		{
 			Console.WriteLine("Hello Aeon!");
+			DrawTitle();
+			Console.ReadKey();
+
 
 			Player player1 = new Player();
 			Player player2 = new Player();
+
+
 
 			Game game = new Game(player1, player2);
 			ShopPresenter shop = new(game);
@@ -26,28 +33,13 @@ namespace Aeon.BasicApp
 			Console.WriteLine($"Winner: {game.WinStatus}");
 			Console.Write("Goodbye Aeon!");
 		}
-	}
 
-	class BattlePresenter : IBattle.ILogger
-	{
-		private Game _game;
-
-		public Battle LastBattle { get; private set; }
-
-		public BattlePresenter(Game game)
+		public static void DrawTitle()
 		{
-			_game = game;
-		}
-
-		public void StartBattle()
-		{
-			_game.Battle(out Battle battle, this);
-			LastBattle = battle;
-		}
-
-		public void LogBattlersState(IBattler battler1, IBattler battler2)
-		{
-			// UNDONE
+			var bytes = new byte[256];
+			for (int i = 0; i < 256; ++i) bytes[i] = (byte) i;
+			ColorPic pic = new(32, 8, bytes);
+			pic.DrawIn(24, 6);
 		}
 	}
 }

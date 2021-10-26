@@ -54,7 +54,7 @@ namespace Aeon.Core
 		public int Value { get; private set; }
 
 		internal int SetValue(int value, IReadOnlyStats context) {
-			return Value = Math.Clamp(value, Behaviour.TopLimit(context), Behaviour.BotLimit(context));
+			return Value = Math.Clamp(value, Behaviour.BotLimit(context), Behaviour.TopLimit(context));
 			//OnChanged?.Invoke(this, _value);
 		}
 

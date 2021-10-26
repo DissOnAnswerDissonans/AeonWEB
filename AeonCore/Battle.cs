@@ -15,7 +15,15 @@ namespace Aeon.Core
 
 		public interface ILogger
 		{
-			void LogBattlersState(IBattler battler1, IBattler battler2);
+			void LogBattlersState(IBattler battler1, IBattler battler2, LogType logType);
+		}
+
+		public enum LogType
+		{
+			InitState,
+			AfterDamage,
+			AfterHealing,
+			AfterBattle
 		}
 
 		/// <summary>
@@ -39,6 +47,8 @@ namespace Aeon.Core
 			_logger = logger;
 		}
 
+		public int Rounds { get; private set; } = 0;
+
 		public int Start()
 		{
 			_h1.OnBattleStart(_h2);
@@ -46,12 +56,10 @@ namespace Aeon.Core
 
 			const int MAX_ROUNDS = 50;
 
-			int round = 0;
-			
-			while(_h1.IsAlive && _h2.IsAlive && round < MAX_ROUNDS) {
-				++round;
+			_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.InitState);
 
-				_logger?.LogBattlersState(_h1, _h2);
+			while (_h1.IsAlive && _h2.IsAlive && Rounds < MAX_ROUNDS) {
+				++Rounds;
 
 				Damage dmg1to2 = _h1.GetDamageTo(_h2);
 				Damage dmg2to1 = _h2.GetDamageTo(_h1);
@@ -59,15 +67,19 @@ namespace Aeon.Core
 				Damage received1 = _h1.ReceiveDamage(dmg2to1);
 				Damage received2 = _h2.ReceiveDamage(dmg1to2);
 
-				_logger?.LogBattlersState(_h1, _h2);
+				_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterDamage);
 
 				if (!(_h1.IsAlive && _h2.IsAlive)) break;
 
 				_h1.AfterHit(received1);
 				_h2.AfterHit(received2);
+
+				_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterHealing);
 			}
 
-			if (round == MAX_ROUNDS) return 0;
+			_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterBattle);
+
+			if (Rounds == MAX_ROUNDS) return 0;
 			return _h1.IsAlive ? 1 : _h2.IsAlive ? 2 : 0;
 		}
 	}
