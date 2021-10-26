@@ -43,14 +43,14 @@ namespace Aeon.Core
 			};
 		}
 
-
+		public int ID { get; protected set; }
 		public Func<int, double> Convertor { get; protected set; }
 		public int MinValue { get; protected set; }
 		public int MaxValue { get; protected set; }
 
 		public Names DebugNames { get; protected set; }
 
-		protected StatType() { 
+		protected StatType() {
 			Convertor = a => (double) a;
 			MinValue = 0;
 			MaxValue = int.MaxValue;
@@ -95,6 +95,7 @@ namespace Aeon.Core
 
 		protected override void Init()
 		{
+			ID = 1;
 			DebugNames = new Names() {
 				FullNameEN = "Health",
 				FullNameRU = "Здоровье",
@@ -126,6 +127,7 @@ namespace Aeon.Core
 	public class Attack : StatType {
 		protected override void Init()
 		{
+			ID = 2;
 			DebugNames = new Names() {
 				FullNameEN = "Attack",
 				FullNameRU = "Атака",
@@ -146,6 +148,7 @@ namespace Aeon.Core
 	public class Magic : StatType {
 		protected override void Init()
 		{
+			ID = 3;
 			DebugNames = new Names() {
 				FullNameEN = "Magic",
 				FullNameRU = "Магия",
@@ -165,6 +168,7 @@ namespace Aeon.Core
 */
 	public class CritChance : StatType {
 		protected override void Init() {
+			ID = 4;
 			Convertor = (a) => a / 100.0;
 			MaxValue = 100;
 			DebugNames = new Names() {
@@ -187,6 +191,7 @@ namespace Aeon.Core
 */
 	public class CritDamage : StatType {
 		protected override void Init() {
+			ID = 5;
 			Convertor = (a) => a / 100.0;
 			DebugNames = new Names() {
 				FullNameEN = "Critical Attack",
@@ -224,6 +229,7 @@ namespace Aeon.Core
 		//}
 
 		protected override void Init() {
+			ID = 6;
 			Convertor = a => 1 + a / 100.0;
 			DebugNames = new Names() {
 				FullNameEN = "Income",
@@ -245,6 +251,7 @@ namespace Aeon.Core
 	public class Block : StatType {
 		protected override void Init()
 		{
+			ID = 7;
 			DebugNames = new Names() {
 				FullNameEN = "Block",
 				FullNameRU = "Броня",
@@ -265,6 +272,7 @@ namespace Aeon.Core
 	public class Armor : StatType {
 		const double COEFF = 0.0075;
 		protected override void Init() {
+			ID = 8;
 			MaxValue = 300;
 			Convertor = t => COEFF * t / (1 + COEFF * Math.Exp(0.9 * Math.Log(t)));
 			DebugNames = new Names() {
@@ -289,6 +297,7 @@ namespace Aeon.Core
 	{
 		protected override void Init()
 		{
+			ID = 9;
 			DebugNames = new Names() { 
 				FullNameEN = "Regeneration", 
 				FullNameRU = "Регенерация", 

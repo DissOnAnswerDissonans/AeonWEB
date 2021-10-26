@@ -45,7 +45,9 @@ namespace DrawingCLI
             Console.ResetColor();
             Console.Clear();
         }
-    }
+
+		internal static void Colors(Colors color) => Colors(color.Color, color.BGColor);
+	}
 
     static class DrawDebug
     {

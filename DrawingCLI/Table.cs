@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DrawingCLI
 {
-	public class Table : IDrawableCLI
+	public class Table<T> : IDrawableCLI
 	{
 		private MutableRect _rect = new() { Width = 1, Height = 1 };
 		public Rect Rect => _rect;
@@ -17,10 +17,43 @@ namespace DrawingCLI
 		public List<int> ColumnPos { get; } = new() { 1 };
 		public List<int> RowPos { get; } = new() { 1 };
 
-		private Dictionary<(int, int), string> _values = new();
+		private Dictionary<(int, int), T> _values = new();
 
-		public string this[int row, int column] {
-			get => _values.TryGetValue((row, column), out var value) ? value : "";
+
+		private Colors _color = new() {Color = ConsoleColor.Gray, BGColor = ConsoleColor.Black};
+
+		private Dictionary<(int, int), Colors> _colors = new();
+
+		public void SetColor(ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) {
+			_color = new Colors { Color = color, BGColor = colorBG };
+		}
+
+		public void SetColor(int row, int column, 
+			ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) {
+			_colors[(row, column)] = new Colors { Color = color, BGColor = colorBG };
+		}
+
+		public void SetColorIf(Func<T, bool> func, ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black)
+		{
+			for (int row = 0; row < Rows; ++row) {
+				for (int column = 0; column < Columns; ++column) {
+					if (func(this[row, column]))
+						SetColor(row, column, color, colorBG);
+				}
+			}
+		}
+
+		public void ResetColor(int row, int column) {
+			_colors.Remove((row, column));
+		}
+
+		public Colors GetColor(int row, int column) =>
+			_colors.TryGetValue((row, column), out Colors color) ? color : _color;
+
+
+
+		public T this[int row, int column] {
+			get => _values.TryGetValue((row, column), out T value) ? value : default;
 			set => _values[(row, column)] = value;
 		}
 
@@ -69,24 +102,27 @@ namespace DrawingCLI
 				rows[0] = RowDrawType.Top;
 				rows[^1] = RowDrawType.Bottom;
 			}
-			
+			Print.Colors(_color);
+
 			for (int y = 0; y < _rect.Height; ++y) {
 				for (int x = 0; x < _rect.Width; ++x) {
 					Print.Pos(x + _rect.Column, y + _rect.Row, DChar(rows[y], columns[x]));
 				}
 			}
 
+			DrawTextOnly();
+		}
+
+		public void DrawTextOnly()
+		{
 			for (int row = 0; row < Rows; ++row) {
 				for (int column = 0; column < Columns; ++column) {
-					Print.Pos(ColumnPos[column] + _rect.Column, 
-						RowPos[row] + _rect.Row, this[row, column]);
+					Print.Colors(GetColor(row, column));
+					Print.Pos(ColumnPos[column] + _rect.Column,
+						RowPos[row] + _rect.Row, $" {this[row, column]} ");
 				}
 			}
-
-			//string z0 = "║      │   │     │    ║";
-			//string z1 = "╟──────┼───┼─────┼────╢";
-			//string z2 = "╔══════╤═══╤═════╤════╗";
-			//string z3 = "╚══════╧═══╧═════╧════╝";
+			Console.ResetColor();
 		}
 
 		enum RowDrawType { None = 0, Middle = 1, Top = 2, Bottom = 3 }

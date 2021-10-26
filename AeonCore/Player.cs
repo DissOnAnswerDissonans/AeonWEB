@@ -7,9 +7,11 @@ namespace Aeon.Core
 	{
 		const int WAGE_WINNER = 120;
 		const int WAGE_LOSER = 100;
+		const int WAGE_START = 100;
+		const int TARGET_WINS = 5;
 
 		public int Score { get; private set; }
-		public bool IsWinner => Score >= 5;
+		public bool IsWinner => Score >= TARGET_WINS;
 
 		public Hero Hero { get; }
 
@@ -18,6 +20,7 @@ namespace Aeon.Core
 		{
 			Score = 0;
 			Hero = hero;
+			Hero.Wage(WAGE_START);
 		}
 
 		public Player() : this(new Hero()) { }

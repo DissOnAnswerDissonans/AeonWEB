@@ -3,5 +3,7 @@
     interface IDrawableCLI
     {
         void Draw();
+
+		void DrawTextOnly() => Draw();
     }
 }

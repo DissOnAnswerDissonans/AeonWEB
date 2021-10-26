@@ -42,9 +42,9 @@ namespace DrawingCLI
         };
     }
 
-    class DrawRect : IDrawableCLI
+    public class DrawRect : IDrawableCLI
     {
-        public Rect Rect { get; init; } // rekt
+        public Rect Rect { get; set; } // rekt
         #region Rect Properties
         public int Column => Rect.Column;
         public int Row => Rect.Row;
@@ -56,7 +56,7 @@ namespace DrawingCLI
         public int Top => Rect.Row;
         public int Bottom => Rect.Row + Rect.Height - 1;
         #endregion
-        public Colors Colors { get; init; }
+        public Colors Colors { get; set; }
 
         public void Draw()
         {
@@ -83,15 +83,15 @@ namespace DrawingCLI
         }
     }
 
-    class DrawTextRect : DrawRect, IDrawableCLI
+	public class DrawTextRect : DrawRect, IDrawableCLI
     {
         const int PADDING_TOP = 1;
         const int PADDING_BOT = 1;
         const int PADDING_LEFT = 2;
         const int PADDING_RIGHT = 2;
 
-        public string Text { get; init; }
-        public ConsoleColor TextColor { get; init; }
+        public string Text { get; set; }
+        public ConsoleColor TextColor { get; set; }
 
         public new void Draw()
         {
