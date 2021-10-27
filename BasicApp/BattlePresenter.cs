@@ -85,15 +85,20 @@ namespace Aeon.BasicApp
 
 				case IBattle.LogType.InitState:
 					DrawBattlers();
+					UpdateBars(hb1, hb2, log);
 					break;
 
 				case IBattle.LogType.AfterDamage:
 					DrawAttack();
 					UpdateLogZones(log1Zone, log2Zone, log);
+					UpdateBars(hb1, hb2, log);
+					Console.Beep(200, 200);
 					break;
 
 				case IBattle.LogType.AfterHealing:
 					UpdateLogZones(log1Zone, log2Zone, log);
+					UpdateBars(hb1, hb2, log);
+					Console.Beep(400, 200);
 					break;
 
 				case IBattle.LogType.AfterBattle:
@@ -101,12 +106,10 @@ namespace Aeon.BasicApp
 					break;
 
 				}
-
-				UpdateBars(hb1, hb2, log);
 				ground.Draw();
 				Print.Pos(39, 3, $"{log.Num,2}");
-				Console.SetCursorPosition(39 + log.Num % 2, 3);
-				Thread.Sleep(500);
+				Console.SetCursorPosition(0, 0);
+				Thread.Sleep(200);
 			}
 		}
 
@@ -117,6 +120,7 @@ namespace Aeon.BasicApp
 
 			hb1.Draw();
 			hb2.Draw();
+			Console.SetCursorPosition(0, 0);
 		}
 
 		private void UpdateLogZones(DrawLogZone zone1, DrawLogZone zone2, LogPT log)

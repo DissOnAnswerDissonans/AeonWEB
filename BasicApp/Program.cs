@@ -15,6 +15,10 @@ namespace Aeon.BasicApp
 
 		static void Main(string[] args)
 		{
+			Console.SetBufferSize(80, 25);
+			Console.SetWindowSize(80, 25);
+			Console.Title = "Aeon";
+
 			Console.ResetColor();
 			Print.Pos(3, 1, "Hello Aeon!");
 			DrawTitle();
@@ -42,10 +46,14 @@ namespace Aeon.BasicApp
 
 		public static void DrawTitle()
 		{
-			var bytes = new byte[256];
-			for (int i = 0; i < 256; ++i) bytes[i] = (byte) i;
-			ColorPic pic = new(32, 8, bytes);
-			pic.DrawIn(24, 6);
+			var bytes = new byte[] { 0, 0, 144, 144, 144, 16, 0, 0, 144, 144, 144, 144, 144, 16, 0, 
+				0, 144, 144, 144, 16, 0, 0, 144, 16, 0, 0, 144, 16, 0, 153, 17, 0, 0, 153, 17, 0, 153, 
+				17, 0, 0, 0, 0, 0, 153, 17, 0, 0, 153, 17, 0, 153, 145, 16, 0, 153, 17, 0, 153, 25, 9, 
+				9, 153, 17, 0, 153, 25, 9, 9, 9, 1, 0, 153, 17, 0, 0, 153, 17, 0, 153, 17, 9, 145, 153, 
+				17, 0, 153, 17, 0, 0, 153, 17, 0, 153, 145, 144, 144, 144, 16, 0, 9, 145, 144, 144, 25, 
+				1, 0, 153, 17, 0, 0, 153, 17, 0, 0, 0, 0 };
+			ColorPic pic = new(28, 4, bytes);
+			pic.DrawIn(26, 6);
 		}
 	}
 }

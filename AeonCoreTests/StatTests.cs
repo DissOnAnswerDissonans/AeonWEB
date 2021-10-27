@@ -67,7 +67,7 @@ namespace Aeon.Core.Tests
 		{
 			protected override void Init()
 			{
-				Convertor = a => a * 2.4m;
+				Convertor = (a, c) => a * 2.4m;
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace Aeon.Core.Tests
 			Stat s1 = Stat.Make<ConvStat>(11);
 
 			Assert.Equal(11, s1.Value);
-			Assert.Equal(26.4m, s1.Converted);
+			Assert.Equal(26.4m, s1.Convert(default));
 		}
 
 		[Fact]public void ConvertedDefault_retDouble()
@@ -84,7 +84,7 @@ namespace Aeon.Core.Tests
 			Stat s1 = Stat.Make<TestStat1>(11);
 
 			Assert.Equal(11, s1.Value);
-			Assert.Equal(11.0m, s1.Converted);
+			Assert.Equal(11.0m, s1.Convert(default));
 		}
 
 	}

@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31727.386
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AeonCore", "AeonCore\AeonCore.csproj", "{81AFC1D1-BF34-49A7-BF4F-0F841DB01F36}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{61729F9D-0775-42AF-8EF4-9EBF1946743E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{61729F9D-0775-42AF-8EF4-9EBF1946743E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
@@ -19,7 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicApp", "BasicApp\BasicA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawingCLI", "DrawingCLI\DrawingCLI.csproj", "{F630E7C0-98D8-48DB-AE6E-F85BCD0FD88B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aeon.Heroes", "Aeon.Heroes\Aeon.Heroes.csproj", "{7F558223-9895-4E4F-AC97-BAEF5F23F554}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aeon.Heroes", "Aeon.Heroes\Aeon.Heroes.csproj", "{7F558223-9895-4E4F-AC97-BAEF5F23F554}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{B5E28AFE-A629-4AAA-870A-B2949E8C6ADD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicEditor", "PicEditor\PicEditor.csproj", "{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,12 +51,19 @@ Global
 		{7F558223-9895-4E4F-AC97-BAEF5F23F554}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F558223-9895-4E4F-AC97-BAEF5F23F554}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F558223-9895-4E4F-AC97-BAEF5F23F554}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{81AFC1D1-BF34-49A7-BF4F-0F841DB01F36} = {61729F9D-0775-42AF-8EF4-9EBF1946743E}
+		{BC5A2441-38B3-4F1C-A1A5-02FA57C85B8F} = {61729F9D-0775-42AF-8EF4-9EBF1946743E}
 		{7F558223-9895-4E4F-AC97-BAEF5F23F554} = {61729F9D-0775-42AF-8EF4-9EBF1946743E}
+		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396} = {B5E28AFE-A629-4AAA-870A-B2949E8C6ADD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC5C05A3-807C-49D1-B790-5B217D8825D2}
