@@ -80,6 +80,9 @@ namespace Aeon.Core
 				_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterHealing);
 			}
 
+			_h1.AfterBattle(_h2);
+			_h2.AfterBattle(_h1);
+
 			_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterBattle);
 
 			if (Rounds == MAX_ROUNDS) return 0;

@@ -37,5 +37,11 @@
 		/// </summary>
 		/// <param name="enemyHit">Полученный урон</param>
 		void AfterHit(Damage enemyHit);
+
+		/// <summary>
+		/// Вызвать после боя
+		/// </summary>
+		/// <param name="enemy">Противник</param>
+		void AfterBattle(IBattler enemy);
 	}
 }

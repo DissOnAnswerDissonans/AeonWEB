@@ -18,13 +18,9 @@ namespace Aeon.Core
 			return s;
 		}
 
-		protected void AddOffer<T>(int amount, int cost) 
+		virtual protected void AddOffer<T>(int amount, int cost, bool opt = false) 
 			where T : StatType, new() => 
-			offers.Add(new Offer(Stat.Make<T>(amount), cost, false));
-
-		protected void AddOptOffer<T>(int amount, int cost) 
-			where T : StatType, new() =>
-			offers.Add(new Offer(Stat.Make<T>(amount), cost, true));
+			offers.Add(new Offer(Stat.Make<T>(amount), cost, opt));
 	}
 
 	public class StandardShop : Shop
@@ -41,15 +37,15 @@ namespace Aeon.Core
 			AddOffer<Armor>(15, 30);
 			AddOffer<Regen>(5, 11);
 
-			AddOptOffer<Health>(220, 87);
-			AddOptOffer<Attack>(60, 120);
-			AddOptOffer<Magic>(46, 90);
-			AddOptOffer<CritChance>(40, 104);
-			AddOptOffer<CritDamage>(120, 105);
-			AddOptOffer<Income>(20, 120);
-			AddOptOffer<Block>(80, 130);
-			AddOptOffer<Armor>(66, 120);
-			AddOptOffer<Regen>(62, 115);
+			AddOffer<Health>(220, 87, opt: true);
+			AddOffer<Attack>(60, 120, opt: true);
+			AddOffer<Magic>(46, 90, opt: true);
+			AddOffer<CritChance>(40, 104, opt: true);
+			AddOffer<CritDamage>(120, 105, opt: true);
+			AddOffer<Income>(20, 120, opt: true);
+			AddOffer<Block>(80, 130, opt: true);
+			AddOffer<Armor>(66, 120, opt: true);
+			AddOffer<Regen>(62, 115, opt: true);
 		}
 	}
 

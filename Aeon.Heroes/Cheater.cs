@@ -39,4 +39,19 @@ namespace Aeon.Heroes
 			return d;
 		}
 	}
+
+	public class Warrior : Hero 
+	{
+		const decimal CRIT_DMG_BONUS = 0.5m;
+		const decimal CRIT_CHA_BONUS = 0.1m;
+
+		public class CritDamage : Core.CritDamage
+		{
+			protected override void Init()
+			{
+				base.Init();
+				Convertor = a => a / 100.0m;
+			}
+		}
+	}
 }

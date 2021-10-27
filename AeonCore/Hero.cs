@@ -20,7 +20,7 @@ namespace Aeon.Core
 		public bool IsAlive => StatsRO.DynamicValue<Health>() > 0;
 
 		public int Money { get; private set; }
-		public Shop Shop { get; }
+		public Shop Shop { get; protected set; }
 
 		internal protected Hero()
 		{
@@ -95,6 +95,9 @@ namespace Aeon.Core
 				Stats.Modify<Health>(StatsRO.ConvInt<Regen>());
 		}
 
+		public virtual void AfterBattle(IBattler enemy)
+		{
 
+		}
 	}
 }

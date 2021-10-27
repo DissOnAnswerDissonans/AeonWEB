@@ -85,7 +85,7 @@ namespace Aeon.Core
 
 
 
-		internal void AddStat(Stat stat)
+		public void AddStat(Stat stat)
 		{
 			try {
 				_stats[stat.Behaviour] += stat;
@@ -95,7 +95,7 @@ namespace Aeon.Core
 			}
 		}
 
-		internal DynStat Modify<TStat>(int delta) where TStat : StatTypeDynamic, new()
+		public DynStat Modify<TStat>(int delta) where TStat : StatTypeDynamic, new()
 		{
 			DynStat stat = GetDyn<TStat>();
 			stat.SetValue(stat.Value + delta, this);
