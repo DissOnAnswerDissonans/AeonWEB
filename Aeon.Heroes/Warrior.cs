@@ -2,6 +2,11 @@
 
 namespace Aeon.Heroes
 {
+	/// <summary>
+	/// Герой средней и поздней стадий игры. Его критический урон
+	///	увеличен на 50% от магии, а критический шанс увеличен на
+	/// 10% от магии.
+	/// </summary>
 	public class Warrior : Hero 
 	{
 		const decimal CRIT_DMG_BONUS = 0.5m;
@@ -30,5 +35,7 @@ namespace Aeon.Heroes
 			Stats.OverrideBehaviour<Core.CritChance, CritChance>();
 			Stats.OverrideBehaviour<Core.CritDamage, CritDamage>();
 		}
+
+		public override string AbilityText => $"+{StatsRO.Converted<Magic>() * CRIT_DMG_BONUS}% бонус КУР";
 	}
 }

@@ -23,6 +23,9 @@ namespace Aeon.Heroes
 		const decimal HEALTH_MULTIPLIER = 1.095m;
 		readonly Stat REGEN_BONUS = Stat.Make<Regen>(2);
 
+		int _addedRegen = 0;
+		public override string AbilityText => $"Нажрал +{_addedRegen} регенерации";
+
 		public Fatty()
 		{
 			Shop = new FattyShop();
@@ -32,6 +35,7 @@ namespace Aeon.Heroes
 		{
 			base.AfterBattle(enemy);
 			Stats.AddStat(REGEN_BONUS);
+			_addedRegen += REGEN_BONUS.Value;
 		}
 	}
 }

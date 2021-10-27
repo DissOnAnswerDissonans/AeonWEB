@@ -51,7 +51,6 @@ namespace Aeon.BasicApp
 
 		internal void FullDraw()
 		{
-			Print.Colors(ConsoleColor.Gray, ConsoleColor.Black);
 			Console.Clear();
 
 			SetTableValues();
@@ -69,6 +68,7 @@ namespace Aeon.BasicApp
 			SetTableValues();
 			SetColors();
 			moneyBox.Text = $"$ {Hero.Money,-4}";
+			abilityBox.Text = Hero.AbilityText;
 
 			tabStats.DrawTextOnly();
 			tabOffers.DrawTextOnly();
@@ -100,10 +100,10 @@ namespace Aeon.BasicApp
 
 		private void SetColors()
 		{
-			tabOffers.SetColorIf(c => c.Cost > Hero.Money, ConsoleColor.Red);
-			tabOffers.SetColorIf(c => c.Cost <= Hero.Money, ConsoleColor.White);
+			tabOffers.SetTextColorIf(c => c.Cost > Hero.Money, ConsoleColor.Red);
+			tabOffers.SetTextColorIf(c => c.Cost <= Hero.Money, ConsoleColor.White);
 
-			tabOffers.SetColor(_selectorY, _selectorX, ConsoleColor.Black,
+			tabOffers.SetTextColor(_selectorY, _selectorX, ConsoleColor.Black,
 				tabOffers[_selectorY, _selectorX].Cost > Hero.Money ? ConsoleColor.Red : ConsoleColor.White);
 
 			abilityBox.Colors = (_selectorY == 9 && _selectorX == 0)
@@ -150,6 +150,8 @@ namespace Aeon.BasicApp
 		internal void EnterShopRoutine(int player)
 		{
 			SetPlayer(player);
+			tabStats.SetColor(Program.PlayerColors[player - 1]);
+			tabOffers.SetColor(Program.PlayerColors[player - 1]);
 			FullDraw();
 
 			do {

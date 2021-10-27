@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections;
 using Aeon.Core;
+using Aeon.Heroes;
 using DrawingCLI;
 
 namespace Aeon.BasicApp
 {
 	class Program
 	{
+		public static readonly Colors[] PlayerColors  = new Colors[] {
+			new() { Color = ConsoleColor.Blue, BGColor = ConsoleColor.Black },
+			new() { Color = ConsoleColor.DarkYellow, BGColor = ConsoleColor.Black }
+		};
+
 		static void Main(string[] args)
 		{
 			Console.ResetColor();
@@ -14,11 +20,10 @@ namespace Aeon.BasicApp
 			DrawTitle();
 			Console.ReadKey();
 
+			PickPresenter pick = new();
 
-			Player player1 = new Player(new Heroes.Cheater());
-			Player player2 = new Player(new Heroes.Warrior());
-
-
+			Player player1 = new Player(pick.PickHero(0));
+			Player player2 = new Player(pick.PickHero(1));
 
 			Game game = new Game(player1, player2);
 			ShopPresenter shop = new(game);

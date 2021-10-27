@@ -51,6 +51,8 @@ namespace Aeon.Core
 
 		public int Rounds { get; private set; } = 0;
 
+		public int Winner { get; private set; } = 0;
+
 		public int Start()
 		{
 			_h1.OnBattleStart(_h2);
@@ -85,8 +87,8 @@ namespace Aeon.Core
 
 			_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterBattle);
 
-			if (Rounds == MAX_ROUNDS) return 0;
-			return _h1.IsAlive ? 1 : _h2.IsAlive ? 2 : 0;
+			if (Rounds == MAX_ROUNDS) return 0;	
+			return Winner = _h1.IsAlive ? 1 : _h2.IsAlive ? 2 : 0;
 		}
 	}
 }

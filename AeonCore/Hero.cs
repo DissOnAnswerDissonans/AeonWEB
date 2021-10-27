@@ -99,5 +99,10 @@ namespace Aeon.Core
 		{
 
 		}
+
+
+		public virtual string AbilityText => "Нет способности";
+		public virtual bool UseAbility() => false;
+
 	}
 }

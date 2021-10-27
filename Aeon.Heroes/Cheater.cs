@@ -38,5 +38,7 @@ namespace Aeon.Heroes
 			}
 			return d;
 		}
+
+		public override string AbilityText => $"Первый удар: {base.GetDamageTo(default).Phys * FIRST_ATT_X} физ. урона";
 	}
 }

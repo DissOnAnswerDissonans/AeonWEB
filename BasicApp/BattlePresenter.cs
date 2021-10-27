@@ -174,9 +174,10 @@ namespace Aeon.BasicApp
 			SimplePic pic1 = new SimplePic(8, 10, new BitArray(numbers[_game.Player1.Score]));
 			SimplePic pic2 = new SimplePic(8, 10, new BitArray(numbers[_game.Player2.Score]));
 			var colors = new Colors { Color = ConsoleColor.White, BGColor = ConsoleColor.Black };
+			var plusColors = new Colors { Color = ConsoleColor.DarkGreen, BGColor = ConsoleColor.Black };
 			pic.DrawIn(38, 6, colors);
-			pic1.DrawIn(30, 6, colors);
-			pic2.DrawIn(44, 6, colors);
+			pic1.DrawIn(30, 6, LastBattle.Winner == 1 ? plusColors : colors);
+			pic2.DrawIn(44, 6, LastBattle.Winner == 2 ? plusColors : colors);
 		}
 
 		private void DrawAttack()
