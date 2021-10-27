@@ -22,7 +22,7 @@ namespace Aeon.Core
 			}
 		}
 
-		public decimal Converted => Behaviour.Convertor(_value);
+		public decimal Convert(IReadOnlyStats context) => Behaviour.Convertor(Value, context);
 
 		public static Stat Make<T>(int value) where T : StatType, new()
 		{
@@ -68,7 +68,7 @@ namespace Aeon.Core
 			};
 		}
 
-		public decimal Converted => Behaviour.Convertor(Value);
+		public decimal Convert(IReadOnlyStats context) => Behaviour.Convertor(Value, context);
 
 	}
 }

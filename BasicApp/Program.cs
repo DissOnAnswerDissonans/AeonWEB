@@ -16,7 +16,7 @@ namespace Aeon.BasicApp
 
 
 			Player player1 = new Player(new Heroes.Cheater());
-			Player player2 = new Player(new Heroes.Fatty());
+			Player player2 = new Player(new Heroes.Warrior());
 
 
 

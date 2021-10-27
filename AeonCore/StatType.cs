@@ -44,14 +44,14 @@ namespace Aeon.Core
 		}
 
 		public int ID { get; protected set; }
-		public Func<int, decimal> Convertor { get; protected set; }
+		public Func<int, IReadOnlyStats, decimal> Convertor { get; protected set; }
 		public int MinValue { get; protected set; }
 		public int MaxValue { get; protected set; }
 
 		public Names DebugNames { get; protected set; }
 
 		protected StatType() {
-			Convertor = a => a;
+			Convertor = (a, context) => a;
 			MinValue = 0;
 			MaxValue = int.MaxValue;
 			Init();
@@ -169,7 +169,7 @@ namespace Aeon.Core
 	public class CritChance : StatType {
 		protected override void Init() {
 			ID = 4;
-			Convertor = (a) => a / 100.0m;
+			Convertor = (a, context) => a / 100.0m;
 			MaxValue = 100;
 			DebugNames = new Names() {
 				FullNameEN = "Crit. Chance",
@@ -192,7 +192,7 @@ namespace Aeon.Core
 	public class CritDamage : StatType {
 		protected override void Init() {
 			ID = 5;
-			Convertor = (a) => a / 100.0m;
+			Convertor = (a, context) => a / 100.0m;
 			DebugNames = new Names() {
 				FullNameEN = "Crit. Attack",
 				FullNameRU = "Крит. Урон",
@@ -230,7 +230,7 @@ namespace Aeon.Core
 
 		protected override void Init() {
 			ID = 6;
-			Convertor = a => 1 + a / 100.0m;
+			Convertor = (a, context) => 1 + a / 100.0m;
 			DebugNames = new Names() {
 				FullNameEN = "Income",
 				FullNameRU = "Прирост",
@@ -274,7 +274,7 @@ namespace Aeon.Core
 		protected override void Init() {
 			ID = 8;
 			MaxValue = 300;
-			Convertor = t => COEFF * t / (1 + COEFF * (decimal)Math.Exp(0.9 * Math.Log(t)));
+			Convertor = (t, context) => COEFF * t / (1 + COEFF * (decimal)Math.Exp(0.9 * Math.Log(t)));
 			DebugNames = new Names() {
 				FullNameEN = "Armor",
 				FullNameRU = "Защита",

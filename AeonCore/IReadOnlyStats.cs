@@ -10,7 +10,7 @@
 			Get<TStat>().Value;
 
 		public decimal Converted<TStat>() where TStat : StatType, new() => 
-			Get<TStat>().Converted;
+			Get<TStat>().Convert(this);
 
 		public int ConvInt<TStat>() where TStat : StatType, new() => 
 			(int) Converted<TStat>();
@@ -22,7 +22,7 @@
 			GetDyn<TStat>().Value;
 
 		public decimal DynConverted<TStat>() where TStat : StatTypeDynamic, new() =>
-			GetDyn<TStat>().Converted;
+			GetDyn<TStat>().Convert(this);
 
 		public int DynConvInt<TStat>() where TStat : StatTypeDynamic, new() =>
 			(int) DynConverted<TStat>();

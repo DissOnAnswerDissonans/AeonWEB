@@ -21,7 +21,7 @@ namespace Aeon.Heroes
 			protected override void Init()
 			{
 				base.Init();
-				Convertor = a => a * ATT_MULTIPLIER;
+				Convertor = (a, context) => a * ATT_MULTIPLIER;
 			}
 		}
 
@@ -37,21 +37,6 @@ namespace Aeon.Heroes
 				d = new Damage { Instigator = d.Instigator, IsCrit = d.IsCrit, Magic = d.Magic, Phys = (int) (d.Phys * FIRST_ATT_X) };
 			}
 			return d;
-		}
-	}
-
-	public class Warrior : Hero 
-	{
-		const decimal CRIT_DMG_BONUS = 0.5m;
-		const decimal CRIT_CHA_BONUS = 0.1m;
-
-		public class CritDamage : Core.CritDamage
-		{
-			protected override void Init()
-			{
-				base.Init();
-				Convertor = a => a / 100.0m;
-			}
 		}
 	}
 }
