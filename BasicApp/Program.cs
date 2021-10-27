@@ -9,7 +9,8 @@ namespace Aeon.BasicApp
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Hello Aeon!");
+			Console.ResetColor();
+			Print.Pos(3, 1, "Hello Aeon!");
 			DrawTitle();
 			Console.ReadKey();
 

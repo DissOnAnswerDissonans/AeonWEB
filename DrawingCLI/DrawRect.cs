@@ -2,46 +2,6 @@
 
 namespace DrawingCLI
 {
-	public struct Point
-    {
-        public int Column { get; init; }
-        public int Row { get; init; }
-    }
-
-    public struct Rect
-    {
-        public int Column { get; init; }
-        public int Row { get; init; }
-        public int Width { get; init; }
-        public int Height { get; init; }
-    }
-
-	class MutableRect
-	{
-		public int Column { get; set; }
-		public int Row { get; set; }
-		public int Width { get; set; }
-		public int Height { get; set; }
-
-		public static implicit operator Rect(MutableRect mutable) => new Rect { 
-				Column = mutable.Column, Row = mutable.Row,
-				Height = mutable.Height, Width = mutable.Width
-			};
-	}
-
-    public struct Colors
-    {
-        public ConsoleColor Color { get; init; }
-        public ConsoleColor BGColor { get; init; }
-
-        public void Set() => Print.Colors(Color, BGColor);
-
-        public static Colors Random(Random random) => new() {
-            Color = (ConsoleColor) random.Next(16),
-            BGColor = (ConsoleColor) random.Next(16),
-        };
-    }
-
     public class DrawRect : IDrawableCLI
     {
         public Rect Rect { get; set; } // rekt
@@ -83,46 +43,6 @@ namespace DrawingCLI
             };
         }
     }
-
-	public class ProgressBar : DrawRect
-	{
-		private int _value;
-		public int Value { get => _value; set => _value = Math.Clamp(value, 0, MaxValue); }
-		public int MaxValue { get; set; } = 100;
-
-		public ConsoleColor FillColor { get; set; }
-		private Colors FillColors => new() { Color = Colors.Color, BGColor = FillColor };
-
-		public void SetValues(int value, int max)
-		{
-			MaxValue = max;
-			Value = value;
-		}
-
-		public new void Draw()
-		{
-			int widthA = (Width - 2)*Value/MaxValue;
-			int widthB = (Width - 2) - widthA;
-
-			FillColors.Set();
-			Print.Pos(Column, Row, "█" + "".PadRight(widthA, '▀'));
-			for (int row = Top + 1; row < Bottom; ++row)
-				Print.Pos(Column, row, "█" + "".PadRight(widthA));
-			Print.Pos(Column, Bottom, "█" + "".PadRight(widthA, '▄'));
-
-			Colors.Set();
-			Print.Pos(Column + widthA + 1, Row, "".PadRight(widthB, '▀') + "█");
-			for (int row = Top + 1; row < Bottom; ++row)
-				Print.Pos(Column + widthA + 1, row, "".PadRight(widthB) + "█");
-			Print.Pos(Column + widthA + 1, Bottom, "".PadRight(widthB, '▄') + "█");
-
-			Console.SetCursorPosition(Column + 2, Row + 1);
-			string s = $"{Value}/{MaxValue}";
-			Console.Write(s);
-
-			Console.ResetColor();
-		}
-	}
 
 	public class DrawTextRect : DrawRect, IDrawableCLI
     {

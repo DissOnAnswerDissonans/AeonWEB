@@ -16,6 +16,8 @@ namespace Aeon.Core
 		public interface ILogger
 		{
 			void LogBattlersState(IBattler battler1, IBattler battler2, LogType logType);
+
+			void LogDamage(Damage dmg1to2, Damage dmg2to1);
 		}
 
 		public enum LogType
@@ -67,6 +69,7 @@ namespace Aeon.Core
 				Damage received1 = _h1.ReceiveDamage(dmg2to1);
 				Damage received2 = _h2.ReceiveDamage(dmg1to2);
 
+				_logger?.LogDamage(received2, received1);
 				_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterDamage);
 
 				if (!(_h1.IsAlive && _h2.IsAlive)) break;

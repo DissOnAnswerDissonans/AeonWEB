@@ -17,6 +17,8 @@ namespace Aeon.BasicApp
 			internal int CurrentHP2 { get; init; }
 			internal int MaxHP1 { get; init; }
 			internal int MaxHP2 { get; init; }
+
+			internal int RoundNumber { get; init; }
 		}
 
 		private Game _game;
@@ -24,6 +26,10 @@ namespace Aeon.BasicApp
 		public Battle LastBattle { get; private set; }
 
 		private List<LogPT> _log;
+
+		private List<(Damage dmg1to2, Damage dmg2to1)> _damage;
+
+		private int _round;
 
 		public BattlePresenter(Game game)
 		{
@@ -33,6 +39,8 @@ namespace Aeon.BasicApp
 		public void StartBattle()
 		{
 			_log = new();
+			_damage = new();
+			_round = 0;
 			int winner = _game.Battle(out Battle battle, this);
 			LastBattle = battle;
 			Console.Clear();
@@ -113,11 +121,19 @@ namespace Aeon.BasicApp
 
 		private void UpdateLogZones(DrawLogZone zone1, DrawLogZone zone2, LogPT log)
 		{
+			ConsoleColor color1 = ConsoleColor.Green;
+			ConsoleColor color2 = ConsoleColor.Green;
+			if (log.LogType == IBattle.LogType.AfterDamage) {
+				color1 = _damage[_round].dmg2to1.IsCrit ? ConsoleColor.DarkYellow : ConsoleColor.Red;
+				color2 = _damage[_round].dmg1to2.IsCrit ? ConsoleColor.DarkYellow : ConsoleColor.Red;
+				_round++;
+			}
+
 			int z1 = log.CurrentHP1 -_log[log.Num-1].CurrentHP1;
-			zone1.Add($"{z1:+#.#;-#.#}", z1 < 0 ? ConsoleColor.Red : ConsoleColor.Green);
+			zone1.Add($"{z1:+#.#;-#.#}", color1);
 
 			int z2 = log.CurrentHP2 - _log[log.Num-1].CurrentHP2;
-			zone2.Add($"{z2:+#.#;-#.#}", z2 < 0 ? ConsoleColor.Red : ConsoleColor.Green);
+			zone2.Add($"{z2:+#.#;-#.#}", color2);
 
 			zone1.Draw();
 			zone2.Draw();
@@ -134,6 +150,8 @@ namespace Aeon.BasicApp
 				MaxHP2 = battler2.StatsRO.ConvInt<Health>(),
 			});
 		}
+
+		public void LogDamage(Damage dmg1to2, Damage dmg2to1) => _damage.Add((dmg1to2, dmg2to1));
 
 		private void DrawBattlers()
 		{

@@ -48,22 +48,4 @@ namespace DrawingCLI
 
 		internal static void Colors(Colors color) => Colors(color.Color, color.BGColor);
 	}
-
-    static class DrawDebug
-    {
-        public static void Draw()
-        {
-            Console.Write(@"
-
-                █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█            
-                █                 █
-                █ ▀ ▄ ▌ ▐ █ ░ ▒ ▓ █
-                █                 █
-                █     T E S T     █
-                █                 █
-                █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
-
-");
-        }
-    }
 }
