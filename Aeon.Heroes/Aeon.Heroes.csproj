@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Aeon.Core</RootNamespace>
-    <ApplicationIcon />
-    <StartupObject />
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AeonCore\AeonCore.csproj" />
+  </ItemGroup>
 
 </Project>

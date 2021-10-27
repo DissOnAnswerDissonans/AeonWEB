@@ -1,8 +1,18 @@
 ﻿using System;
 
-namespace AeonCore
+namespace Aeon.Core
 {
-	public class Hero
+
+	interface IShopper
+	{
+		int Money { get; }
+		Shop Shop { get; }
+
+		bool TryBuyOffer(Offer offer);
+	}
+
+
+	public class Hero : IBattler, IShopper
 	{
 		protected StatsContainer Stats { get; }
 		public IReadOnlyStats StatsRO => Stats;
@@ -10,16 +20,19 @@ namespace AeonCore
 		public bool IsAlive => StatsRO.DynamicValue<Health>() > 0;
 
 		public int Money { get; private set; }
-		public Shop Shop { get; }
+		public Shop Shop { get; protected set; }
 
 		internal protected Hero()
 		{
-			Stats.Register<Health>	   (100); // здоровье
+			Stats = new StatsContainer();
+			Shop = new StandardShop();
+
+			Stats.RegisterDyn<Health>  (100); // здоровье
 			Stats.Register<Attack>      (15); // атака
 			Stats.Register<Magic>        (0); // магия
 			Stats.Register<CritChance>   (0); // критический шанс
 			Stats.Register<CritDamage> (150); // критический урон
-			Stats.Register<Income>       (0); // прирост
+			Stats.RegisterDyn<Income>    (0); // прирост
 			Stats.Register<Block>        (1); // броня
 			Stats.Register<Armor>        (0); // защита
 			Stats.Register<Regen>        (1); // регенерация
@@ -27,27 +40,33 @@ namespace AeonCore
 
 		internal int Wage(int amount) => Money += amount;
 
-		internal int Spend(int amount)
+		private int Spend(int amount)
 		{
 			if (Money < amount)
 				throw new ArgumentException("Not enough money", nameof(amount));
 			return Money -= amount;
 		}
 
-		internal void AddStat(Stat stat) => Stats.AddStat(stat);
-
-
-		internal virtual void OnBattleStart(Hero enemy)
+		public virtual bool TryBuyOffer(Offer offer)
 		{
-			Stats.Get<Health>().OnBattleStart(); // TODO: обходить динамически
-			Stats.Get<Income>().OnBattleStart();
+			if (offer.Cost > Money) return false;
+			Stats.AddStat(offer.Stat);
+			Spend(offer.Cost);
+			return true;
 		}
 
-		internal virtual Damage GetDamageTo(Hero enemy)
+
+		public virtual void OnBattleStart(IBattler enemy)
 		{
-			int phys = StatsRO.ConvInt<Attack>();
+			Stats.SetDyn<Health>(StatsRO.ConvInt<Health>());
+			Stats.SetDyn<Income>(0);
+		}
+
+		public virtual Damage GetDamageTo(IBattler enemy)
+		{
+			int phys = (int)(StatsRO.ConvInt<Attack>() * StatsRO.DynConverted<Income>());
 			int magic = StatsRO.ConvInt<Magic>();
-			bool procCrit = Game.RNG.NextDouble() < StatsRO.Converted<CritChance>();
+			bool procCrit = Game.RNG.NextDouble() < (double) StatsRO.Converted<CritChance>();
 			return new Damage {
 				Instigator = this,
 				Phys = procCrit ? (int) (phys * StatsRO.Converted<CritDamage>()) : phys,
@@ -56,7 +75,7 @@ namespace AeonCore
 			};
 		}
 
-		internal virtual Damage ReceiveDamage(Damage damage)
+		public virtual Damage ReceiveDamage(Damage damage)
 		{
 			int phys = (int)(damage.Phys * (1 - StatsRO.Converted<Armor>()) - StatsRO.Converted<Block>());
 			var d = new Damage {
@@ -65,14 +84,20 @@ namespace AeonCore
 				Magic = damage.Magic,
 				IsCrit = damage.IsCrit,
 			};
-			Stats.Get<Health>().Value -= (d.Phys + d.Magic); // hack
+
+			Stats.Modify<Health>(-(d.Phys + d.Magic));
 			return d;
 		}
 
-		internal virtual void AfterHit(Damage enemyHit)
+		public virtual void AfterHit(Damage enemyHit)
 		{
-			Stats.Get<Health>().AfterHit(this, enemyHit);
-			Stats.Get<Income>().AfterHit(this, enemyHit);
+			if (enemyHit.Phys > 0)
+				Stats.Modify<Health>(StatsRO.ConvInt<Regen>());
+		}
+
+		public virtual void AfterBattle(IBattler enemy)
+		{
+
 		}
 	}
 }

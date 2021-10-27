@@ -1,50 +1,59 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
-namespace AeonCore
+namespace Aeon.Core
 {
 
 	public class StatsContainer : IReadOnlyStats
 	{
-		static Dictionary<string, Type> _strNames = new();
+		Dictionary<StatType, Stat> _stats = new();
+		Dictionary<StatTypeDynamic, DynStat> _dynStats = new();
 
-		Dictionary<Type, Stat> _stats = new();
+		Dictionary<StatType, StatType> _overrides = new();
 
-		public Stat this[string s] => _stats[_strNames[s]];
+		public Stat this[StatType type] => _stats[type];
 
-		public bool Register<TStat>(int value) where TStat : Stat, new()
+		public bool Register<TStat>(int value) where TStat : StatType, new()
 		{
-			Stat stat = new TStat {
-				Value = value
-			};
+			Stat stat = Stat.Make<TStat>(value);
 			try {
-				_stats.Add(typeof(TStat), stat);
+				_stats.Add(stat.Behaviour, stat);
 			} catch (Exception e) {
 #if DEBUG
 				throw new InvalidOperationException(
-					$"Stat {stat.StatID} is already registered", e);
+					$"Stat {stat.Behaviour} is already registered", e);
 #endif
 				return false;
 			}
-			if (!_strNames.ContainsKey(stat.StatID.Name)) // HACK: эту хню со строками надо потом порешать
-				_strNames[stat.StatID.Name] = typeof(TStat);
 			return true;
 		}
 
-		public void Set<TStat>(int value) where TStat : Stat
+		public bool RegisterDyn<TStat>(int value) where TStat : StatTypeDynamic, new()
 		{
-			try {
-				_stats[typeof(TStat)].Value = value;
-			} catch (Exception e) {
-				throw new InvalidOperationException(
-					$"Stat {typeof(TStat).Name} is not registered", e);
+			if (Register<TStat>(value)) {
+				DynStat dyn = DynStat.Make<TStat>(0);
+				_dynStats.Add(dyn.Behaviour, dyn);
+				return true;
 			}
+			return false;
 		}
 
-		public TStat Get<TStat>() where TStat : Stat
+		public void Set<TStat>(int value) where TStat : StatType, new()
+		{
+			if (!_stats.ContainsKey(StatType.Instance<TStat>())) {
+#if DEBUG
+				throw new InvalidOperationException(
+					$"Stat {typeof(TStat).Name} is not registered");
+#endif
+			}
+			_stats[StatType.Instance<TStat>()] = Stat.Make<TStat>(value);
+		}
+
+		public Stat Get<TStat>() where TStat : StatType, new()
 		{
 			try {
-				return (TStat) _stats[typeof(TStat)];
+				return _stats[StatType.Instance<TStat>()];
 			}
 			catch (Exception e) {
 				throw new InvalidOperationException(
@@ -52,9 +61,59 @@ namespace AeonCore
 			}
 		}
 
-		internal void AddStat(Stat stat)
+		public void SetDyn<TStat>(int value) where TStat : StatTypeDynamic, new()
 		{
-			_stats[stat.StatID].Add(stat);
+			try {
+				_dynStats[StatType.Instance<TStat>()] = DynStat.Make<TStat>(value);
+			}
+			catch (Exception e) {
+				throw new InvalidOperationException(
+					$"Stat {typeof(TStat).Name} is not registered for dyn", e);
+			}
+		}
+
+		public DynStat GetDyn<TStat>() where TStat : StatTypeDynamic, new()
+		{
+			try {
+				return _dynStats[StatType.Instance<TStat>()];
+			}
+			catch (Exception e) {
+				throw new InvalidOperationException(
+					$"Stat {typeof(TStat).Name} is not registered for dyn", e);
+			}
+		}
+
+
+
+		public void AddStat(Stat stat)
+		{
+			try {
+				_stats[stat.Behaviour] += stat;
+			} catch (KeyNotFoundException) {
+				throw new InvalidOperationException(
+					$"Stat {stat.StatType.GetType()} is not registered");
+			}
+		}
+
+		public DynStat Modify<TStat>(int delta) where TStat : StatTypeDynamic, new()
+		{
+			DynStat stat = GetDyn<TStat>();
+			stat.SetValue(stat.Value + delta, this);
+			return _dynStats[StatType.Instance<TStat>()] = stat;
+		}
+
+
+		public void OverrideBehaviour<TStat, Tnew>() 
+			where TStat : StatType, new() where Tnew : TStat, new()
+		{
+			try {
+				_stats[StatType.Instance<TStat>()] = Stat.Make<Tnew>(Get<TStat>().Value);
+				_overrides.Add(StatType.Instance<TStat>(), StatType.Instance<Tnew>());
+			}
+			catch (Exception e) {
+				throw new InvalidOperationException(
+					$"Stat {typeof(TStat).Name} is not registered", e);
+			}
 		}
 	}
 }

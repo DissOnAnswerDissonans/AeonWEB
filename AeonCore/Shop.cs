@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AeonCore
+namespace Aeon.Core
 {
 	abstract public class Shop : ICloneable
 	{
-		List<Offer> offers;
+		List<Offer> offers = new();
 
 		public IReadOnlyList<Offer> Offers => offers;
 
@@ -18,13 +18,9 @@ namespace AeonCore
 			return s;
 		}
 
-		protected void AddOffer<T>(int amount, int cost) 
-			where T : Stat, new() => 
-			offers.Add(new Offer(new T() { Value = amount }, cost, false));
-
-		protected void AddOptOffer<T>(int amount, int cost) 
-			where T : Stat, new() =>
-			offers.Add(new Offer(new T() { Value = amount }, cost, true));
+		virtual protected void AddOffer<T>(int amount, int cost, bool opt = false) 
+			where T : StatType, new() => 
+			offers.Add(new Offer(Stat.Make<T>(amount), cost, opt));
 	}
 
 	public class StandardShop : Shop
@@ -41,23 +37,23 @@ namespace AeonCore
 			AddOffer<Armor>(15, 30);
 			AddOffer<Regen>(5, 11);
 
-			AddOptOffer<Health>(220, 87);
-			AddOptOffer<Attack>(60, 120);
-			AddOptOffer<Magic>(46, 90);
-			AddOptOffer<CritChance>(40, 104);
-			AddOptOffer<CritDamage>(120, 105);
-			AddOptOffer<Income>(20, 120);
-			AddOptOffer<Block>(80, 130);
-			AddOptOffer<Armor>(66, 120);
-			AddOptOffer<Regen>(62, 115);
+			AddOffer<Health>(220, 87, opt: true);
+			AddOffer<Attack>(60, 120, opt: true);
+			AddOffer<Magic>(46, 90, opt: true);
+			AddOffer<CritChance>(40, 104, opt: true);
+			AddOffer<CritDamage>(120, 105, opt: true);
+			AddOffer<Income>(20, 120, opt: true);
+			AddOffer<Block>(80, 130, opt: true);
+			AddOffer<Armor>(66, 120, opt: true);
+			AddOffer<Regen>(62, 115, opt: true);
 		}
 	}
 
 	public struct Offer : ICloneable
 	{
-		Stat Stat { get; }
-		int Cost { get; }
-		bool IsOpt { get; }
+		public Stat Stat { get; }
+		public int Cost { get; }
+		public bool IsOpt { get; }
 
 		internal Offer(Stat stat, int cost, bool opt = false)
 		{
@@ -66,17 +62,23 @@ namespace AeonCore
 			IsOpt = opt;
 		}
 
-		public bool TryToBuy(Hero hero)
+		public override string ToString()
 		{
-			if (hero.Money < Cost) return false;
-			hero.Spend(Cost);
-			hero.AddStat(Stat);
-			return true;
+			return IsOpt ? $"опт {Cost,3}$ => {Stat.Value,-3} {Stat.StatType.DebugNames.AliasRU,-3}"
+						 : $"{Cost,2}$ => {Stat.Value,-2} {Stat.StatType.DebugNames.AliasRU,-3}";
 		}
+
+		//public bool TryToBuy(Hero hero)
+		//{
+		//	if (hero.Money < Cost) return false;
+		//	hero.Spend(Cost);
+		//	hero.AddStat(Stat);
+		//	return true;
+		//}
 
 		public object Clone()
 		{
-			return new Offer((Stat) Stat.Clone(), Cost, IsOpt);
+			return new Offer(Stat, Cost, IsOpt);
 		}
 	}
 }
