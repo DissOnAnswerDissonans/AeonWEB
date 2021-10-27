@@ -22,7 +22,7 @@ namespace Aeon.Core
 			}
 		}
 
-		public double Converted => Behaviour.Convertor(_value);
+		public decimal Converted => Behaviour.Convertor(_value);
 
 		public static Stat Make<T>(int value) where T : StatType, new()
 		{
@@ -34,7 +34,7 @@ namespace Aeon.Core
 
 		internal Stat Add(Stat stat)
 		{
-			if (Behaviour != stat.Behaviour)
+			if (Behaviour.ID != stat.Behaviour.ID)
 				throw new ArgumentException("", nameof(stat));
 
 			return new Stat {
@@ -68,7 +68,7 @@ namespace Aeon.Core
 			};
 		}
 
-		public double Converted => Behaviour.Convertor(Value);
+		public decimal Converted => Behaviour.Convertor(Value);
 
 	}
 }

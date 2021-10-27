@@ -15,7 +15,7 @@ namespace Aeon.BasicApp
 			Console.ReadKey();
 
 
-			Player player1 = new Player();
+			Player player1 = new Player(new Heroes.Cheater());
 			Player player2 = new Player();
 
 

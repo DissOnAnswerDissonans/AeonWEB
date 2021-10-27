@@ -10,6 +10,8 @@ namespace Aeon.Core
 		Dictionary<StatType, Stat> _stats = new();
 		Dictionary<StatTypeDynamic, DynStat> _dynStats = new();
 
+		Dictionary<StatType, StatType> _overrides = new();
+
 		public Stat this[StatType type] => _stats[type];
 
 		public bool Register<TStat>(int value) where TStat : StatType, new()
@@ -98,6 +100,20 @@ namespace Aeon.Core
 			DynStat stat = GetDyn<TStat>();
 			stat.SetValue(stat.Value + delta, this);
 			return _dynStats[StatType.Instance<TStat>()] = stat;
+		}
+
+
+		public void OverrideBehaviour<TStat, Tnew>() 
+			where TStat : StatType, new() where Tnew : TStat, new()
+		{
+			try {
+				_stats[StatType.Instance<TStat>()] = Stat.Make<Tnew>(Get<TStat>().Value);
+				_overrides.Add(StatType.Instance<TStat>(), StatType.Instance<Tnew>());
+			}
+			catch (Exception e) {
+				throw new InvalidOperationException(
+					$"Stat {typeof(TStat).Name} is not registered", e);
+			}
 		}
 	}
 }

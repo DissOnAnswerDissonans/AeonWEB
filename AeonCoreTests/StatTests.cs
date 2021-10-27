@@ -3,8 +3,19 @@ using Xunit;
 
 namespace Aeon.Core.Tests
 {
-	public class TestStat1 : StatType { }
-	public class TestStat2 : StatType { }
+	public class TestStat1 : StatType {
+		protected override void Init()
+		{
+			ID = 1001;
+		}
+	}
+	public class TestStat2 : StatType {
+		protected override void Init()
+		{
+			ID = 1002;
+		}
+	}
+	public class TestStatCompatable : TestStat1 { }
 
 	public class StatTests
 	{
@@ -38,11 +49,25 @@ namespace Aeon.Core.Tests
 			Assert.Throws<ArgumentException>(() => stat1 + stat2);
 		}
 
+		[Fact]
+		public void Add_statsCompatableTypes_retStat()
+		{
+			Stat stat1 = Stat.Make<TestStatCompatable>(123);
+			Stat stat2 = Stat.Make<TestStat1>(456);
+
+			Stat result = stat1.Add(stat2);
+			Stat result2 = stat1 + stat2;
+
+			Assert.Equal(579, result.Value);
+			Assert.Equal(result.Value, result2.Value);
+			Assert.Equal(StatType.Instance<TestStatCompatable>(), result.StatType);
+		}
+
 		public class ConvStat : StatType
 		{
 			protected override void Init()
 			{
-				Convertor = a => a * 2.4;
+				Convertor = a => a * 2.4m;
 			}
 		}
 
@@ -51,7 +76,7 @@ namespace Aeon.Core.Tests
 			Stat s1 = Stat.Make<ConvStat>(11);
 
 			Assert.Equal(11, s1.Value);
-			Assert.Equal(26.4, s1.Converted);
+			Assert.Equal(26.4m, s1.Converted);
 		}
 
 		[Fact]public void ConvertedDefault_retDouble()
@@ -59,7 +84,7 @@ namespace Aeon.Core.Tests
 			Stat s1 = Stat.Make<TestStat1>(11);
 
 			Assert.Equal(11, s1.Value);
-			Assert.Equal(11.0, s1.Converted);
+			Assert.Equal(11.0m, s1.Converted);
 		}
 
 	}

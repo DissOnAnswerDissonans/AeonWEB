@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aeon.Heroes\Aeon.Heroes.csproj" />
     <ProjectReference Include="..\AeonCore\AeonCore.csproj" />
     <ProjectReference Include="..\DrawingCLI\DrawingCLI.csproj" />
   </ItemGroup>

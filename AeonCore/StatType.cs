@@ -44,14 +44,14 @@ namespace Aeon.Core
 		}
 
 		public int ID { get; protected set; }
-		public Func<int, double> Convertor { get; protected set; }
+		public Func<int, decimal> Convertor { get; protected set; }
 		public int MinValue { get; protected set; }
 		public int MaxValue { get; protected set; }
 
 		public Names DebugNames { get; protected set; }
 
 		protected StatType() {
-			Convertor = a => (double) a;
+			Convertor = a => a;
 			MinValue = 0;
 			MaxValue = int.MaxValue;
 			Init();
@@ -169,11 +169,11 @@ namespace Aeon.Core
 	public class CritChance : StatType {
 		protected override void Init() {
 			ID = 4;
-			Convertor = (a) => a / 100.0;
+			Convertor = (a) => a / 100.0m;
 			MaxValue = 100;
 			DebugNames = new Names() {
-				FullNameEN = "Critical Chance",
-				FullNameRU = "Критический Шанс",
+				FullNameEN = "Crit. Chance",
+				FullNameRU = "Крит. Шанс",
 				AliasEN = "CRC",
 				AliasRU = "КША",
 			};
@@ -192,10 +192,10 @@ namespace Aeon.Core
 	public class CritDamage : StatType {
 		protected override void Init() {
 			ID = 5;
-			Convertor = (a) => a / 100.0;
+			Convertor = (a) => a / 100.0m;
 			DebugNames = new Names() {
-				FullNameEN = "Critical Attack",
-				FullNameRU = "Критический Урон",
+				FullNameEN = "Crit. Attack",
+				FullNameRU = "Крит. Урон",
 				AliasEN = "CAT",
 				AliasRU = "КУР",
 			};
@@ -230,7 +230,7 @@ namespace Aeon.Core
 
 		protected override void Init() {
 			ID = 6;
-			Convertor = a => 1 + a / 100.0;
+			Convertor = a => 1 + a / 100.0m;
 			DebugNames = new Names() {
 				FullNameEN = "Income",
 				FullNameRU = "Прирост",
@@ -270,11 +270,11 @@ namespace Aeon.Core
 </summary>
 */
 	public class Armor : StatType {
-		const double COEFF = 0.0075;
+		const decimal COEFF = 0.0075m;
 		protected override void Init() {
 			ID = 8;
 			MaxValue = 300;
-			Convertor = t => COEFF * t / (1 + COEFF * Math.Exp(0.9 * Math.Log(t)));
+			Convertor = t => COEFF * t / (1 + COEFF * (decimal)Math.Exp(0.9 * Math.Log(t)));
 			DebugNames = new Names() {
 				FullNameEN = "Armor",
 				FullNameRU = "Защита",

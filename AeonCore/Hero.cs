@@ -66,7 +66,7 @@ namespace Aeon.Core
 		{
 			int phys = (int)(StatsRO.ConvInt<Attack>() * StatsRO.DynConverted<Income>());
 			int magic = StatsRO.ConvInt<Magic>();
-			bool procCrit = Game.RNG.NextDouble() < StatsRO.Converted<CritChance>();
+			bool procCrit = Game.RNG.NextDouble() < (double) StatsRO.Converted<CritChance>();
 			return new Damage {
 				Instigator = this,
 				Phys = procCrit ? (int) (phys * StatsRO.Converted<CritDamage>()) : phys,
