@@ -138,6 +138,9 @@ namespace Aeon.BasicApp
 					if (_selectorX == 1) {
 						return false;
 					}
+					if (_selectorX == 0) {
+						Hero.UseAbility();
+					}
 					break;
 				}
 				Hero.TryBuyOffer(tabOffers[_selectorY, _selectorX]); break;

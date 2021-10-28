@@ -21,5 +21,10 @@ namespace Aeon.Core
 		{
 			return new Damage(Instigator, newPhys(Phys), Magic, IsCrit);
 		}
+
+		public Damage ModMag(Func<int, int> newMag)
+		{
+			return new Damage(Instigator, Phys, newMag(Magic), IsCrit);
+		}
 	}
 }

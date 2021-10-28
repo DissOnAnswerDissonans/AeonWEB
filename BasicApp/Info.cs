@@ -61,6 +61,18 @@ namespace Aeon.BasicApp
 			[typeof(Master)] = new() {
 				Name = new("Master", "Повелитель")
 			},
+			[typeof(BloodyElf)] = new() {
+				Name = new("Bloody Elf", "Кровавый Эльф")
+			},
+			[typeof(Killer)] = new() {
+				Name = new("Killer", "Убийца")
+			},
+			[typeof(Tramp)] = new() {
+				Name = new("Tramp", "Бомж")
+			},
+			[typeof(Warlock)] = new() {
+				Name = new("Warlock", "Чернокнижник")
+			},
 		};
 
 		public static HeroInfo AboutHero(Type hero)

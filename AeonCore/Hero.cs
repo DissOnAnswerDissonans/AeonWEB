@@ -38,9 +38,10 @@ namespace Aeon.Core
 			Stats.Register<Regen>        (1); // регенерация
 		}
 
-		internal int Wage(int amount) => Money += amount;
+		public int Wage(int amount) => Money += amount >= 0? amount 
+			: throw new ArgumentOutOfRangeException();
 
-		private int Spend(int amount)
+		public int Spend(int amount)
 		{
 			if (Money < amount)
 				throw new ArgumentException("Not enough money", nameof(amount));
