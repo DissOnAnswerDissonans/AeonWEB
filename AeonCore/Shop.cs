@@ -18,9 +18,20 @@ namespace Aeon.Core
 			return s;
 		}
 
-		virtual protected void AddOffer<T>(int amount, int cost, bool opt = false) 
-			where T : StatType, new() => 
+		virtual protected void AddOffer<T>(int amount, int cost, bool opt = false)
+			where T : StatType, new() =>
 			offers.Add(new Offer(Stat.Make<T>(amount), cost, opt));
+
+
+		public void ModifyOffers(Func<Offer, bool> predicate, Func<Offer, Offer> func)
+		{
+			for (int i = 0; i < offers.Count; ++i) {
+				if (predicate(offers[i])) {
+					offers[i] = func(offers[i]);
+				}
+			}
+		}
+
 	}
 
 	public class StandardShop : Shop
@@ -55,7 +66,7 @@ namespace Aeon.Core
 		public int Cost { get; }
 		public bool IsOpt { get; }
 
-		internal Offer(Stat stat, int cost, bool opt = false)
+		public Offer(Stat stat, int cost, bool opt = false)
 		{
 			Stat = stat;
 			Cost = cost;

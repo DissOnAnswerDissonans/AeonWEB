@@ -68,7 +68,7 @@ namespace Aeon.Core
 			};
 		}
 
-		public decimal Convert(IReadOnlyStats context) => Behaviour.Convertor(Value, context);
+		public decimal Convert(IReadOnlyStats context) => Behaviour.DynConvertor(Value, context);
 
 	}
 }

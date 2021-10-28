@@ -20,21 +20,50 @@ namespace PicEditor
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private int LeftColor { get; set; } = 15;
-		private int RightColor { get; set; } = 0;
+		private int LeftColor {
+			get => __leftColor;
+			set {
+				__leftColor = value;
+				_palLeft.Fill = _brushes[__leftColor];
+			}
+		}
+		private int RightColor {
+			get => __rightColor;
+			set {
+				__rightColor = value;
+				_palRight.Fill = _brushes[__rightColor];
+			}
+		}
+
+		private int __leftColor;
+		private int __rightColor;
 
 		private byte[] _bytes;
+
+		private int _mouseButton;
+
+		Brush black = new SolidColorBrush(Color.FromRgb(0, 0, 0));
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			for (int i = 0; i < 16; ++i) {
-				var rect = new Rectangle { Fill = _brushes[i] };
+				var rect = new Rectangle 
+				{ Fill = _brushes[i], Stroke = black, Margin = new Thickness(2)};
 				int c = i;
 				rect.MouseLeftButtonDown += (obj, args) => LeftColor = c;
 				rect.MouseRightButtonDown += (obj, args) => RightColor = c;
 				_palette.Children.Add(rect);
 			}
+
+			LeftColor = 15;
+			RightColor = 0;
+
+			window.MouseLeftButtonDown += (obj, args) => _mouseButton = 1;
+			window.MouseRightButtonDown += (obj, args) => _mouseButton = 2;
+			window.MouseUp += (obj, args) => _mouseButton = 0;
+
+			Button_Click(this, null);
 		}
 
 		private void ResizeBase()
@@ -48,7 +77,8 @@ namespace PicEditor
 			try {
 				x = Convert.ToInt32(_sizeX.Text);
 				y = Convert.ToInt32(_sizeY.Text);
-			} catch (FormatException) {
+			}
+			catch (FormatException) {
 				_text.Text = "В полях X, Y какая-то херня";
 				return;
 			}
@@ -68,34 +98,36 @@ namespace PicEditor
 
 			_bytes = new byte[x * y / 2];
 
-			var stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-
 			_base.Children.Clear();
 			for (int i = 0; i < x * y; ++i) {
 				int tx = i;
-				var kok = new Rectangle { Stroke = stroke, Fill = _brushes[0] };
-				kok.MouseLeftButtonDown += (obj, args) => {
-					(obj as Rectangle).Fill = _brushes[LeftColor];
-					int r = tx % x, z = tx / x, pos = r + x*(z/2);
-					_bytes[pos] = (byte) (z % 2 == 0
-						? (_bytes[pos] & 0xF0 | LeftColor)
-						: (_bytes[pos] & 0x0F | 16*LeftColor));
-					UpdateText();
-				};
-				kok.MouseRightButtonDown += (obj, args) => {
-					(obj as Rectangle).Fill = _brushes[RightColor];
-					int r = tx % x, z = tx / x, pos = r + x*(z/2);
-					_bytes[pos] = (byte) (z % 2 == 0
-						? (_bytes[pos] & 0xF0 | RightColor)
-						: (_bytes[pos] & 0x0F | 16 * RightColor));
-					UpdateText();
-				};
+				var kok = new Rectangle { Stroke = black, Fill = _brushes[0] };
+
+				kok.MouseMove += PaintCell;
 				_base.Children.Add(kok);
+
+				void PaintCell(object sender, MouseEventArgs e)
+				{
+					int color = _mouseButton switch{
+						1 => LeftColor,
+						2 => RightColor,
+						_ => -1
+					};
+					if (color == -1) return;
+
+					(sender as Rectangle).Fill = _brushes[color];
+					int r = tx % x, z = tx / x, pos = r + x*(z/2);
+					_bytes[pos] = (byte) (z % 2 == 0
+						? (_bytes[pos] & 0xF0 | color)
+						: (_bytes[pos] & 0x0F | 16 * color));
+					UpdateText();
+				}
 			}
 
 			ResizeBase();
 
 		}
+
 
 		void UpdateText()
 		{

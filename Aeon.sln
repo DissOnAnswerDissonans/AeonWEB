@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AeonCore", "AeonCore\AeonCore.csproj", "{81AFC1D1-BF34-49A7-BF4F-0F841DB01F36}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{61729F9D-0775-42AF-8EF4-9EBF1946743E}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AeonCore.Tests", "AeonCoreTests\AeonCore.Tests.csproj", "{BC5A2441-38B3-4F1C-A1A5-02FA57C85B8F}"
 EndProject
@@ -23,7 +20,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aeon.Heroes", "Aeon.Heroes\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{B5E28AFE-A629-4AAA-870A-B2949E8C6ADD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicEditor", "PicEditor\PicEditor.csproj", "{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicEditor", "PicEditor\PicEditor.csproj", "{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4934DBF1-4884-4B9C-BF3E-F05E9A834316}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

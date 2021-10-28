@@ -93,6 +93,7 @@ namespace Aeon.Core
 		{
 			if (enemyHit.Phys > 0)
 				Stats.Modify<Health>(StatsRO.ConvInt<Regen>());
+			Stats.Modify<Income>(1);
 		}
 
 		public virtual void AfterBattle(IBattler enemy)

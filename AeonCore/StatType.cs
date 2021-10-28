@@ -66,6 +66,12 @@ namespace Aeon.Core
 		public virtual int TopLimit(IReadOnlyStats stats) => int.MaxValue;
 		public virtual int BotLimit(IReadOnlyStats stats) => 0;
 
+		public Func<int, IReadOnlyStats, decimal> DynConvertor { get; protected set; }
+
+		protected StatTypeDynamic()
+		{
+			Convertor = (a, context) => a;
+		}
 
 		//virtual public bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy) => false;
 		//virtual public bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage) => false;
@@ -231,6 +237,13 @@ namespace Aeon.Core
 		protected override void Init() {
 			ID = 6;
 			Convertor = (a, context) => 1 + a / 100.0m;
+			DynConvertor = (a, context) => {
+				decimal d = 1;
+				decimal f = context.Converted<Income>();
+				for (int i = 0; i < a; ++i)
+					d *= f;
+				return d;
+			};
 			DebugNames = new Names() {
 				FullNameEN = "Income",
 				FullNameRU = "Прирост",
