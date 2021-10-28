@@ -14,7 +14,7 @@ namespace Aeon.Core
 
 	public class Hero : IBattler, IShopper
 	{
-		protected StatsContainer Stats { get; }
+		public StatsContainer Stats { get; }
 		public IReadOnlyStats StatsRO => Stats;
 
 		public bool IsAlive => StatsRO.DynamicValue<Health>() > 0;
@@ -55,7 +55,6 @@ namespace Aeon.Core
 			return true;
 		}
 
-
 		public virtual void OnBattleStart(IBattler enemy)
 		{
 			Stats.SetDyn<Health>(StatsRO.ConvInt<Health>());
@@ -64,7 +63,8 @@ namespace Aeon.Core
 
 		public virtual Damage GetDamageTo(IBattler enemy)
 		{
-			int phys = (int)(StatsRO.ConvInt<Attack>() * StatsRO.DynConverted<Income>());
+			decimal d = StatsRO.DynConverted<Income>();
+			int phys = (int)(StatsRO.ConvInt<Attack>() * d);
 			int magic = StatsRO.ConvInt<Magic>();
 			bool procCrit = Game.RNG.NextDouble() < (double) StatsRO.Converted<CritChance>();
 			return new Damage {
@@ -85,18 +85,18 @@ namespace Aeon.Core
 				IsCrit = damage.IsCrit,
 			};
 
-			Stats.Modify<Health>(-(d.Phys + d.Magic));
+			Stats.ModifyDyn<Health>(-(d.Phys + d.Magic));
 			return d;
 		}
 
-		public virtual void AfterHit(Damage enemyHit)
+		public virtual void AfterHit(Damage enemyHit, Damage ourHit)
 		{
 			if (enemyHit.Phys > 0)
-				Stats.Modify<Health>(StatsRO.ConvInt<Regen>());
-			Stats.Modify<Income>(1);
+				Stats.ModifyDyn<Health>(StatsRO.ConvInt<Regen>());
+			Stats.ModifyDyn<Income>(1);
 		}
 
-		public virtual void AfterBattle(IBattler enemy)
+		public virtual void AfterBattle(IBattler enemy, bool isWon)
 		{
 
 		}

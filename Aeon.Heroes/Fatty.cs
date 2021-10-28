@@ -31,9 +31,9 @@ namespace Aeon.Heroes
 			Shop = new FattyShop();
 		}
 
-		public override void AfterBattle(IBattler enemy)
+		public override void AfterBattle(IBattler enemy, bool isWon)
 		{
-			base.AfterBattle(enemy);
+			base.AfterBattle(enemy, isWon);
 			Stats.AddStat(REGEN_BONUS);
 			_addedRegen += REGEN_BONUS.Value;
 		}

@@ -15,6 +15,10 @@ namespace Aeon.BasicApp
 
 		private int _choice = 0;
 
+		private const int ROWS = 4;
+		private const int HEIGHT = 3;
+		private const int WIDTH = 24;
+
 		public PickPresenter()
 		{
 			Assembly heroesAssembly = Assembly.Load("Aeon.Heroes");
@@ -33,9 +37,14 @@ namespace Aeon.BasicApp
 			for (int i = 0; i < _heroes.Count; ++i) {
 				var rect = new DrawRect {
 					Colors = Program.PlayerColors[player],
-					Rect = new Rect { Column = 5, Row = 1 + 4 * i, Height = 3, Width = 30 }
+					Rect = new Rect {
+						Column = 2 + i / ROWS * (WIDTH + 2),
+						Row = 1 + (1 + HEIGHT) * (i % ROWS),
+						Height = HEIGHT,
+						Width = WIDTH
+					}
 				};
-				selectors.Add(new DrawTextRect(rect, _heroes[i].ToString()));
+				selectors.Add(new DrawTextRect(rect, Info.AboutHero(_heroes[i]).Name.ToString()));
 			}
 
 			_choice = 0;
@@ -60,10 +69,14 @@ namespace Aeon.BasicApp
 				_choice -= 1; break;
 			case ConsoleKey.DownArrow:
 				_choice += 1; break;
+			case ConsoleKey.LeftArrow:
+				_choice -= ROWS; break;
+			case ConsoleKey.RightArrow:
+				_choice += ROWS; break;
 			case ConsoleKey.Enter:
 				return false;
 			};
-			_choice = Math.Clamp(_choice, 0, _heroes.Count-1);
+			_choice = Math.Clamp(_choice, 0, _heroes.Count - 1);
 			return true;
 		}
 

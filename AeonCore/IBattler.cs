@@ -36,12 +36,13 @@
 		/// Вызвать после получения урона
 		/// </summary>
 		/// <param name="enemyHit">Полученный урон</param>
-		void AfterHit(Damage enemyHit);
+		/// <param name="ourHit">Нанесенный урон</param>
+		void AfterHit(Damage enemyHit, Damage ourHit);
 
 		/// <summary>
 		/// Вызвать после боя
 		/// </summary>
 		/// <param name="enemy">Противник</param>
-		void AfterBattle(IBattler enemy);
+		void AfterBattle(IBattler enemy, bool isWin);
 	}
 }

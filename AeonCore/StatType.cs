@@ -70,8 +70,11 @@ namespace Aeon.Core
 
 		protected StatTypeDynamic()
 		{
-			Convertor = (a, context) => a;
+			DynConvertor = (a, context) => a;
+			InitDyn();
 		}
+
+		virtual protected void InitDyn() { }
 
 		//virtual public bool OnBattleStart(ref DynStat dynStat, in Hero hero, in Hero enemy) => false;
 		//virtual public bool AfterHit(ref DynStat dynStat, in Hero hero, in Damage damage) => false;
@@ -237,18 +240,22 @@ namespace Aeon.Core
 		protected override void Init() {
 			ID = 6;
 			Convertor = (a, context) => 1 + a / 100.0m;
+			DebugNames = new Names() {
+				FullNameEN = "Income",
+				FullNameRU = "Прирост",
+				AliasEN = "INC",
+				AliasRU = "ПРС",
+			};
+		}
+
+		protected override void InitDyn()
+		{
 			DynConvertor = (a, context) => {
 				decimal d = 1;
 				decimal f = context.Converted<Income>();
 				for (int i = 0; i < a; ++i)
 					d *= f;
 				return d;
-			};
-			DebugNames = new Names() {
-				FullNameEN = "Income",
-				FullNameRU = "Прирост",
-				AliasEN = "INC",
-				AliasRU = "ПРС",
 			};
 		}
 	}

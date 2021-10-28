@@ -47,11 +47,13 @@ namespace Aeon.BasicApp
 		private DrawTextRect abilityBox;
 		private DrawTextRect endShopBox;
 
-		private int _selectorX = 0, _selectorY = 0;
+		private int _selectorX, _selectorY;
 
 		internal void FullDraw()
 		{
 			Console.Clear();
+
+			Print.Pos(3, 1, Info.AboutHero(Hero).Name);
 
 			SetTableValues();
 			SetColors();
@@ -122,8 +124,7 @@ namespace Aeon.BasicApp
 
 		internal bool Input(ConsoleKeyInfo info)
 		{
-			switch (info.Key) 
-			{
+			switch (info.Key) {
 			case ConsoleKey.UpArrow:
 				_selectorY -= 1; break;
 			case ConsoleKey.DownArrow:

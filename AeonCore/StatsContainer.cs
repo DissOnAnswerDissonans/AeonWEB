@@ -95,7 +95,14 @@ namespace Aeon.Core
 			}
 		}
 
-		public DynStat Modify<TStat>(int delta) where TStat : StatTypeDynamic, new()
+		public Stat Modify<TStat>(int delta) where TStat : StatType, new()
+		{
+			Stat stat = Get<TStat>();
+			stat.Value += delta;
+			return _stats[StatType.Instance<TStat>()] = stat;
+		}
+
+		public DynStat ModifyDyn<TStat>(int delta) where TStat : StatTypeDynamic, new()
 		{
 			DynStat stat = GetDyn<TStat>();
 			stat.SetValue(stat.Value + delta, this);

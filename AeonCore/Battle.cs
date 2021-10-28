@@ -76,19 +76,21 @@ namespace Aeon.Core
 
 				if (!(_h1.IsAlive && _h2.IsAlive)) break;
 
-				_h1.AfterHit(received1);
-				_h2.AfterHit(received2);
+				_h1.AfterHit(received1, received2);
+				_h2.AfterHit(received2, received1);
 
 				_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterHealing);
 			}
 
-			_h1.AfterBattle(_h2);
-			_h2.AfterBattle(_h1);
+			Winner = _h1.IsAlive ? 1 : _h2.IsAlive ? 2 : 0;
+
+			_h1.AfterBattle(_h2, Winner == 1);
+			_h2.AfterBattle(_h1, Winner == 2);
 
 			_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterBattle);
 
-			if (Rounds == MAX_ROUNDS) return 0;	
-			return Winner = _h1.IsAlive ? 1 : _h2.IsAlive ? 2 : 0;
+			if (Rounds == MAX_ROUNDS) return 0;
+			return Winner;
 		}
 	}
 }
