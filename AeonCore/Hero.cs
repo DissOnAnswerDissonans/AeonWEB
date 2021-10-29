@@ -14,7 +14,7 @@ namespace Aeon.Core
 
 	public class Hero : IBattler, IShopper
 	{
-		public StatsContainer Stats { get; }
+		public StatsContainer Stats { get; private set; }
 		public IReadOnlyStats StatsRO => Stats;
 
 		public bool IsAlive => StatsRO.DynamicValue<Health>() > 0;
@@ -24,18 +24,22 @@ namespace Aeon.Core
 
 		internal protected Hero()
 		{
-			Stats = new StatsContainer();
+			ResetStats();
 			Shop = new StandardShop();
+		}
 
-			Stats.RegisterDyn<Health>  (100); // здоровье
-			Stats.Register<Attack>      (15); // атака
-			Stats.Register<Magic>        (0); // магия
-			Stats.Register<CritChance>   (0); // критический шанс
-			Stats.Register<CritDamage> (150); // критический урон
-			Stats.RegisterDyn<Income>    (0); // прирост
-			Stats.Register<Block>        (1); // броня
-			Stats.Register<Armor>        (0); // защита
-			Stats.Register<Regen>        (1); // регенерация
+		protected void ResetStats()
+		{
+			Stats = new StatsContainer();
+			Stats.RegisterDyn<Health>(100); // здоровье
+			Stats.Register<Attack>(15); // атака
+			Stats.Register<Magic>(0); // магия
+			Stats.Register<CritChance>(0); // критический шанс
+			Stats.Register<CritDamage>(150); // критический урон
+			Stats.RegisterDyn<Income>(0); // прирост
+			Stats.Register<Block>(1); // броня
+			Stats.Register<Armor>(0); // защита
+			Stats.Register<Regen>(1); // регенерация
 		}
 
 		public int Wage(int amount) => Money += amount >= 0? amount 
@@ -101,7 +105,6 @@ namespace Aeon.Core
 		{
 
 		}
-
 
 		public virtual string AbilityText => "Нет способности";
 		public virtual bool UseAbility() => false;
