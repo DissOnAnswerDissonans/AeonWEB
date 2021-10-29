@@ -8,9 +8,9 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Tramp : Hero
 	{
-		const decimal MONEY_B = 1.1m;
-		decimal _coc = 0;
-		int _grabbed = 0;
+		private const decimal MONEY_B = 1.1m;
+		private decimal _coc = 0;
+		private int _grabbed;
 
 		public override Damage ReceiveDamage(Damage damage)
 		{

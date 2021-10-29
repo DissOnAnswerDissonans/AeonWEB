@@ -13,8 +13,8 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Cheater : Hero
 	{
-		const decimal ATT_MULTIPLIER = 0.93m;
-		const decimal FIRST_ATT_X = 2m;
+		private const decimal ATT_MULTIPLIER = 0.93m;
+		private const decimal FIRST_ATT_X = 2m;
 
 		public class Attack : Core.Attack
 		{
@@ -25,10 +25,7 @@ namespace Aeon.Heroes
 			}
 		}
 
-		public Cheater()
-		{
-			Stats.OverrideBehaviour<Core.Attack, Attack>();
-		}
+		public Cheater() => Stats.OverrideBehaviour<Core.Attack, Attack>();
 
 		public override Damage GetDamageTo(IBattler enemy)
 		{

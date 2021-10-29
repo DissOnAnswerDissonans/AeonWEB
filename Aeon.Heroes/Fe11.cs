@@ -10,7 +10,7 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Fe11 : Hero
 	{
-		int _battles = 0;
+		private int _battles;
 
 		public Fe11()
 		{

@@ -9,14 +9,15 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Beast : Hero
 	{
-		const decimal DMG_BOOST = .39m;
+		private const decimal DMG_BOOST = .039m;
 
-		public override Damage GetDamageTo(IBattler enemy)
-		{
-			var pBoost = 1 - StatsRO.DynamicValue<Health>() / (decimal) StatsRO.ConvInt<Health>();
-			return base.GetDamageTo(enemy).ModPhys(d => (int) (d * (1 + pBoost * DMG_BOOST)));
-		}
+		private int Stacks =>
+			(int) (StatsRO.DynamicValue<Health>() / (decimal) StatsRO.ConvInt<Health>() * 10);
 
-		public override string AbilityText => "Озверение на 39% от -доли ХП";
+		public override Damage GetDamageTo(IBattler enemy) =>
+			base.GetDamageTo(enemy).ModPhys(d => (int) (d * (1 + Stacks * DMG_BOOST)));
+
+		public override string AbilityText =>
+			$"+{DMG_BOOST:P1} АТК за каждые -10% ХП";
 	}
 }

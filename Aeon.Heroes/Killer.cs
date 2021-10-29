@@ -14,22 +14,21 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Killer : Hero
 	{
-		const decimal CONV_RATE = 0.15m;
-		const int LVL_COEFF = 75;
+		private const decimal CONV_RATE = 0.15m;
+		private const int LVL_COEFF = 75;
 
-		readonly Stat Bonus = Stat.Make<Attack>(10);
+		private readonly Stat _bonus = Stat.Make<Attack>(10);
+		private int _totalDamage;
+		private int _abilityLevel;
 
-		int _totalDamage;
-		int _abilityLevel = 0;
+		private int NextLevel => LVL_COEFF * (_abilityLevel + 1) * (_abilityLevel + 2);
 
-		int NextLevel => LVL_COEFF * (_abilityLevel + 1) * (_abilityLevel + 2);
-
-		void AddToDamage(int damage)
+		private void AddToDamage(int damage)
 		{
 			_totalDamage += damage;
 			while (_totalDamage >= NextLevel) {
 				_abilityLevel++;
-				Stats.AddStat(Bonus);
+				Stats.AddStat(_bonus);
 			}
 		}
 
@@ -46,7 +45,7 @@ namespace Aeon.Heroes
 			AddToDamage(ourHit.Phys + ourHit.Magic);
 		}
 
-		public override string AbilityText => 
-			$"+{_abilityLevel * Bonus.Value} АТК, Для +{Bonus.Value}: {NextLevel - _totalDamage} урона";
+		public override string AbilityText =>
+			$"+{_abilityLevel * _bonus.Value} АТК, Для +{_bonus.Value}: {NextLevel - _totalDamage} урона";
 	}
 }

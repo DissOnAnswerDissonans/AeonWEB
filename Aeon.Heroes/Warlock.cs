@@ -11,10 +11,10 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Warlock : Hero
 	{
-		const int COST = 10;
-		const int BONUS = 17;
+		private const int COST = 10;
+		private const int BONUS = 17;
 
-		bool _abilityUsed;
+		private bool _abilityUsed;
 
 		public override bool UseAbility()
 		{

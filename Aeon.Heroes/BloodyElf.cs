@@ -32,15 +32,15 @@ namespace Aeon.Heroes
 		private int _mana;
 		private Mode _mode;
 
-		const int MONEY_BURN = 2;
-		const int MONEY_BURN_COST = 3;
+		private const int MONEY_BURN = 2;
+		private const int MONEY_BURN_COST = 3;
 
-		int MagHitAdder => (int) (StatsRO.Converted<Magic>() * MAG_HIT_BONUS);
-		const decimal MAG_HIT_BONUS = 0.3m;
-		const int MAG_HIT_COST = 4;
+		private int MagHitAdder => (int) (StatsRO.Converted<Magic>() * MAG_HIT_BONUS);
+		private const decimal MAG_HIT_BONUS = 0.3m;
+		private const int MAG_HIT_COST = 4;
 
-		const decimal HEALING_COEFF = 0.2m;
-		const int HEALING_COST = 5;
+		private const decimal HEALING_COEFF = 0.2m;
+		private const int HEALING_COST = 5;
 
 		public override bool UseAbility()
 		{
@@ -57,7 +57,7 @@ namespace Aeon.Heroes
 
 		public override Damage GetDamageTo(IBattler enemy)
 		{
-			var d = base.GetDamageTo(enemy);
+			Damage d = base.GetDamageTo(enemy);
 			++_mana;
 
 			switch (_mode) {

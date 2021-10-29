@@ -12,10 +12,10 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Master : Hero
 	{
-		decimal _vamp_coeff = 0.15m;
-		const decimal VAMP_ADDER = 0.006m;
+		private decimal _vamp_coeff = 0.15m;
+		private const decimal VAMP_ADDER = 0.006m;
 
-		int Vamp => (int) (StatsRO.Converted<Attack>() * _vamp_coeff);
+		private int Vamp => (int) (StatsRO.Converted<Attack>() * _vamp_coeff);
 
 		public override void AfterHit(Damage enemyHit, Damage ourHit)
 		{

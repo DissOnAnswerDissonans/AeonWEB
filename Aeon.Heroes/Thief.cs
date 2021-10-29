@@ -10,8 +10,8 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Thief : Hero
 	{
-		int _stealAmount = 1;
-		int _stolen = 0;
+		private int _stealAmount;
+		private int _stolen;
 
 		public override Damage GetDamageTo(IBattler enemy)
 		{

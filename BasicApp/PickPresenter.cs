@@ -15,7 +15,7 @@ namespace Aeon.BasicApp
 
 		private int _choice = 0;
 
-		private const int ROWS = 4;
+		private const int ROWS = 5;
 		private const int HEIGHT = 3;
 		private const int WIDTH = 24;
 

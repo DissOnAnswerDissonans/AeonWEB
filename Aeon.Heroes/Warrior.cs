@@ -9,8 +9,8 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Warrior : Hero 
 	{
-		const decimal CRIT_DMG_BONUS = 0.5m;
-		const decimal CRIT_CHA_BONUS = 0.1m;
+		private const decimal CRIT_DMG_BONUS = 0.5m;
+		private const decimal CRIT_CHA_BONUS = 0.1m;
 
 		public class CritDamage : Core.CritDamage
 		{

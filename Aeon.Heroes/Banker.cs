@@ -11,10 +11,10 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Banker : Hero
 	{
-		private int _optNumber = 0;
-		private int _totalPriceDrop = 0;
+		private int _optNumber;
+		private int _totalPriceDrop;
 
-		const int MAX_DROP = 50;
+		private const int MAX_DROP = 50;
 
 		public override bool TryBuyOffer(Offer offer)
 		{
