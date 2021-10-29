@@ -2,13 +2,10 @@
 using Aeon.Heroes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Aeon.BasicApp
 {
-	static class Info
+	internal static class Info
 	{
 		public struct Translation
 		{
@@ -36,7 +33,7 @@ namespace Aeon.BasicApp
 			public Translation Name { get; init; }
 		}
 
-		private static Dictionary<Type, HeroInfo> _heroInfo = new () {
+		private static readonly Dictionary<Type, HeroInfo> _heroInfo = new () {
 			[typeof(Banker)] = new() {
 				Name = new("Banker", "Банкир")
 			},

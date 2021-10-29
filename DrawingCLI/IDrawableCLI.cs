@@ -1,9 +1,9 @@
 ﻿namespace DrawingCLI
 {
-    interface IDrawableCLI
-    {
-        void Draw();
+	internal interface IDrawableCLI
+	{
+		void Draw();
 
 		void DrawTextOnly() => Draw();
-    }
+	}
 }

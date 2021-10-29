@@ -6,6 +6,9 @@
     <RootNamespace>Aeon.Core</RootNamespace>
     <ApplicationIcon />
     <StartupObject />
+    <Authors>tupotrof</Authors>
+    <Company>6D</Company>
+    <Product>Aeon Core Model</Product>
   </PropertyGroup>
 
 </Project>

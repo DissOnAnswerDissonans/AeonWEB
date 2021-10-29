@@ -1,14 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Aeon.Core
+﻿namespace Aeon.Core
 {
 	public class Player
 	{
-		const int WAGE_WINNER = 120;
-		const int WAGE_LOSER = 100;
-		const int WAGE_START = 100;
-		const int TARGET_WINS = 5;
+		private const int WAGE_WINNER = 120;
+		private const int WAGE_LOSER = 100;
+		private const int WAGE_START = 100;
+		private const int TARGET_WINS = 5;
 
 		public int Score { get; private set; }
 		public bool IsWinner => Score >= TARGET_WINS;

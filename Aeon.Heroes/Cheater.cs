@@ -1,5 +1,4 @@
-﻿using System;
-using Aeon.Core;
+﻿using Aeon.Core;
 
 namespace Aeon.Heroes
 {

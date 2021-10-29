@@ -1,9 +1,4 @@
 ﻿using Aeon.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Aeon.Heroes
 {
@@ -31,7 +26,7 @@ namespace Aeon.Heroes
 		private readonly int[] _needCharges = { 0, 3, 2, 1 };
 		private readonly decimal[] _lifestealLv = { 0, .20m, .25m, .30m };
 
-		private int Lifesteal => (int)(_lifestealLv[_abilityLvl] * StatsRO.Converted<Attack>());
+		private int Lifesteal => (int) (_lifestealLv[_abilityLvl] * StatsRO.Converted<Attack>());
 		private int NeedCharges => _needCharges[_abilityLvl];
 
 		public override bool UseAbility()

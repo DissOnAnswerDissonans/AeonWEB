@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Aeon.Core
 {
@@ -37,9 +34,9 @@ namespace Aeon.Core
 
 	public class Battle : IBattle
 	{
-		IBattler _h1;
-		IBattler _h2;
-		IBattle.ILogger _logger;
+		private readonly IBattler _h1;
+		private readonly IBattler _h2;
+		private readonly IBattle.ILogger _logger;
 
 		public Battle(IBattle.IBattlersProv provider, IBattle.ILogger logger = null)
 		{
@@ -89,8 +86,7 @@ namespace Aeon.Core
 
 			_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterBattle);
 
-			if (Rounds == MAX_ROUNDS) return 0;
-			return Winner;
+			return Rounds == MAX_ROUNDS ? 0 : Winner;
 		}
 	}
 }

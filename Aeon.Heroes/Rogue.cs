@@ -16,8 +16,8 @@ namespace Aeon.Heroes
 		private int _battle;
 		private const decimal ROGUE_HIT = .09m;
 		private const decimal ENEMY_HIT = .11m;
-		private decimal BattleBonus => 1 + .02m * _battle; 
-			// HACK сделал на *, не на ^, отличий при малом кефе не очень много, СПРОСИТЬ!
+		private decimal BattleBonus => 1 + .02m * _battle;
+		// HACK сделал на *, не на ^, отличий при малом кефе не очень много, СПРОСИТЬ!
 		private decimal RogueHitPerc => ROGUE_HIT / BattleBonus;
 		private decimal EnemyHitPerc => ENEMY_HIT * BattleBonus;
 
@@ -28,7 +28,7 @@ namespace Aeon.Heroes
 			.ModMag(a => a + (int) (StatsRO.DynConverted<Health>() * RogueHitPerc)));
 
 		public override string AbilityText =>
-			$"По себе:{RogueHitPerc*100:F2}% По врагу:{EnemyHitPerc*100:F2}%";
+			$"По себе:{RogueHitPerc * 100:F2}% По врагу:{EnemyHitPerc * 100:F2}%";
 
 		public override void AfterBattle(IBattler enemy, bool isWon)
 		{

@@ -14,8 +14,8 @@ namespace Aeon.Heroes
 
 		public Fe11()
 		{
-			Stats.Set<Health>(Stats.Get<Health>().Value / 2);
-			Stats.Set<Attack>(Stats.Get<Attack>().Value * 2);
+			Stats.Set<Health>(Stats.GetStat<Health>().Value / 2);
+			Stats.Set<Attack>(Stats.GetStat<Attack>().Value * 2);
 		}
 
 		public override void OnBattleStart(IBattler enemy)

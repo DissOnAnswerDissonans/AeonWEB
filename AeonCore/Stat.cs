@@ -2,11 +2,6 @@
 
 namespace Aeon.Core
 {
-	//interface IStat
-	//{
-	//	StatType StatType { get; }
-	//	int Value { get; }
-	//}
 
 	public struct Stat //: IStat
 	{
@@ -16,10 +11,7 @@ namespace Aeon.Core
 		private int _value;
 		public int Value {
 			get => _value;
-			internal set {
-				_value = Math.Clamp(value, Behaviour.MinValue, Behaviour.MaxValue);
-				//OnChanged?.Invoke(this, _value);
-			}
+			internal set => _value = Math.Clamp(value, Behaviour.MinValue, Behaviour.MaxValue);//OnChanged?.Invoke(this, _value);
 		}
 
 		public decimal Convert(IReadOnlyStats context) => Behaviour.Convertor(Value, context);
@@ -38,8 +30,8 @@ namespace Aeon.Core
 				throw new ArgumentException("", nameof(stat));
 
 			return new Stat {
-				Behaviour = this.Behaviour,
-				Value = this.Value + stat.Value,
+				Behaviour = Behaviour,
+				Value = Value + stat.Value,
 			};
 		}
 
@@ -53,14 +45,11 @@ namespace Aeon.Core
 
 		public int Value { get; private set; }
 
-		internal int SetValue(int value, IReadOnlyStats context) {
-			return Value = Math.Clamp(value, Behaviour.BotLimit(context), Behaviour.TopLimit(context));
-			//OnChanged?.Invoke(this, _value);
-		}
+		internal int SetValue(int value, IReadOnlyStats context) => Value = Math.Clamp(value, Behaviour.BotLimit(context), Behaviour.TopLimit(context));//OnChanged?.Invoke(this, _value);
 
 
 
-	public static DynStat Make<T>(int value) where T : StatTypeDynamic, new()
+		public static DynStat Make<T>(int value) where T : StatTypeDynamic, new()
 		{
 			return new DynStat {
 				Behaviour = StatType.Instance<T>(),

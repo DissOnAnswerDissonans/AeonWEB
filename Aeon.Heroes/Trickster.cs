@@ -6,7 +6,7 @@ namespace Aeon.Heroes
 	{
 		private const decimal RESET_SALVAGE = 0.80m;
 		private int _totalSpent;
-		private int ResetMoney => (int)(RESET_SALVAGE * _totalSpent);
+		private int ResetMoney => (int) (RESET_SALVAGE * _totalSpent);
 
 		public override bool TryBuyOffer(Offer offer)
 		{
@@ -26,7 +26,7 @@ namespace Aeon.Heroes
 			return true;
 		}
 
-		public override string AbilityText => 
+		public override string AbilityText =>
 			$"Сбросить всё и получить ${ResetMoney}";
 	}
 }

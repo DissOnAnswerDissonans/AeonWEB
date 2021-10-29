@@ -4,17 +4,18 @@
 	{
 		public Stat this[StatType type] { get; }
 
-		public Stat Get<TStat>() where TStat : StatType, new();
+		public Stat GetStat<TStat>() where TStat : StatType, new();
 
-		public int RawValue<TStat>() where TStat : StatType, new() => 
-			Get<TStat>().Value;
+		public int RawValue<TStat>() where TStat : StatType, new() =>
+			GetStat<TStat>().Value;
 
-		public decimal Converted<TStat>() where TStat : StatType, new() => 
-			Get<TStat>().Convert(this);
+		public decimal Converted<TStat>() where TStat : StatType, new() =>
+			GetStat<TStat>().Convert(this);
 
-		public int ConvInt<TStat>() where TStat : StatType, new() => 
+		public int ConvInt<TStat>() where TStat : StatType, new() =>
 			(int) Converted<TStat>();
 
+		//
 
 		public DynStat GetDyn<TStat>() where TStat : StatTypeDynamic, new();
 

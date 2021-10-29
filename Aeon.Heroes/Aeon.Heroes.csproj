@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>tupotrof, Fe11</Authors>
+    <Company>6D</Company>
+    <Product>Heroes for Aeon</Product>
+    <Description />
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>

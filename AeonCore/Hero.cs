@@ -2,15 +2,13 @@
 
 namespace Aeon.Core
 {
-
-	interface IShopper
+	internal interface IShopper
 	{
 		int Money { get; }
 		Shop Shop { get; }
 
 		bool TryBuyOffer(Offer offer);
 	}
-
 
 	public class Hero : IBattler, IShopper
 	{
@@ -22,7 +20,7 @@ namespace Aeon.Core
 		public int Money { get; private set; }
 		public Shop Shop { get; protected set; }
 
-		internal protected Hero()
+		protected internal Hero()
 		{
 			ResetStats();
 			Shop = new StandardShop();
@@ -42,7 +40,7 @@ namespace Aeon.Core
 			Stats.Register<Regen>(1); // регенерация
 		}
 
-		public int Wage(int amount) => Money += amount >= 0? amount 
+		public int Wage(int amount) => Money += amount >= 0 ? amount
 			: throw new ArgumentOutOfRangeException();
 
 		public int Spend(int amount)

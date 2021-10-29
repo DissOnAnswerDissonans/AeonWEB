@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Aeon.Core;
+using DrawingCLI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Aeon.Core;
-using DrawingCLI;
 
 namespace Aeon.BasicApp
 {
-	class BattlePresenter : IBattle.ILogger
+	internal class BattlePresenter : IBattle.ILogger
 	{
-		struct LogPT
+		private struct LogPT
 		{
 			internal int Num { get; init; }
 			internal IBattle.LogType LogType { get; init; }
@@ -21,7 +21,7 @@ namespace Aeon.BasicApp
 			internal int RoundNumber { get; init; }
 		}
 
-		private Game _game;
+		private readonly Game _game;
 
 		public Battle LastBattle { get; private set; }
 
@@ -31,10 +31,7 @@ namespace Aeon.BasicApp
 
 		private int _round;
 
-		public BattlePresenter(Game game)
-		{
-			_game = game;
-		}
+		public BattlePresenter(Game game) => _game = game;
 
 		public void StartBattle()
 		{
@@ -159,11 +156,11 @@ namespace Aeon.BasicApp
 
 		private void DrawBattlers()
 		{
-			var bytes1 = new byte[128];
-			var bytes2 = new byte[128];
+			byte[] bytes1 = new byte[128];
+			byte[] bytes2 = new byte[128];
 			for (byte i = 0; i < 128; ++i) {
 				bytes1[i] = i;
-				bytes2[i] = (byte)(i + 128);
+				bytes2[i] = (byte) (i + 128);
 			}
 			ColorPic pic1 = new(16, 8, bytes1);
 			ColorPic pic2 = new(16, 8, bytes2);
@@ -173,10 +170,10 @@ namespace Aeon.BasicApp
 
 		private void DrawScore()
 		{
-			var bytes = new byte[] { 246, 111, 0, 246, 111 };
-			SimplePic pic = new SimplePic(4, 10, new BitArray(bytes));
-			SimplePic pic1 = new SimplePic(8, 10, new BitArray(numbers[_game.Player1.Score]));
-			SimplePic pic2 = new SimplePic(8, 10, new BitArray(numbers[_game.Player2.Score]));
+			byte[] bytes = new byte[] { 246, 111, 0, 246, 111 };
+			var pic = new SimplePic(4, 10, new BitArray(bytes));
+			var pic1 = new SimplePic(8, 10, new BitArray(numbers[_game.Player1.Score]));
+			var pic2 = new SimplePic(8, 10, new BitArray(numbers[_game.Player2.Score]));
 			var colors = new Colors { Color = ConsoleColor.White, BGColor = ConsoleColor.Black };
 			var plusColors = new Colors { Color = ConsoleColor.DarkGreen, BGColor = ConsoleColor.Black };
 			pic.DrawIn(38, 6, colors);
@@ -186,8 +183,8 @@ namespace Aeon.BasicApp
 
 		private void DrawAttack()
 		{
-			foreach (var a in _anim) {
-				SimplePic pic = new SimplePic(16, 8, new BitArray(a));
+			foreach (byte[] a in _anim) {
+				var pic = new SimplePic(16, 8, new BitArray(a));
 				pic.DrawIn(32, 15, new Colors { Color = ConsoleColor.Red, BGColor = ConsoleColor.Black });
 				Thread.Sleep(50);
 			}

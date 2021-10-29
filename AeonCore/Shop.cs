@@ -3,22 +3,22 @@ using System.Collections.Generic;
 
 namespace Aeon.Core
 {
-	abstract public class Shop : ICloneable
+	public abstract class Shop : ICloneable
 	{
-		List<Offer> offers = new();
+		private List<Offer> offers = new();
 
 		public IReadOnlyList<Offer> Offers => offers;
 
 		public object Clone()
 		{
-			Shop s = (Shop) this.MemberwiseClone();
+			var s = (Shop) MemberwiseClone();
 			s.offers = new List<Offer>();
 			foreach (Offer offer in offers)
 				s.offers.Add((Offer) offer.Clone());
 			return s;
 		}
 
-		virtual protected void AddOffer<T>(int amount, int cost, bool opt = false)
+		protected virtual void AddOffer<T>(int amount, int cost, bool opt = false)
 			where T : StatType, new() =>
 			offers.Add(new Offer(Stat.Make<T>(amount), cost, opt));
 
@@ -87,9 +87,6 @@ namespace Aeon.Core
 		//	return true;
 		//}
 
-		public object Clone()
-		{
-			return new Offer(Stat, Cost, IsOpt);
-		}
+		public object Clone() => new Offer(Stat, Cost, IsOpt);
 	}
 }

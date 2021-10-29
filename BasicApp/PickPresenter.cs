@@ -1,17 +1,16 @@
-﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
-using Aeon.Core;
+﻿using Aeon.Core;
 using DrawingCLI;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Aeon.BasicApp
 {
-	class PickPresenter
+	internal class PickPresenter
 	{
 		public List<Type> _heroes;
-
-		readonly Colors ColorSelected = new() { Color = ConsoleColor.Green, BGColor = ConsoleColor.DarkGreen };
+		private readonly Colors ColorSelected = new() { Color = ConsoleColor.Green, BGColor = ConsoleColor.DarkGreen };
 
 		private int _choice = 0;
 
@@ -21,7 +20,7 @@ namespace Aeon.BasicApp
 
 		public PickPresenter()
 		{
-			Assembly heroesAssembly = Assembly.Load("Aeon.Heroes");
+			var heroesAssembly = Assembly.Load("Aeon.Heroes");
 			_heroes = heroesAssembly.GetTypes()
 				.Where(t => t.BaseType == typeof(Hero))
 				//.Select(t => (Hero) Activator.CreateInstance(t))

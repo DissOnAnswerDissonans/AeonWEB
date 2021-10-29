@@ -18,7 +18,7 @@ namespace Aeon.Heroes
 
 		public override bool UseAbility()
 		{
-			if (_abilityUsed || Money < COST) 
+			if (_abilityUsed || Money < COST)
 				return false;
 			Spend(COST);
 			_abilityUsed = true;

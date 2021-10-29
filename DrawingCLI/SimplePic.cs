@@ -5,7 +5,7 @@ namespace DrawingCLI
 {
 	public class SimplePic
 	{
-		private BitArray _pixels;
+		private readonly BitArray _pixels;
 		public int Width { get; init; }
 		public int Height { get; init; }
 
@@ -19,14 +19,14 @@ namespace DrawingCLI
 		public void DrawIn(int column, int row, Colors colors)
 		{
 			colors.Set();
-			for(int y = 0; y < Height; y+=2) {
-				for(int x = 0; x < Width; ++x) {
-					var p = (_pixels[y*Width+x], _pixels[(y+1)*Width+x]);
-					Print.Pos(column + x, row + y/2, p switch {
-						(false, false)	=> ' ',
-						(false, true)	=> '▄',
-						(true, false)	=> '▀',
-						(true, true)	=> '█'
+			for (int y = 0; y < Height; y += 2) {
+				for (int x = 0; x < Width; ++x) {
+					(bool, bool) p = (_pixels[y*Width+x], _pixels[(y+1)*Width+x]);
+					Print.Pos(column + x, row + y / 2, p switch {
+						(false, false) => ' ',
+						(false, true) => '▄',
+						(true, false) => '▀',
+						(true, true) => '█'
 					});
 				}
 			}

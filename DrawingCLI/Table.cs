@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DrawingCLI
 {
 	public class Table<T> : IDrawableCLI
 	{
-		private MutableRect _rect = new() { Width = 1, Height = 1 };
+		private readonly MutableRect _rect = new() { Width = 1, Height = 1 };
 		public Rect Rect => _rect;
 
 		public int Rows { get; private set; } = 0;
@@ -17,30 +14,23 @@ namespace DrawingCLI
 		public List<int> ColumnPos { get; } = new() { 1 };
 		public List<int> RowPos { get; } = new() { 1 };
 
-		private Dictionary<(int, int), T> _values = new();
+		private readonly Dictionary<(int, int), T> _values = new();
 
 
 		private Colors _color = new() {Color = ConsoleColor.Gray, BGColor = ConsoleColor.Black};
 
 		private Colors _textColor = new() {Color = ConsoleColor.Gray, BGColor = ConsoleColor.Black};
 
-		private Dictionary<(int, int), Colors> _colors = new();
+		private readonly Dictionary<(int, int), Colors> _colors = new();
 
-		public void SetColor(ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) {
-			_color = new Colors { Color = color, BGColor = colorBG };
-		}
+		public void SetColor(ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) => _color = new Colors { Color = color, BGColor = colorBG };
 		public void SetColor(Colors colors) => _color = colors;
 
-		public void SetTextColor(ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black)
-		{
-			_textColor = new Colors { Color = color, BGColor = colorBG };
-		}
+		public void SetTextColor(ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) => _textColor = new Colors { Color = color, BGColor = colorBG };
 		public void SetTextColor(Colors colors) => _textColor = colors;
 
-		public void SetTextColor(int row, int column, 
-			ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) {
-			_colors[(row, column)] = new Colors { Color = color, BGColor = colorBG };
-		}
+		public void SetTextColor(int row, int column,
+			ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) => _colors[(row, column)] = new Colors { Color = color, BGColor = colorBG };
 
 		public void SetTextColorIf(Func<T, bool> func, ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black)
 		{
@@ -52,9 +42,7 @@ namespace DrawingCLI
 			}
 		}
 
-		public void ResetColor(int row, int column) {
-			_colors.Remove((row, column));
-		}
+		public void ResetColor(int row, int column) => _colors.Remove((row, column));
 
 		public Colors GetColor(int row, int column) =>
 			_colors.TryGetValue((row, column), out Colors color) ? color : _textColor;
@@ -68,7 +56,7 @@ namespace DrawingCLI
 
 		public Rect AddColumns(params int[] widths)
 		{
-			foreach (var w in widths) {
+			foreach (int w in widths) {
 				++Columns;
 				_rect.Width += w + 1;
 				ColumnPos.Add(_rect.Width);
@@ -95,18 +83,18 @@ namespace DrawingCLI
 
 		public void Draw()
 		{
-			ColumnDrawType[] columns = new ColumnDrawType[_rect.Width];
-			RowDrawType[] rows = new RowDrawType[_rect.Height];
+			var columns = new ColumnDrawType[_rect.Width];
+			var rows = new RowDrawType[_rect.Height];
 
 			{
-				foreach (var w in ColumnPos) {
-					columns[w-1] = ColumnDrawType.Middle;
+				foreach (int w in ColumnPos) {
+					columns[w - 1] = ColumnDrawType.Middle;
 				}
 				columns[0] = ColumnDrawType.Left;
 				columns[^1] = ColumnDrawType.Right;
 
-				foreach (var w in RowPos) {
-					rows[w-1] = RowDrawType.Middle;
+				foreach (int w in RowPos) {
+					rows[w - 1] = RowDrawType.Middle;
 				}
 				rows[0] = RowDrawType.Top;
 				rows[^1] = RowDrawType.Bottom;
@@ -134,17 +122,18 @@ namespace DrawingCLI
 			Console.ResetColor();
 		}
 
-		enum RowDrawType { None = 0, Middle = 1, Top = 2, Bottom = 3 }
-		enum ColumnDrawType { None = 0, Middle = 1, Left = 2, Right = 3 }
+		private enum RowDrawType { None = 0, Middle = 1, Top = 2, Bottom = 3 }
 
-		char DChar(RowDrawType row, ColumnDrawType column) =>
+		private enum ColumnDrawType { None = 0, Middle = 1, Left = 2, Right = 3 }
+
+		private char DChar(RowDrawType row, ColumnDrawType column) =>
 			_bchars[(int) row, (int) column];
 
-		readonly char[,] _bchars = { 
-			{' ', '│', '║', '║'}, 
-			{'─', '┼', '╟', '╢'}, 
-			{'═', '╤', '╔', '╗'}, 
-			{'═', '╧', '╚', '╝'}, 
+		private readonly char[,] _bchars = {
+			{' ', '│', '║', '║'},
+			{'─', '┼', '╟', '╢'},
+			{'═', '╤', '╔', '╗'},
+			{'═', '╧', '╚', '╝'},
 		};
 
 

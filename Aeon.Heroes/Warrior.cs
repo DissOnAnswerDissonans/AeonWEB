@@ -7,7 +7,7 @@ namespace Aeon.Heroes
 	///	увеличен на 50% от магии, а критический шанс увеличен на
 	/// 10% от магии.
 	/// </summary>
-	public class Warrior : Hero 
+	public class Warrior : Hero
 	{
 		private const decimal CRIT_DMG_BONUS = 0.5m;
 		private const decimal CRIT_CHA_BONUS = 0.1m;

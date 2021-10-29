@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace Aeon.Core
 {
-    public class Game : IBattle.IBattlersProv
+	public class Game : IBattle.IBattlersProv
 	{
 		public enum WinCond { Undecided, First, Second, None = -1 }
-
 
 		public Player Player1 { get; }
 		public Player Player2 { get; }
@@ -15,7 +14,7 @@ namespace Aeon.Core
 
 		public WinCond WinStatus { get; private set; } = WinCond.Undecided;
 
-		public Game(Player pl1, Player pl2) 
+		public Game(Player pl1, Player pl2)
 		{
 			Player1 = pl1;
 			Player2 = pl2;
@@ -24,7 +23,7 @@ namespace Aeon.Core
 		public int Battle(out Battle battle, in IBattle.ILogger logger)
 		{
 			battle = new Battle(this, logger);
-			var winner = battle.Start();
+			int winner = battle.Start();
 			Player1.End(winner == 1);
 			Player2.End(winner == 2);
 			if (Player1.IsWinner) WinStatus = WinCond.First;

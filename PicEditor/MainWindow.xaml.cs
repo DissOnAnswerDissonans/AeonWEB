@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace PicEditor
@@ -41,14 +33,13 @@ namespace PicEditor
 		private byte[] _bytes;
 
 		private int _mouseButton;
-
-		Brush black = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+		private readonly Brush black = new SolidColorBrush(Color.FromRgb(0, 0, 0));
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			for (int i = 0; i < 16; ++i) {
-				var rect = new Rectangle 
+				var rect = new Rectangle
 				{ Fill = _brushes[i], Stroke = black, Margin = new Thickness(2)};
 				int c = i;
 				rect.MouseLeftButtonDown += (obj, args) => LeftColor = c;
@@ -66,10 +57,7 @@ namespace PicEditor
 			Button_Click(this, null);
 		}
 
-		private void ResizeBase()
-		{
-			_base.Width = _base.ActualHeight * _base.Columns / _base.Rows;
-		}
+		private void ResizeBase() => _base.Width = _base.ActualHeight * _base.Columns / _base.Rows;
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
@@ -128,8 +116,7 @@ namespace PicEditor
 
 		}
 
-
-		void UpdateText()
+		private void UpdateText()
 		{
 			StringBuilder @string = new();
 			foreach (byte b in _bytes)
@@ -137,10 +124,7 @@ namespace PicEditor
 			_text.Text = @string.ToString();
 		}
 
-		private void window_SizeChanged(object sender, SizeChangedEventArgs e)
-		{
-			ResizeBase();
-		}
+		private void window_SizeChanged(object sender, SizeChangedEventArgs e) => ResizeBase();
 
 		private readonly Brush[] _brushes = new Brush[]{
 			new SolidColorBrush(Color.FromRgb(012, 012, 012)), // 0

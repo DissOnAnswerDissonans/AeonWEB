@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DrawingCLI
 {
 	public class DrawLogZone : IDrawableCLI
 	{
 		public Rect Rect { get; init; }
-		
+
 		public bool BottomUp { get; init; }
 		public bool LeftAligned { get; init; }
 
-		private List<string> _logs = new();
-		private List<Colors> _colors = new();
+		private readonly List<string> _logs = new();
+		private readonly List<Colors> _colors = new();
 
 		public void Add(string str, ConsoleColor color = ConsoleColor.White, ConsoleColor colorBG = ConsoleColor.Black)
 		{

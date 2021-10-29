@@ -4,7 +4,7 @@ namespace DrawingCLI
 {
 	public class ColorPic
 	{
-		private byte[] _pixels;
+		private readonly byte[] _pixels;
 		public int Width { get; init; }
 		public int Height { get; init; }
 

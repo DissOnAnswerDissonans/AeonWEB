@@ -50,9 +50,9 @@ namespace Aeon.Heroes
 
 		public override string AbilityText => _mode switch {
 			Mode.AbilityOff => $"M{_mana,-2}| Накопление",
-			Mode.MoneyBurn  => $"M{_mana,-2}| Сжигание ${MONEY_BURN} ~ {MONEY_BURN_COST}м",
-			Mode.MagicHit   => $"M{_mana,-2}| +{MAG_HIT_BONUS:P0} ({MagHitAdder}) МАГ ~ {MAG_HIT_COST}м",
-			Mode.Healing    => $"M{_mana,-2}| +{HEALING_COEFF:P0} сбитого ЗДР ~ {HEALING_COST}м",
+			Mode.MoneyBurn => $"M{_mana,-2}| Сжигание ${MONEY_BURN} ~ {MONEY_BURN_COST}м",
+			Mode.MagicHit => $"M{_mana,-2}| +{MAG_HIT_BONUS:P0} ({MagHitAdder}) МАГ ~ {MAG_HIT_COST}м",
+			Mode.Healing => $"M{_mana,-2}| +{HEALING_COEFF:P0} сбитого ЗДР ~ {HEALING_COST}м",
 		};
 
 		public override Damage GetDamageTo(IBattler enemy)
@@ -80,7 +80,7 @@ namespace Aeon.Heroes
 				if (_mana < HEALING_COST) return d;
 				_mana -= HEALING_COST;
 				Stats.ModifyDyn<Health>
-					((int)((1 - StatsRO.DynConvInt<Health>() / StatsRO.ConvInt<Health>()) * HEALING_COEFF));
+					((int) ((1 - StatsRO.DynConvInt<Health>() / StatsRO.ConvInt<Health>()) * HEALING_COEFF));
 				return d;
 
 			default: return d;

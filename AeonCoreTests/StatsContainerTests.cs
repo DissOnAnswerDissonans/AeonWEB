@@ -1,20 +1,22 @@
-﻿using Xunit;
-using System;
+﻿using System;
+using Xunit;
 
 namespace Aeon.Core.Tests
 {
 	public class StatsContainerTests
 	{
-		[Fact] public void Register_Kok()
+		[Fact]
+		public void Register_Kok()
 		{
 			var stats = new StatsContainer();
 
 			stats.Register<TestStat1>(15);
 
-			Assert.Equal(15, stats.Get<TestStat1>().Value);
+			Assert.Equal(15, stats.GetStat<TestStat1>().Value);
 		}
 
-		[Fact] public void Register_sameStats_throw()
+		[Fact]
+		public void Register_sameStats_throw()
 		{
 			var stats = new StatsContainer();
 
@@ -23,23 +25,26 @@ namespace Aeon.Core.Tests
 			Assert.Throws<InvalidOperationException>(() => stats.Register<TestStat1>(16));
 		}
 
-		[Fact] public void Get_afterRegister()
+		[Fact]
+		public void Get_afterRegister()
 		{
 			var stats = new StatsContainer();
 
 			stats.Register<TestStat1>(25);
 			stats.Register<TestStat2>(15);
 
-			Assert.Equal(15, stats.Get<TestStat2>().Value);
+			Assert.Equal(15, stats.GetStat<TestStat2>().Value);
 		}
 
-		[Fact] public void Get_noRegister_throw()
+		[Fact]
+		public void Get_noRegister_throw()
 		{
 			var stats = new StatsContainer();
-			Assert.Throws<InvalidOperationException>(() => stats.Get<Health>());
+			Assert.Throws<InvalidOperationException>(() => stats.GetStat<Health>());
 		}
 
-		[Fact] public void Set_afterRegister_thenGet()
+		[Fact]
+		public void Set_afterRegister_thenGet()
 		{
 			var stats = new StatsContainer();
 
@@ -49,16 +54,18 @@ namespace Aeon.Core.Tests
 			stats.Set<TestStat1>(15);
 			stats.Set<TestStat2>(25);
 
-			Assert.Equal(25, stats.Get<TestStat2>().Value);
+			Assert.Equal(25, stats.GetStat<TestStat2>().Value);
 		}
 
-		[Fact] public void Set_noRegister_throw()
+		[Fact]
+		public void Set_noRegister_throw()
 		{
 			var stats = new StatsContainer();
 			Assert.Throws<InvalidOperationException>(() => stats.Set<Health>(99));
 		}
 
-		[Fact] public void RO_RawValue()
+		[Fact]
+		public void RO_RawValue()
 		{
 			var stats = new StatsContainer();
 			var read = stats as IReadOnlyStats;
@@ -69,7 +76,8 @@ namespace Aeon.Core.Tests
 			Assert.Equal(15, read.RawValue<TestStat2>());
 		}
 
-		[Fact] public void AddStats()
+		[Fact]
+		public void AddStats()
 		{
 			var stats = new StatsContainer();
 			stats.Register<TestStat1>(25);
@@ -81,8 +89,8 @@ namespace Aeon.Core.Tests
 			stats.AddStat(adder);
 			stats.AddStat(adder2);
 
-			Assert.Equal(30, stats.Get<TestStat1>().Value);
-			Assert.Equal(22, stats.Get<TestStat2>().Value);
+			Assert.Equal(30, stats.GetStat<TestStat1>().Value);
+			Assert.Equal(22, stats.GetStat<TestStat2>().Value);
 		}
 
 		[Fact]
