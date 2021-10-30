@@ -41,5 +41,4 @@ namespace DrawingCLI
 			BGColor = (ConsoleColor) random.Next(16),
 		};
 	}
-
 }

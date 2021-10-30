@@ -37,6 +37,5 @@ namespace Aeon.Heroes
 		public override string AbilityText => _abilityUsed
 			? $"Вы получите завтра ${BONUS}"
 			: $"Получить завтра ${BONUS} за ${COST}";
-
 	}
 }

@@ -61,7 +61,6 @@ namespace Aeon.Heroes
 			++_mana;
 
 			switch (_mode) {
-
 			case Mode.AbilityOff:
 				return d;
 

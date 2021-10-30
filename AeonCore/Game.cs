@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("AeonCore.Tests")]
+
 namespace Aeon.Core
 {
 	public class Game : IBattle.IBattlersProv

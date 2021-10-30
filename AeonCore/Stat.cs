@@ -2,13 +2,13 @@
 
 namespace Aeon.Core
 {
-
 	public struct Stat //: IStat
 	{
 		internal StatType Behaviour { get; init; }
 		public StatType StatType => Behaviour;
 
 		private int _value;
+
 		public int Value {
 			get => _value;
 			internal set => _value = Math.Clamp(value, Behaviour.MinValue, Behaviour.MaxValue);//OnChanged?.Invoke(this, _value);
@@ -49,8 +49,6 @@ namespace Aeon.Core
 
 		internal int SetValue(int value, IReadOnlyStats context) => Value = Math.Clamp(value, Behaviour.BotLimit(context), Behaviour.TopLimit(context));//OnChanged?.Invoke(this, _value);
 
-
-
 		public static DynStat Make<T>(int value) where T : StatTypeDynamic, new()
 		{
 			return new DynStat {
@@ -60,6 +58,5 @@ namespace Aeon.Core
 		}
 
 		public decimal Convert(IReadOnlyStats context) => Behaviour.DynConvertor(Value, context);
-
 	}
 }

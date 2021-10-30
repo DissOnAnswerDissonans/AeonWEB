@@ -7,10 +7,12 @@ namespace Aeon.Core.Tests
 	{
 		protected override void Init() => ID = 1001;
 	}
+
 	public class TestStat2 : StatType
 	{
 		protected override void Init() => ID = 1002;
 	}
+
 	public class TestStatCompatable : TestStat1 { }
 
 	public class StatTests
@@ -84,6 +86,5 @@ namespace Aeon.Core.Tests
 			Assert.Equal(11, s1.Value);
 			Assert.Equal(11.0m, s1.Convert(default));
 		}
-
 	}
 }

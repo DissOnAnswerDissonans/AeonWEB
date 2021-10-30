@@ -5,7 +5,9 @@ namespace DrawingCLI
 	public class DrawRect : IDrawableCLI
 	{
 		public Rect Rect { get; set; } // rekt
+
 		#region Rect Properties
+
 		public int Column => Rect.Column;
 		public int Row => Rect.Row;
 		public int Width => Rect.Width;
@@ -15,7 +17,9 @@ namespace DrawingCLI
 		public int Right => Rect.Column + Rect.Width - 1;
 		public int Top => Rect.Row;
 		public int Bottom => Rect.Row + Rect.Height - 1;
-		#endregion
+
+		#endregion Rect Properties
+
 		public Colors Colors { get; set; }
 
 		public void Draw()

@@ -26,6 +26,7 @@ namespace Aeon.BasicApp
 		}
 
 		public enum Lang { EN, RU }
+
 		public static Lang Locale { get; set; } = Lang.RU;
 
 		public struct HeroInfo
@@ -150,6 +151,7 @@ namespace Aeon.BasicApp
 				};
 			}
 		}
+
 		public static HeroInfo AboutHero(Hero hero) => AboutHero(hero.GetType());
 
 		public static StatInfo AboutStat(Type stat)
@@ -167,7 +169,9 @@ namespace Aeon.BasicApp
 				};
 			}
 		}
+
 		public static StatInfo AboutStat(StatType stat) => AboutStat(stat.GetType());
+
 		public static StatInfo AboutStat(Stat stat) => AboutStat(stat.StatType.GetType());
 
 		public static string StrStat(Stat stat) => $"{stat.Value} {AboutStat(stat).Alias}";

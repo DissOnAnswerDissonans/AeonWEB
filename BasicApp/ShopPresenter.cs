@@ -152,7 +152,6 @@ namespace Aeon.BasicApp
 			return true;
 		}
 
-
 		internal void EnterShopRoutine(int player)
 		{
 			SetPlayer(player);
@@ -163,7 +162,6 @@ namespace Aeon.BasicApp
 			do {
 				Display();
 			} while (Input(Console.ReadKey()));
-
 		}
 	}
 }

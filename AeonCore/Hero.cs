@@ -54,7 +54,7 @@ namespace Aeon.Core
 		{
 			if (!Shop.CanBuy(offer, this)) return false;
 			Stats.AddStat(offer.Stat);
-			_ = Spend(offer.Cost);
+			Spend(offer.Cost);
 			return true;
 		}
 
@@ -101,11 +101,10 @@ namespace Aeon.Core
 
 		public virtual void AfterBattle(IBattler enemy, bool isWon)
 		{
-
 		}
 
 		public virtual string AbilityText => "Нет способности";
-		public virtual bool UseAbility() => false;
 
+		public virtual bool UseAbility() => false;
 	}
 }

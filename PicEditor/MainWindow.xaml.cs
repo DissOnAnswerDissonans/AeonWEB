@@ -19,6 +19,7 @@ namespace PicEditor
 				_palLeft.Fill = _brushes[__leftColor];
 			}
 		}
+
 		private int RightColor {
 			get => __rightColor;
 			set {
@@ -113,7 +114,6 @@ namespace PicEditor
 			}
 
 			ResizeBase();
-
 		}
 
 		private void UpdateText()

@@ -77,9 +77,7 @@ namespace Aeon.BasicApp
 			};
 
 			foreach (LogPT log in _log) {
-
 				switch (log.LogType) {
-
 				case IBattle.LogType.InitState:
 					DrawBattlers();
 					UpdateBars(hb1, hb2, log);
@@ -101,7 +99,6 @@ namespace Aeon.BasicApp
 				case IBattle.LogType.AfterBattle:
 					DrawScore();
 					break;
-
 				}
 				ground.Draw();
 				Print.Pos(39, 3, $"{log.Num,2}");

@@ -1,11 +1,5 @@
-﻿using Xunit;
-using Aeon.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
+using Xunit;
 
 namespace Aeon.Core.Tests
 {
@@ -23,7 +17,7 @@ namespace Aeon.Core.Tests
 			var list = new IBattler[] { _battler1.Object, _battler2.Object };
 
 			var provider = new Mock<IBattle.IBattlersProv>();
-			provider.Setup(a=>a.GetBattlers()).Returns(list);
+			provider.Setup(a => a.GetBattlers()).Returns(list);
 
 			_battle = new Battle(provider.Object, null);
 		}

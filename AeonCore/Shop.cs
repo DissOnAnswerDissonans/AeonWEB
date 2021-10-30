@@ -22,7 +22,6 @@ namespace Aeon.Core
 			where T : StatType, new() =>
 			_offers.Add(new Offer(Stat.Make<T>(amount), cost, opt));
 
-
 		public void ModifyOffers(Func<Offer, bool> predicate, Func<Offer, Offer> func)
 		{
 			for (int i = 0; i < _offers.Count; ++i) {

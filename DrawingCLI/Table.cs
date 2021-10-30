@@ -18,7 +18,6 @@ namespace DrawingCLI
 
 		private readonly Dictionary<(int, int), string> _names = new();
 
-
 		private Colors _color = new() {Color = ConsoleColor.Gray, BGColor = ConsoleColor.Black};
 
 		private Colors _textColor = new() {Color = ConsoleColor.Gray, BGColor = ConsoleColor.Black};
@@ -26,9 +25,11 @@ namespace DrawingCLI
 		private readonly Dictionary<(int, int), Colors> _colors = new();
 
 		public void SetColor(ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) => _color = new Colors { Color = color, BGColor = colorBG };
+
 		public void SetColor(Colors colors) => _color = colors;
 
 		public void SetTextColor(ConsoleColor color, ConsoleColor colorBG = ConsoleColor.Black) => _textColor = new Colors { Color = color, BGColor = colorBG };
+
 		public void SetTextColor(Colors colors) => _textColor = colors;
 
 		public void SetTextColor(int row, int column,
@@ -120,7 +121,6 @@ namespace DrawingCLI
 		{
 			for (int row = 0; row < Rows; ++row) {
 				for (int column = 0; column < Columns; ++column) {
-
 					if (!_names.TryGetValue((row, column), out string s))
 						s = this[row, column].ToString();
 
@@ -145,7 +145,5 @@ namespace DrawingCLI
 			{'═', '╤', '╔', '╗'},
 			{'═', '╧', '╚', '╝'},
 		};
-
-
 	}
 }

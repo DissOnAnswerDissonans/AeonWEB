@@ -78,6 +78,5 @@ namespace Aeon.BasicApp
 			_choice = Math.Clamp(_choice, 0, _heroes.Count - 1);
 			return true;
 		}
-
 	}
 }

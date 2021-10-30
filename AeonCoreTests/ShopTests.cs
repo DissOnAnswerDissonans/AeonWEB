@@ -1,11 +1,6 @@
-﻿using Xunit;
-using Aeon.Core;
+﻿using Moq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
+using Xunit;
 
 namespace Aeon.Core.Tests
 {

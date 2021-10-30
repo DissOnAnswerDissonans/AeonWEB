@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace Aeon.Core
 {
 	/// <summary>
-	/// 
+	///
 	/// Базовый Класс поведений статов.
-	/// Для создания своего стата надо наследоваться от него 
-	/// и переопределить свойства? .. 
-	/// 
+	/// Для создания своего стата надо наследоваться от него
+	/// и переопределить свойства? ..
+	///
 	/// Тут надо подумать насчет записи, по идее, это должен
 	/// быть наследуемый одиночка (1 экз. на каждый подкласс)
-	/// 
+	///
 	/// </summary>
 
 	public abstract class StatType
@@ -19,6 +19,7 @@ namespace Aeon.Core
 		static StatType() => _instances = new Dictionary<Type, StatType>();
 
 		private static readonly Dictionary<Type, StatType> _instances;
+
 		internal static T Instance<T>() where T : StatType, new()
 		{
 			if (_instances.TryGetValue(typeof(T), out StatType stat)) {
@@ -45,12 +46,15 @@ namespace Aeon.Core
 			Init();
 		}
 
-		protected virtual void Init() { }
+		protected virtual void Init()
+		{
+		}
 	}
 
 	public abstract class StatTypeDynamic : StatType
 	{
 		public virtual int TopLimit(IReadOnlyStats stats) => int.MaxValue;
+
 		public virtual int BotLimit(IReadOnlyStats stats) => 0;
 
 		public Func<int, IReadOnlyStats, decimal> DynConvertor { get; protected set; }
@@ -61,7 +65,9 @@ namespace Aeon.Core
 			InitDyn();
 		}
 
-		protected virtual void InitDyn() { }
+		protected virtual void InitDyn()
+		{
+		}
 	}
 
 	/**
@@ -72,6 +78,7 @@ namespace Aeon.Core
 	В Магазине игрок может улучшить только максимальное здоровье героя.
 </summary>
 */
+
 	public class Health : StatTypeDynamic
 	{
 		public override int TopLimit(IReadOnlyStats stats) => stats.ConvInt<Health>();
@@ -85,6 +92,7 @@ namespace Aeon.Core
 	Характеристика влияет на скорость уменьшения здоровья оппонента.
 </summary>
 */
+
 	public class Attack : StatType
 	{
 		protected override void Init() => ID = 2;
@@ -98,6 +106,7 @@ namespace Aeon.Core
 	свойствами.
 </summary>
 */
+
 	public class Magic : StatType
 	{
 		protected override void Init() => ID = 3;
@@ -111,6 +120,7 @@ namespace Aeon.Core
 	признан критическим.
 </summary>
 */
+
 	public class CritChance : StatType
 	{
 		protected override void Init()
@@ -130,6 +140,7 @@ namespace Aeon.Core
 	ударом к урону не критического удара.
 </summary>
 */
+
 	public class CritDamage : StatType
 	{
 		protected override void Init()
@@ -150,6 +161,7 @@ namespace Aeon.Core
 	В Магазине можно улучшить только разовый прирост.
 </summary>
 */
+
 	public class Income : StatTypeDynamic
 	{
 		protected override void Init()
@@ -178,6 +190,7 @@ namespace Aeon.Core
 	получить герой — урон предотвращается.
 </summary>
 */
+
 	public class Block : StatType
 	{
 		protected override void Init() => ID = 7;
@@ -191,9 +204,11 @@ namespace Aeon.Core
 	значения не меньше 0% и не больше 99%.
 </summary>
 */
+
 	public class Armor : StatType
 	{
 		private const decimal COEFF = 0.0075m;
+
 		protected override void Init()
 		{
 			ID = 8;
@@ -211,6 +226,7 @@ namespace Aeon.Core
 	случае, если его Броня предотвратила получение Урона.
 </summary>
 */
+
 	public class Regen : StatType
 	{
 		protected override void Init() => ID = 9;
