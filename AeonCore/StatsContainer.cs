@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Aeon.Core
 {
-
 	public class StatsContainer : IReadOnlyStats
 	{
 		private readonly Dictionary<StatType, Stat> _stats = new();

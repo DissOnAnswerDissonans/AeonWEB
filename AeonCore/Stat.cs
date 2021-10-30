@@ -36,6 +36,8 @@ namespace Aeon.Core
 		}
 
 		public static Stat operator +(Stat s1, Stat s2) => s1.Add(s2);
+
+		public override string ToString() => $"{Value} {Behaviour}";
 	}
 
 	public struct DynStat //: IStat

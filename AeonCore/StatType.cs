@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("AeonCore.Tests")]
 namespace Aeon.Core
 {
 	/// <summary>
@@ -17,14 +16,6 @@ namespace Aeon.Core
 
 	public abstract class StatType
 	{
-		public struct Names
-		{
-			public string FullNameEN { get; init; }
-			public string FullNameRU { get; init; }
-			public string AliasEN { get; init; }
-			public string AliasRU { get; init; }
-		}
-
 		static StatType() => _instances = new Dictionary<Type, StatType>();
 
 		private static readonly Dictionary<Type, StatType> _instances;
@@ -44,7 +35,7 @@ namespace Aeon.Core
 		public int MinValue { get; protected set; }
 		public int MaxValue { get; protected set; }
 
-		public Names DebugNames { get; protected set; }
+		//public Names DebugNames { get; protected set; }
 
 		protected StatType()
 		{
@@ -85,16 +76,7 @@ namespace Aeon.Core
 	{
 		public override int TopLimit(IReadOnlyStats stats) => stats.ConvInt<Health>();
 
-		protected override void Init()
-		{
-			ID = 1;
-			DebugNames = new Names() {
-				FullNameEN = "Health",
-				FullNameRU = "Здоровье",
-				AliasEN = "HP",
-				AliasRU = "ЗДР",
-			};
-		}
+		protected override void Init() => ID = 1;
 	}
 
 	/**
@@ -105,16 +87,7 @@ namespace Aeon.Core
 */
 	public class Attack : StatType
 	{
-		protected override void Init()
-		{
-			ID = 2;
-			DebugNames = new Names() {
-				FullNameEN = "Attack",
-				FullNameRU = "Атака",
-				AliasEN = "ATT",
-				AliasRU = "АТК",
-			};
-		}
+		protected override void Init() => ID = 2;
 	}
 
 	/**
@@ -127,16 +100,7 @@ namespace Aeon.Core
 */
 	public class Magic : StatType
 	{
-		protected override void Init()
-		{
-			ID = 3;
-			DebugNames = new Names() {
-				FullNameEN = "Magic",
-				FullNameRU = "Магия",
-				AliasEN = "MAG",
-				AliasRU = "МАГ",
-			};
-		}
+		protected override void Init() => ID = 3;
 	}
 
 	/**
@@ -154,12 +118,6 @@ namespace Aeon.Core
 			ID = 4;
 			Convertor = (a, context) => a / 100.0m;
 			MaxValue = 100;
-			DebugNames = new Names() {
-				FullNameEN = "Crit. Chance",
-				FullNameRU = "Крит. Шанс",
-				AliasEN = "CRC",
-				AliasRU = "КША",
-			};
 		}
 	}
 
@@ -178,12 +136,6 @@ namespace Aeon.Core
 		{
 			ID = 5;
 			Convertor = (a, context) => a / 100.0m;
-			DebugNames = new Names() {
-				FullNameEN = "Crit. Attack",
-				FullNameRU = "Крит. Урон",
-				AliasEN = "CAT",
-				AliasRU = "КУР",
-			};
 		}
 	}
 
@@ -204,12 +156,6 @@ namespace Aeon.Core
 		{
 			ID = 6;
 			Convertor = (a, context) => 1 + a / 100.0m;
-			DebugNames = new Names() {
-				FullNameEN = "Income",
-				FullNameRU = "Прирост",
-				AliasEN = "INC",
-				AliasRU = "ПРС",
-			};
 		}
 
 		protected override void InitDyn()
@@ -234,16 +180,7 @@ namespace Aeon.Core
 */
 	public class Block : StatType
 	{
-		protected override void Init()
-		{
-			ID = 7;
-			DebugNames = new Names() {
-				FullNameEN = "Block",
-				FullNameRU = "Броня",
-				AliasEN = "BLK",
-				AliasRU = "БРН",
-			};
-		}
+		protected override void Init() => ID = 7;
 	}
 
 	/**
@@ -262,12 +199,6 @@ namespace Aeon.Core
 			ID = 8;
 			MaxValue = 300;
 			Convertor = (t, context) => COEFF * t / (1 + COEFF * (decimal) Math.Exp(0.9 * Math.Log(t)));
-			DebugNames = new Names() {
-				FullNameEN = "Armor",
-				FullNameRU = "Защита",
-				AliasEN = "ARM",
-				AliasRU = "ЩИТ",
-			};
 		}
 	}
 
@@ -282,15 +213,6 @@ namespace Aeon.Core
 */
 	public class Regen : StatType
 	{
-		protected override void Init()
-		{
-			ID = 9;
-			DebugNames = new Names() {
-				FullNameEN = "Regeneration",
-				FullNameRU = "Регенерация",
-				AliasEN = "REG",
-				AliasRU = "РЕГ"
-			};
-		}
+		protected override void Init() => ID = 9;
 	}
 }

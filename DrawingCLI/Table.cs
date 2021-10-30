@@ -16,6 +16,8 @@ namespace DrawingCLI
 
 		private readonly Dictionary<(int, int), T> _values = new();
 
+		private readonly Dictionary<(int, int), string> _names = new();
+
 
 		private Colors _color = new() {Color = ConsoleColor.Gray, BGColor = ConsoleColor.Black};
 
@@ -47,11 +49,16 @@ namespace DrawingCLI
 		public Colors GetColor(int row, int column) =>
 			_colors.TryGetValue((row, column), out Colors color) ? color : _textColor;
 
-
-
 		public T this[int row, int column] {
 			get => _values.TryGetValue((row, column), out T value) ? value : default;
 			set => _values[(row, column)] = value;
+		}
+
+		public T this[int row, int column, string name] {
+			set {
+				this[row, column] = value;
+				_names[(row, column)] = name;
+			}
 		}
 
 		public Rect AddColumns(params int[] widths)
@@ -85,7 +92,6 @@ namespace DrawingCLI
 		{
 			var columns = new ColumnDrawType[_rect.Width];
 			var rows = new RowDrawType[_rect.Height];
-
 			{
 				foreach (int w in ColumnPos) {
 					columns[w - 1] = ColumnDrawType.Middle;
@@ -114,9 +120,13 @@ namespace DrawingCLI
 		{
 			for (int row = 0; row < Rows; ++row) {
 				for (int column = 0; column < Columns; ++column) {
+
+					if (!_names.TryGetValue((row, column), out string s))
+						s = this[row, column].ToString();
+
 					Print.Colors(GetColor(row, column));
 					Print.Pos(ColumnPos[column] + _rect.Column,
-						RowPos[row] + _rect.Row, $" {this[row, column]} ");
+						RowPos[row] + _rect.Row, $" {s} ");
 				}
 			}
 			Console.ResetColor();

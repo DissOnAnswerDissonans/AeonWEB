@@ -36,10 +36,5 @@
 			Hero.Wage(WAGE_LOSER);
 			return Score;
 		}
-
-		internal void Shopping()
-		{
-
-		}
 	}
 }

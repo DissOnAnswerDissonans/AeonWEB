@@ -2,7 +2,7 @@
 
 namespace Aeon.Core
 {
-	internal interface IShopper
+	public interface IShopper
 	{
 		int Money { get; }
 		Shop Shop { get; }
@@ -41,7 +41,7 @@ namespace Aeon.Core
 		}
 
 		public int Wage(int amount) => Money += amount >= 0 ? amount
-			: throw new ArgumentOutOfRangeException();
+			: throw new ArgumentOutOfRangeException(nameof(amount), "Can't be negative");
 
 		public int Spend(int amount)
 		{
@@ -52,9 +52,9 @@ namespace Aeon.Core
 
 		public virtual bool TryBuyOffer(Offer offer)
 		{
-			if (offer.Cost > Money) return false;
+			if (!Shop.CanBuy(offer, this)) return false;
 			Stats.AddStat(offer.Stat);
-			Spend(offer.Cost);
+			_ = Spend(offer.Cost);
 			return true;
 		}
 

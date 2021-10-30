@@ -92,10 +92,11 @@ namespace Aeon.BasicApp
 
 			int rowN = 0;
 			foreach (StatType v in _offers.Keys) {
-				tabStats[rowN, 0] = $"{v.DebugNames.FullNameRU,11}:{Hero.StatsRO[v].Convert(Hero.StatsRO),-5}";
+				tabStats[rowN, 0] = $"{Hero.StatsRO.StrStatConv(v),-6}{Info.AboutStat(v).Name,11}";
 				tabStats[rowN, 1] = $"{Hero.StatsRO[v].Value,4}";
-				tabOffers[rowN, 0] = _offers[v][0];
-				tabOffers[rowN, 1] = _offers[v][1];
+
+				tabOffers[rowN, 0, Info.StrOffer(_offers[v][0])] = _offers[v][0];
+				tabOffers[rowN, 1, Info.StrOffer(_offers[v][1])] = _offers[v][1];
 				++rowN;
 			}
 		}

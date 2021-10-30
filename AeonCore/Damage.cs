@@ -17,8 +17,10 @@ namespace Aeon.Core
 			IsCrit = crit;
 		}
 
-		public Damage ModPhys(Func<int, int> newPhys) => new Damage(Instigator, newPhys(Phys), Magic, IsCrit);
+		public Damage ModPhys(Func<int, int> newPhys) =>
+			new(Instigator, newPhys(Phys), Magic, IsCrit);
 
-		public Damage ModMag(Func<int, int> newMag) => new Damage(Instigator, Phys, newMag(Magic), IsCrit);
+		public Damage ModMag(Func<int, int> newMag) =>
+			new(Instigator, Phys, newMag(Magic), IsCrit);
 	}
 }

@@ -5,33 +5,39 @@ namespace Aeon.Core
 {
 	public abstract class Shop : ICloneable
 	{
-		private List<Offer> offers = new();
+		private List<Offer> _offers = new();
 
-		public IReadOnlyList<Offer> Offers => offers;
+		public IReadOnlyList<Offer> Offers => _offers;
 
 		public object Clone()
 		{
 			var s = (Shop) MemberwiseClone();
-			s.offers = new List<Offer>();
-			foreach (Offer offer in offers)
-				s.offers.Add((Offer) offer.Clone());
+			s._offers = new List<Offer>();
+			foreach (Offer offer in _offers)
+				s._offers.Add((Offer) offer.Clone());
 			return s;
 		}
 
 		protected virtual void AddOffer<T>(int amount, int cost, bool opt = false)
 			where T : StatType, new() =>
-			offers.Add(new Offer(Stat.Make<T>(amount), cost, opt));
+			_offers.Add(new Offer(Stat.Make<T>(amount), cost, opt));
 
 
 		public void ModifyOffers(Func<Offer, bool> predicate, Func<Offer, Offer> func)
 		{
-			for (int i = 0; i < offers.Count; ++i) {
-				if (predicate(offers[i])) {
-					offers[i] = func(offers[i]);
+			for (int i = 0; i < _offers.Count; ++i) {
+				if (predicate(_offers[i])) {
+					_offers[i] = func(_offers[i]);
 				}
 			}
 		}
 
+		internal bool CanBuy(Offer offer, IShopper shopper)
+		{
+			if (!_offers.Contains(offer))
+				throw new ArgumentException("No such offer in hero shop", nameof(offer));
+			return offer.Cost <= shopper.Money;
+		}
 	}
 
 	public class StandardShop : Shop
@@ -73,20 +79,9 @@ namespace Aeon.Core
 			IsOpt = opt;
 		}
 
-		public override string ToString()
-		{
-			return IsOpt ? $"опт {Cost,3}$ => {Stat.Value,-3} {Stat.StatType.DebugNames.AliasRU,-3}"
-						 : $"{Cost,2}$ => {Stat.Value,-2} {Stat.StatType.DebugNames.AliasRU,-3}";
-		}
-
-		//public bool TryToBuy(Hero hero)
-		//{
-		//	if (hero.Money < Cost) return false;
-		//	hero.Spend(Cost);
-		//	hero.AddStat(Stat);
-		//	return true;
-		//}
-
 		public object Clone() => new Offer(Stat, Cost, IsOpt);
+
+		public override string ToString() => IsOpt
+			? $"opt {Cost} => {Stat}" : $"{Cost} => {Stat}";
 	}
 }

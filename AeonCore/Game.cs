@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("AeonCore.Tests")]
 namespace Aeon.Core
 {
 	public class Game : IBattle.IBattlersProv
@@ -36,19 +37,6 @@ namespace Aeon.Core
 			2 => Player2.Hero,
 			_ => throw new ArgumentException("", nameof(playerID))
 		};
-
-		//int Start()
-		//{
-		//	while (!Player1.IsWinner && !Player2.IsWinner) {
-		//		Player1.Shopping();
-		//		Player2.Shopping();
-		//		var battle = new Battle(this);
-		//		var winner = battle.Start();
-		//		Player1.End(winner == 1);
-		//		Player2.End(winner == 2);		
-		//	}
-		//	return Player1.IsWinner	? 1 : Player2.IsWinner ? 2 : 0;
-		//}
 
 		public IEnumerable<IBattler> GetBattlers()
 		{

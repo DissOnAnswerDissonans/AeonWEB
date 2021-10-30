@@ -33,6 +33,13 @@ namespace Aeon.BasicApp
 			public Translation Name { get; init; }
 		}
 
+		public struct StatInfo
+		{
+			public Translation Name { get; init; }
+			public Translation Alias { get; init; }
+			public Func<decimal, string> ConvFormat { get; init; }
+		}
+
 		private static readonly Dictionary<Type, HeroInfo> _heroInfo = new () {
 			[typeof(Banker)] = new() {
 				Name = new("Banker", "Банкир")
@@ -81,6 +88,55 @@ namespace Aeon.BasicApp
 			},
 		};
 
+		private static readonly Dictionary<Type, StatInfo> _statInfo = new ()
+		{
+			[typeof(Health)] = new() {
+				Name = new("Health", "Здоровье"),
+				Alias = new("HP", "ЗДР"),
+				ConvFormat = a => $"{a:N0}",
+			},
+			[typeof(Attack)] = new() {
+				Name = new("Attack", "Атака"),
+				Alias = new("ATT", "АТК"),
+				ConvFormat = a => $"{a:N0}",
+			},
+			[typeof(Magic)] = new() {
+				Name = new("Magic", "Магия"),
+				Alias = new("MAG", "МАГ"),
+				ConvFormat = a => $"{a:N0}",
+			},
+			[typeof(CritChance)] = new() {
+				Name = new("Crit Chance", "Шанс крита"),
+				Alias = new("CRC", "ШКР"),
+				ConvFormat = a => $"{a*100:##0.#}%",
+			},
+			[typeof(CritDamage)] = new() {
+				Name = new("Crit Attack", "Крит атака"),
+				Alias = new("CAT", "КАТ"),
+				ConvFormat = a => $"x{a:#0.##}",
+			},
+			[typeof(Income)] = new() {
+				Name = new("Income", "Прирост"),
+				Alias = new("INC", "ПРС"),
+				ConvFormat = a => $"{(a-1)*100:##0.#}%",
+			},
+			[typeof(Block)] = new() {
+				Name = new("Block", "Броня"),
+				Alias = new("BLK", "БРН"),
+				ConvFormat = a => $"{a:N0}",
+			},
+			[typeof(Armor)] = new() {
+				Name = new("Armor", "Защита"),
+				Alias = new("ARM", "ЩИТ"),
+				ConvFormat = a => $"{a*100:N2}%",
+			},
+			[typeof(Regen)] = new() {
+				Name = new("Regeneration", "Регенерация"),
+				Alias = new("REG", "РЕГ"),
+				ConvFormat = a => $"{a:N0}",
+			},
+		};
+
 		public static HeroInfo AboutHero(Type hero)
 		{
 			if (!hero.IsSubclassOf(typeof(Hero)))
@@ -94,7 +150,33 @@ namespace Aeon.BasicApp
 				};
 			}
 		}
-
 		public static HeroInfo AboutHero(Hero hero) => AboutHero(hero.GetType());
+
+		public static StatInfo AboutStat(Type stat)
+		{
+			if (!stat.IsSubclassOf(typeof(StatType)))
+				throw new ArgumentException("Передан не тип стат", nameof(stat));
+			try {
+				return _statInfo[stat];
+			}
+			catch (KeyNotFoundException) {
+				return new() {
+					Name = new($"?{stat.Name}?", $"?{stat.Name}?"),
+					Alias = new("???", "???"),
+					ConvFormat = a => $"{a}",
+				};
+			}
+		}
+		public static StatInfo AboutStat(StatType stat) => AboutStat(stat.GetType());
+		public static StatInfo AboutStat(Stat stat) => AboutStat(stat.StatType.GetType());
+
+		public static string StrStat(Stat stat) => $"{stat.Value} {AboutStat(stat).Alias}";
+
+		public static string StrStatConv(this IReadOnlyStats stats, StatType stat)
+			=> AboutStat(stat).ConvFormat(stats[stat].Convert(stats));
+
+		public static string StrOffer(Offer offer) => offer.IsOpt
+				? $"опт {offer.Cost,3}$ => {StrStat(offer.Stat)}"
+				: $"{offer.Cost,2}$ => {StrStat(offer.Stat)}";
 	}
 }
