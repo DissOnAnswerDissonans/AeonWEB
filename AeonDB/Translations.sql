@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[Translations]
+(
+	[ID] VARCHAR(64) NOT NULL PRIMARY KEY, 
+    [T_EN] NVARCHAR(MAX) NULL, 
+    [T_RU] NVARCHAR(MAX) NULL
+)
