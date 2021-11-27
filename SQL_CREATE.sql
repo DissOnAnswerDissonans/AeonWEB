@@ -1,0 +1,54 @@
+﻿CREATE TABLE [dbo].[Players]
+(
+	[ID] INT NOT NULL PRIMARY KEY Identity, 
+    [Nickname] NVARCHAR(50) NOT NULL, 
+    [PWHash] INT NULL, 
+    [ValueELO] DECIMAL(9, 4) NULL
+)
+
+CREATE TABLE [dbo].[Heroes]
+(
+	[ID] SMALLINT NOT NULL PRIMARY KEY Identity, 
+    [AsmName] VARCHAR(128) NOT NULL, 
+)
+
+CREATE TABLE [dbo].[Games]
+(
+	[ID] INT NOT NULL PRIMARY KEY Identity, 
+    [Player1ID] INT NULL FOREIGN KEY REFERENCES Players([ID]), 
+    [Player2ID] INT NULL FOREIGN KEY REFERENCES Players([ID]), 
+    [Hero1] SMALLINT NOT NULL FOREIGN KEY REFERENCES Heroes([ID]), 
+    [Hero2] SMALLINT NOT NULL FOREIGN KEY REFERENCES Heroes([ID]), 
+    [Winner] TINYINT NULL, 
+)
+
+CREATE TABLE [dbo].[Rounds]
+(
+	[ID] INT NOT NULL PRIMARY KEY, 
+    [GameID] INT NOT NULL FOREIGN KEY REFERENCES Games(ID), 
+    [Number] SMALLINT NOT NULL
+)
+
+CREATE TABLE [dbo].[Stats]
+(
+	[ID] TINYINT NOT NULL PRIMARY KEY, 
+    [AsmName] VARCHAR(128) NOT NULL, 
+)
+
+CREATE TABLE [dbo].[Buys]
+(
+	[RoundID] INT NOT NULL FOREIGN KEY REFERENCES Rounds(ID), 
+    [StatID] TINYINT NOT NULL FOREIGN KEY REFERENCES [Stats](ID),
+    [IsOpt] BIT NOT NULL, 
+    [Amount] TINYINT NOT NULL,
+    [Player] TINYINT NOT NULL 
+)
+
+CREATE TABLE [dbo].[Attacks]
+(
+	[RoundID] INT NOT NULL FOREIGN KEY REFERENCES Rounds(ID), 
+    [Number] SMALLINT NOT NULL, 
+    [Result] VARCHAR(32) NULL, 
+    [Crit1] BIT NOT NULL, 
+    [Crit2] BIT NOT NULL 
+)

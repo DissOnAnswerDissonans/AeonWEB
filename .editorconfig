@@ -269,3 +269,4 @@ dotnet_diagnostic.IDE0058.severity = none
 
 # IDE0046: Преобразовать в условное выражение
 dotnet_diagnostic.IDE0046.severity = none
+csharp_style_namespace_declarations=file_scoped:suggestion

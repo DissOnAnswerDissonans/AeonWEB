@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31727.386
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AeonCore", "AeonCore\AeonCore.csproj", "{81AFC1D1-BF34-49A7-BF4F-0F841DB01F36}"
 EndProject
@@ -25,9 +25,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4934DBF1-4884-4B9C-BF3E-F05E9A834316}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		SQL_CREATE.sql = SQL_CREATE.sql
 	EndProjectSection
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "AeonDB", "AeonDB\AeonDB.sqlproj", "{4948F380-4CC7-4CFD-B9DD-E327A6C15E23}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{C2F9BCEB-BA06-48B2-BB97-05BAD85F43E1}"
+	ProjectSection(SolutionItems) = preProject
+		SQL_CREATE.sql = SQL_CREATE.sql
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DB_Test", "DB_Test\DB_Test.csproj", "{73EBC9A0-13AB-4A71-898B-2FAAC3397030}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7F558223-9895-4E4F-AC97-BAEF5F23F554} = {7F558223-9895-4E4F-AC97-BAEF5F23F554}
+		{81AFC1D1-BF34-49A7-BF4F-0F841DB01F36} = {81AFC1D1-BF34-49A7-BF4F-0F841DB01F36}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,12 +69,10 @@ Global
 		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4948F380-4CC7-4CFD-B9DD-E327A6C15E23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4948F380-4CC7-4CFD-B9DD-E327A6C15E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4948F380-4CC7-4CFD-B9DD-E327A6C15E23}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{4948F380-4CC7-4CFD-B9DD-E327A6C15E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4948F380-4CC7-4CFD-B9DD-E327A6C15E23}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4948F380-4CC7-4CFD-B9DD-E327A6C15E23}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{73EBC9A0-13AB-4A71-898B-2FAAC3397030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73EBC9A0-13AB-4A71-898B-2FAAC3397030}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73EBC9A0-13AB-4A71-898B-2FAAC3397030}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73EBC9A0-13AB-4A71-898B-2FAAC3397030}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +82,7 @@ Global
 		{BC5A2441-38B3-4F1C-A1A5-02FA57C85B8F} = {61729F9D-0775-42AF-8EF4-9EBF1946743E}
 		{7F558223-9895-4E4F-AC97-BAEF5F23F554} = {61729F9D-0775-42AF-8EF4-9EBF1946743E}
 		{64AFFAEA-BE34-4FE6-A6C6-A82E5C014396} = {B5E28AFE-A629-4AAA-870A-B2949E8C6ADD}
+		{73EBC9A0-13AB-4A71-898B-2FAAC3397030} = {C2F9BCEB-BA06-48B2-BB97-05BAD85F43E1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC5C05A3-807C-49D1-B790-5B217D8825D2}
