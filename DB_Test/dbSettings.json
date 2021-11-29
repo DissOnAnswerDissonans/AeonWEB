@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=DESKTOP-VA3RB6T; Database=AeonDB; Trusted_Connection=True"
+    "DefaultConnection": "Server=DESKTOP-VA3RB6T; Database=AeonDBTest; Trusted_Connection=True"
   }
 }

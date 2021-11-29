@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DB_Test;
+﻿namespace DB_Test;
 
 public partial class Stat
 {
