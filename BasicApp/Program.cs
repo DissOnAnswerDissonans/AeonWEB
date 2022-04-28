@@ -1,6 +1,15 @@
 ﻿using Aeon.Core;
 using DrawingCLI;
+using Microsoft.AspNetCore.SignalR.Client;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
+using Microsoft.CodeAnalysis.Rename;
+using AeonServer;
+using Aeon.Base;
 
 namespace Aeon.BasicApp
 {
@@ -11,36 +20,81 @@ namespace Aeon.BasicApp
 			new() { Color = ConsoleColor.DarkYellow, BGColor = ConsoleColor.Black }
 		};
 
-		private static void Main(string[] args)
+		private static async Task Main(string[] args)
 		{
-			Console.Clear();
-			Console.SetWindowSize(80, 25);
-			Console.SetBufferSize(80, 25);
-			Console.Title = "Aeon";
+			//Console.Clear();
+			//Console.SetWindowSize(80, 25);
+			//Console.SetBufferSize(80, 25);
+			//Console.Title = "Aeon";
 
-			Console.ResetColor();
-			Print.Pos(3, 1, "Hello Aeon!");
-			DrawTitle();
-			Console.ReadKey();
+			//Console.ResetColor();
+			//Print.Pos(3, 1, "Hello Aeon!");
+			//DrawTitle();
+			//Console.ReadKey();
 
-			PickPresenter pick = new();
+			//Console.ResetColor();
+			//Console.Clear();
 
-			var player1 = new Player(pick.PickHero(0));
-			var player2 = new Player(pick.PickHero(1));
+			var url = @"https://localhost:2366";
 
-			var game = new Game(player1, player2);
-			ShopPresenter shop = new(game);
-			BattlePresenter battle = new(game);
+			var http = new HttpClient();
+			
+			Console.WriteLine("Press R to register");
+			var k = Console.ReadKey();
 
-			while (game.WinStatus == Game.WinCond.Undecided) {
-				shop.EnterShopRoutine(1);
-				shop.EnterShopRoutine(2);
-				battle.StartBattle();
+			if (k.Key == ConsoleKey.R) 
+			{
+				Console.WriteLine("Регистрация");
+				Console.Write("Name: ");
+				var name = Console.ReadLine();
+				Console.Write("Pass: ");
+				var pass = Console.ReadLine();
+
+				var resp = await HttpClientJsonExtensions.PostAsJsonAsync(http, $@"{url}/api/Account/Register", 
+					new LoginModel { Name = name, Password = pass });
+
+				Console.WriteLine($"{resp.StatusCode}: {resp.RequestMessage}");
 			}
 
-			Console.Clear();
-			Console.WriteLine($"Winner: {game.WinStatus}");
-			Console.Write("Goodbye Aeon!");
+			string token;
+
+			{
+				Console.Write("Name: ");
+				var name = Console.ReadLine();
+				Console.Write("Pass: ");
+				var pass = Console.ReadLine();
+
+				Console.WriteLine("Авторизация...");
+
+				var resp = await HttpClientJsonExtensions.PostAsJsonAsync(http, $@"{url}/api/Account/Login",
+					new LoginModel { Name = name, Password = pass });
+
+				Console.WriteLine($"{resp.StatusCode}: {resp.RequestMessage}");
+				token = await resp.Content.ReadFromJsonAsync<string>();
+			}
+
+			Console.WriteLine("Подключение...");
+
+			HubConnection aeonConnection = new HubConnectionBuilder()
+				.WithUrl($@"{url}/aeon", o => o.AccessTokenProvider = () => Task.FromResult(token))
+				.Build();
+
+			try {
+				
+				await aeonConnection.StartAsync();
+				Console.WriteLine("Connected");
+				await RoomsMenu(aeonConnection);
+
+			}
+			catch (Exception ex) {
+				Console.WriteLine($"ERR: {ex.Message}\n{ex.StackTrace}");
+			}
+			finally {
+				Console.ReadKey();
+				await aeonConnection.StopAsync();
+				Console.WriteLine("Disconnected");
+				Console.Write("Goodbye Aeon!");
+			}
 		}
 
 		public static void DrawTitle()
@@ -86,5 +140,62 @@ namespace Aeon.BasicApp
 			14, 14, 14, 14, 14, 14, 14, 14, 0, 0, 0, 0, 0, 4, 12, 12, 12, 42, 42, 42, 2,
 			0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 5, 0, 0, 0, 0, 13, 13, 5, 0, 0, 0, 0, 0
 		};
+
+		static int _choice = 0;
+
+		private static async Task RoomsMenu(HubConnection connection)
+		{
+			_choice = -2;
+			while (true) {
+				string[] rooms = await connection.InvokeAsync<string[]>("GetRoomsList");
+
+				do {
+					_choice = Math.Clamp(_choice, -2, rooms.Length - 1);
+
+					Console.ResetColor();
+					Console.Clear();
+
+					for (int i = -2; i < rooms.Length; i++) {
+						Console.BackgroundColor = _choice == i ?
+							ConsoleColor.DarkBlue : ConsoleColor.Black;
+
+						Console.WriteLine(i switch {
+							-2 => "[New Room]",
+							-1 => "[Refresh]",
+							_ => rooms[i]
+						});
+					}
+				} while (Input(Console.ReadKey()));
+
+				if (_choice == -2) {
+					Console.ResetColor();
+					Console.Clear();
+					Console.Write("New Room: ");
+
+					await connection.InvokeAsync("CreateRoom", Console.ReadLine());
+					return;
+				} 
+				else if (_choice == -1) continue;
+				else {
+					await connection.SendAsync("JoinRoom", rooms[_choice]);
+					return;
+				}
+			}
+		}
+
+
+
+		private static bool Input(ConsoleKeyInfo info)
+		{
+			switch (info.Key) {
+			case ConsoleKey.UpArrow:
+				_choice -= 1; break;
+			case ConsoleKey.DownArrow:
+				_choice += 1; break;
+			case ConsoleKey.Enter:
+				return false;
+			};
+			return true;
+		}
 	}
 }

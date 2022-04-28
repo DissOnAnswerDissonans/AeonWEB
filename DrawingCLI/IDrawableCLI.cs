@@ -1,6 +1,6 @@
 ﻿namespace DrawingCLI
 {
-	internal interface IDrawableCLI
+	public interface IDrawableCLI
 	{
 		void Draw();
 

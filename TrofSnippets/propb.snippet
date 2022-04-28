@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Property for binding</Title>
+			<Shortcut>propb</Shortcut>
+		</Header>
+		<Snippet>
+			<Code Language="CSharp">
+				<![CDATA[	public $Class$ $Name$ { get => _$Name$; 
+		set { _$Name$ = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof($Name$))); }} 
+	private $Class$ _$Name$;]]>
+			</Code>
+			<Declarations>
+				<Literal>
+					<ID>Class</ID>
+					<ToolTip>Property class</ToolTip>
+					<Default>string</Default>
+				</Literal>
+				<Literal>
+					<ID>Name</ID>
+					<ToolTip>Property name</ToolTip>
+					<Default>Property</Default>
+				</Literal>
+			</Declarations>
+			<Imports>
+				<Import>
+					<Namespace>System.ComponentModel</Namespace>
+				</Import>
+			</Imports>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

@@ -65,7 +65,7 @@ namespace Aeon.Core
 		}
 	}
 
-	public struct Offer : ICloneable
+	public class Offer : ICloneable
 	{
 		public Stat Stat { get; }
 		public int Cost { get; }

@@ -1,0 +1,12 @@
+﻿<Application x:Class="Aeon.WindowsClient.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Aeon.WindowsClient"
+             xmlns:vm="clr-namespace:Aeon.WindowsClient.ViewModels"
+             xmlns:sr="clr-namespace:Microsoft.AspNetCore.SignalR.Client;assembly=Microsoft.AspNetCore.SignalR.Client.Core"
+             StartupUri="MainWindow.xaml"
+             >
+  <Application.Resources>
+    
+  </Application.Resources>
+</Application>

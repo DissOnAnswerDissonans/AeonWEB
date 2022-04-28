@@ -27,7 +27,7 @@ using (var db = new AeonDBContext(options)) {
 		new Hero { AsmName = "Aeon.Heroes.Thief" },
 		new Hero { AsmName = "Aeon.Heroes.Fatty" },
 	});
-	db.SaveChanges();
+	db.SaveChanges(); 
 
 	db.Games.AddRange(new Game[] {
 		new Game { Player1Id = 1, Player2Id = 2, Hero1Id = 3, Hero2Id = 4, Winner = 1 },
