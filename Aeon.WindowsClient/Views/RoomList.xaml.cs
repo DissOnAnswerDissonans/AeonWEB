@@ -13,14 +13,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Aeon.WindowsClient;
+namespace Aeon.WindowsClient.Views;
 /// <summary>
 /// Interaction logic for RoomList.xaml
 /// </summary>
-public partial class RoomList : Window
+public partial class RoomList : Page
 {
 	public RoomList()
 	{
 		InitializeComponent();
+	}
+
+	private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (e.AddedItems.Count > 0)
+			(DataContext as ViewModels.RoomsVM)?.Join.Execute(e.AddedItems[0]);
 	}
 }

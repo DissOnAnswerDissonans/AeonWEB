@@ -14,17 +14,24 @@ public class ServerState
 		return true;
 	}
 
-	internal void CreateRoom(string roomName, string user)
+	internal bool Disconnected(string user)
+	{
+		if (user is null) return false;
+		Users.Remove(user);
+		return true;
+	}
+
+	internal void CreateRoom(string roomName, string? user)
 	{
 		var room = new Room(roomName, user);
 		Rooms.Add(roomName, room);
-		Users[user] = room;
+		if (user != null) Users[user] = room;
 	}
 
 	internal void JoinRoom(string roomName, string user)
 	{
 		var room = Rooms[roomName];
-		room.Observers.AddLast(user);
+		room.Players.Add(user);
 		Users[user] = room;
 	}
 

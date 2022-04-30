@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 
 using Aeon.Base;
+using Aeon.WindowsClient;
 
 namespace Aeon.WindowsClient.ViewModels;
 
@@ -38,8 +39,16 @@ internal class SignInVM : INotifyPropertyChanged
 		&& (!IsRegister || ConfirmPassword.Length > 0);
 	});
 
+	public TrofCommand<LoginModel> Debug => _cmdDebug ??= new TrofCommand<LoginModel>(async arg => {
+		NickName = "[DEBUG]";
+		await Login(new HttpClient(), @"https://localhost:2366", arg);
+	}, arg => true);
+
+	private TrofCommand<LoginModel>? _cmdDebug = null;
 	private TrofCommand _cmdReg = null!;
 	private TrofCommand _cmdFire = null!;
+
+
 
 	// Properties injected with PropertyChanged.Fody //
 
@@ -58,6 +67,7 @@ internal class SignInVM : INotifyPropertyChanged
 
 	private async Task Register(HttpClient http, string url, LoginModel model)
 	{
+		ErrorMessage = "Регистрация…";
 		var resp = await HttpClientJsonExtensions.PostAsJsonAsync(http, $@"{url}/api/Account/Register", model);
 		if (resp.StatusCode == System.Net.HttpStatusCode.BadRequest) {
 			ErrorMessage = await resp.Content.ReadAsStringAsync();
@@ -70,10 +80,10 @@ internal class SignInVM : INotifyPropertyChanged
 	private async Task Login(HttpClient http, string url, LoginModel model)
 	{
 		try {
+			ErrorMessage = "Подключение…";
 			var resp = await HttpClientJsonExtensions.PostAsJsonAsync(http, $@"{url}/api/Account/Login", model);
 			var result = await resp.Content.ReadFromJsonAsync<TokenResultVM>();
 			if (result!.Ok) {
-				ErrorMessage = "Подключение";
 				await App.Inst.Connect(result.Token);
 			} else ErrorMessage = result.Errors.Aggregate((a, b) => a + "\n" + b);
 		} catch (Exception ex) {
@@ -83,43 +93,4 @@ internal class SignInVM : INotifyPropertyChanged
 }
 
 
-public class TrofCommand : ICommand
-{
-	private Action _execute;
-	private Func<bool>? _canExecute;
-	public event EventHandler? CanExecuteChanged {
-		add { CommandManager.RequerySuggested += value; }
-		remove { CommandManager.RequerySuggested -= value; }
-	}
 
-	public TrofCommand(Action execute, Func<bool>? canExecute = null)
-	{
-		this._execute = execute;
-		this._canExecute = canExecute;
-	}
-
-	public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
-	public void Execute(object? parameter) => _execute.Invoke();
-	//public void Update() => CanExecuteChanged?.Invoke(this, new());
-}
-
-public class TrofCommand<T> : ICommand
-{
-	private Action<T> _execute;
-	private Func<T, bool>? _canExecute;
-	public event EventHandler? CanExecuteChanged {
-		add { CommandManager.RequerySuggested += value; }
-		remove { CommandManager.RequerySuggested -= value; }
-	}
-
-	public TrofCommand(Action<T> execute, Func<T, bool>? canExecute = null)
-	{
-		this._execute = execute;
-		this._canExecute = canExecute;
-	}
-
-	public bool CanExecute(T parameter) => _canExecute?.Invoke(parameter) ?? true;
-	public void Execute(T parameter) => _execute?.Invoke(parameter);
-	public bool CanExecute(object? parameter) => CanExecute((T?) parameter ?? throw new NotSupportedException());
-	public void Execute(object? parameter) => Execute((T?) parameter ?? throw new NotSupportedException());
-}

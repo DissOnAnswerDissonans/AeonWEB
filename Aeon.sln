@@ -25,6 +25,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4934DBF1-4884-4B9C-BF3E-F05E9A834316}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		TrofSnippets\cmdt.snippet = TrofSnippets\cmdt.snippet
+		TrofSnippets\propb.snippet = TrofSnippets\propb.snippet
 		SQL_CREATE.sql = SQL_CREATE.sql
 	EndProjectSection
 EndProject
@@ -36,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scener", "Scener\Scener.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aeon.WindowsClient", "Aeon.WindowsClient\Aeon.WindowsClient.csproj", "{46174C7F-C9EC-4000-B40D-3D4651AE30B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aeon.Base", "Aeon.Base\Aeon.Base.csproj", "{D3939994-60DF-41E7-93DE-04E6A31B6438}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aeon.Base", "Aeon.Base\Aeon.Base.csproj", "{D3939994-60DF-41E7-93DE-04E6A31B6438}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

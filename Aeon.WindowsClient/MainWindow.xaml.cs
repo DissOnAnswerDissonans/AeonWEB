@@ -23,18 +23,4 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
-
-	private void PasswordChanged(object sender, RoutedEventArgs e)
-	{
-		if (DataContext != null) { 
-			((ViewModels.SignInVM) DataContext).Password = ((PasswordBox) sender).Password; 
-		}
-	}
-
-	private void ConfPasswordChanged(object sender, RoutedEventArgs e)
-	{
-		if (DataContext != null) {
-			((ViewModels.SignInVM) DataContext).ConfirmPassword = ((PasswordBox) sender).Password;
-		}
-	}
 }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Trof Command prop</Title>
+			<Shortcut>cmd</Shortcut>
+		</Header>
+		<Snippet>
+			<Code Language="CSharp">
+				<![CDATA[	public TrofCommand $Command$ => _cmd$Command$ ??= new TrofCommand(async () => {
+
+	}, () => true);
+	private TrofCommand? _cmd$Command$ = null;]]>
+			</Code>
+			<Declarations>
+				<Literal>
+					<ID>Command</ID>
+					<ToolTip>Command name</ToolTip>
+					<Default>Name</Default>
+				</Literal>
+			</Declarations>
+			<Imports>
+				<Import>
+					<Namespace>Aeon.WindowsClient</Namespace>
+				</Import>
+			</Imports>
+		</Snippet>
+	</CodeSnippet>
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>Trof Command prop with t</Title>
+			<Shortcut>cmdt</Shortcut>
+		</Header>
+		<Snippet>
+			<Code Language="CSharp">
+				<![CDATA[	public TrofCommand<$Type$> $Command$ => _cmd$Command$ ??= new TrofCommand<$Type$>(async arg => {
+
+	}, arg => true);
+	private TrofCommand<$Type$>? _cmd$Command$ = null;]]>
+			</Code>
+			<Declarations>
+				<Literal>
+					<ID>Command</ID>
+					<ToolTip>Command name</ToolTip>
+					<Default>Name</Default>
+				</Literal>
+				<Literal>
+					<ID>Type</ID>
+					<ToolTip>Recieved argument type</ToolTip>
+					<Default>string</Default>
+				</Literal>
+			</Declarations>
+			<Imports>
+				<Import>
+					<Namespace>Aeon.WindowsClient</Namespace>
+				</Import>
+			</Imports>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

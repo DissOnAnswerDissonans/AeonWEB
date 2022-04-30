@@ -26,4 +26,9 @@ namespace Aeon.Base
 
 		public static TokenResultVM Error(params string[] errors) => new TokenResultVM() { Errors = errors };
 	}
+
+	public class AccountInfo
+	{
+		public string NickName { get; set; }
+	}
 }

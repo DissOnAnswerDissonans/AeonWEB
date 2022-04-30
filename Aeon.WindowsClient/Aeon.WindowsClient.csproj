@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aeon.Base\Aeon.Base.csproj" />
+    <ProjectReference Include="..\AeonServer\AeonServer.csproj" />
   </ItemGroup>
 
 </Project>
