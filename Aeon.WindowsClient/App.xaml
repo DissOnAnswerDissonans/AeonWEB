@@ -17,7 +17,7 @@
     <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey=BaseText}"/>
     <Style TargetType="TextBox" BasedOn="{StaticResource ResourceKey=BaseText}"/>
     <Style TargetType="PasswordBox" BasedOn="{StaticResource ResourceKey=BaseText}"/>
-    
+
     <sys:Double x:Key="Width">800</sys:Double>
     <sys:Double x:Key="Height">600</sys:Double>
     

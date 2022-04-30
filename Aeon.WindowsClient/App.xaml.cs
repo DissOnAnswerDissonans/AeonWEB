@@ -43,10 +43,18 @@ public partial class App : Application
 		SwitchPage<RoomList>();
 
 		AddAeonEvent(RefreshRoomData);
+		AddAeonEvent(UpdSingleRoomInList);
 	}
 
-	void SwitchPage<T>() where T : Page, new()
+	internal async Task Disconnect()
 	{
+		SwitchPage<Login>();
+		await Aeon.StopAsync();
+	}
+
+	private void SwitchPage<T>() where T : Page, new()
+	{
+		(Window.Content as IDisposable)?.Dispose();
 		Window.Content = new T();
 	}
 
@@ -56,9 +64,10 @@ public partial class App : Application
 	static async internal Task CallAeon(string method, object obj) => await Aeon.SendAsync(method, obj);
 
 	public event Action<RoomFullData> RefreshRoomData = data => { };
+	public event Action<RoomShortData>? UpdSingleRoomInList;
 
 
-	private void AddAeonEvent<T>(Action<T> action, [CallerArgumentExpression("action")] string method = "")
+	private void AddAeonEvent<T>(Action<T>? action, [CallerArgumentExpression("action")] string method = "")
 	{
 		Debug.WriteLine($"---- Action {method} added ----");
 		Aeon.On<T>(method, arg => Dispatcher.Invoke(() => action?.Invoke(arg)));

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Aeon.Base;
+using Aeon.WindowsClient.ViewModels;
+using AeonServer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Aeon.WindowsClient.ViewModels.RoomListVM;
 
 namespace Aeon.WindowsClient.Views;
 /// <summary>
@@ -19,14 +23,40 @@ namespace Aeon.WindowsClient.Views;
 /// </summary>
 public partial class RoomList : Page
 {
+	ViewModels.RoomListVM VM { get; }
 	public RoomList()
 	{
 		InitializeComponent();
+		App.Inst.RefreshRoomData += RefreshRoom;
+		App.Inst.UpdSingleRoomInList += UpdSingleRoom;
+		VM = (ViewModels.RoomListVM) DataContext;
+		VM.Refresh.Execute();
+	}
+
+	public void Dispose()
+	{
+		App.Inst.RefreshRoomData -= RefreshRoom;
+		App.Inst.UpdSingleRoomInList -= UpdSingleRoom;
+	}
+
+	private void RefreshRoom(RoomFullData room)
+	{
+		VM.ActiveRoom = room;
+		//VM.Refresh.Execute();
+	}
+
+	private void UpdSingleRoom(RoomShortData obj)
+	{
+		RoomVM? room = VM.Rooms.Where(r => r.Data.RoomName == obj.RoomName).FirstOrDefault();
+		if (room is null)
+			VM.Rooms.Add(new RoomVM(obj) { IsSelected = VM.ActiveRoomName == obj.RoomName });
+		else
+			VM.Rooms[VM.Rooms.IndexOf(room)] = new RoomVM(obj) { IsSelected = VM.ActiveRoomName == obj.RoomName };
 	}
 
 	private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if (e.AddedItems.Count > 0)
-			(DataContext as ViewModels.RoomsVM)?.Join.Execute(e.AddedItems[0]);
+			(DataContext as ViewModels.RoomListVM)?.Join.Execute((e.AddedItems[0] as RoomVM)!.Data);
 	}
 }

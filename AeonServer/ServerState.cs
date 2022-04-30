@@ -4,41 +4,49 @@ public class ServerState
 {
 	internal int Number { get; set; }
 	internal Dictionary<string, Room> Rooms { get; } = new();
-
-	internal Dictionary<string, Room?> Users { get; } = new();
+	internal Dictionary<string, Room.Player> Players { get; } = new();
 
 	internal bool Connected(string user)
 	{
 		if (user is null) return false;
-		Users.Add(user, null);
+		Players.Add(user, new Room.Player(user));
 		return true;
 	}
 
 	internal bool Disconnected(string user)
 	{
 		if (user is null) return false;
-		Users.Remove(user);
+		LeaveRoom(user);
+		Players.Remove(user);
 		return true;
 	}
 
 	internal void CreateRoom(string roomName, string? user)
 	{
-		var room = new Room(roomName, user);
+		var room = new Room(roomName);
 		Rooms.Add(roomName, room);
-		if (user != null) Users[user] = room;
+		if (user == null) return;
+		room.AddPlayer(Players[user]);
 	}
 
-	internal void JoinRoom(string roomName, string user)
+	internal bool JoinRoom(string roomName, string user)
 	{
-		var room = Rooms[roomName];
-		room.Players.Add(user);
-		Users[user] = room;
+		Room? room = Rooms[roomName];
+		if (room == null || room.Status != Aeon.Base.RoomStatus.Open) return false;
+		room.AddPlayer(Players[user]);
+		return true;
 	}
 
 	internal void LeaveRoom(string user)
 	{
-		Users[user]?.Observers.Remove(user);
-		Users[user]?.Players.Remove(user);
-		Users[user] = null;
+		Players[user].Room?.RemovePlayer(Players[user]);
+	}
+
+	internal void DisposeRoom(string roomName)
+	{
+		Room? room = Rooms[roomName];
+		if (room is null) return;
+		room.Players.ForEach(p => p.Room = null);
+		Rooms.Remove(roomName);
 	}
 }

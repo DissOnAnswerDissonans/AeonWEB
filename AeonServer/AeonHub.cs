@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Aeon.Base;
+using System.Diagnostics;
 
 namespace AeonServer;
 
@@ -11,6 +12,8 @@ public class AeonHub : Hub//<AeonHub.IClient>
 	public AeonHub(ServerState state) => _state = state;
 
 	private string UserName => Context.User?.Identity?.Name!;
+	private string? UserRoomName => UserRoom?.Name;
+	private Room? UserRoom => _state.Players[UserName].Room;
 
 	public override Task OnConnectedAsync()
 	{
@@ -19,12 +22,16 @@ public class AeonHub : Hub//<AeonHub.IClient>
 		return base.OnConnectedAsync();
 	}
 
-	public override Task OnDisconnectedAsync(Exception? exception)
+	public override async Task OnDisconnectedAsync(Exception? exception)
 	{
-		LeaveRoom().Wait();
+		var name = UserRoomName;
 		_state.Number--;
 		_state.Disconnected(UserName);
-		return base.OnDisconnectedAsync(exception);
+		if (name is not null) {
+			await NotifyRoom(name);
+			await UpdateRoomInfo(name);
+		}
+		await Task.FromResult(base.OnDisconnectedAsync(exception));
 	}
 
 	public async Task<AccountInfo> GetAccountInfo()
@@ -42,39 +49,56 @@ public class AeonHub : Hub//<AeonHub.IClient>
 
 	public async Task JoinRoom(string roomName)
 	{
-		await Groups.AddToGroupAsync(Context.ConnectionId, $"ROOM_{roomName}");
-		_state.JoinRoom(roomName, UserName);
-		await NotifyRoom(roomName);
-		return;
+		if (_state.JoinRoom(roomName, UserName)) {
+			await Groups.AddToGroupAsync(Context.ConnectionId, $"ROOM_{roomName}");
+			await NotifyRoom(roomName);
+			await UpdateRoomInfo(roomName);
+		} else {
+			await GetRoomsList();
+		}
 	}
 
 	public async Task LeaveRoom()
 	{
-		var roomName = _state.Users[UserName]?.Name;
-		if (roomName is null) return;
-		await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"ROOM_{roomName}");
+		if (UserRoomName is null) return;
+		var temp = UserRoomName;
+		await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"ROOM_{UserRoomName}");
 		_state.LeaveRoom(UserName);
 		await Clients.Caller.SendAsync("RefreshRoomData", null);
-		await NotifyRoom(roomName);
+		await NotifyRoom(temp);
+		await UpdateRoomInfo(temp);
 		return;
 	}
 
-	public async Task<RoomShortData[]> GetRoomsList() 
-		=> await Task.FromResult(_state.Rooms.Select(r => new RoomShortData {
-			RoomName = r.Key, 
-			PlayersCount = r.Value.Players.Count, 
-			MaxPlayers = null 
-		}).ToArray());
+	public async Task ReadyCheck()
+	{
+		if (UserRoom is null) return;
+		_state.Players[UserName].Data.IsReady = !_state.Players[UserName].Data.IsReady;
+		if (UserRoom.Players.All(p => p.Data.IsReady)) {	
+			_ = UserRoom.SetCountdown(10, SendToAeon);
+		} else {
+			UserRoom.ResetCountdown();
+		}
+		await UpdateRoomInfo(UserRoomName!);
+		await NotifyRoom(UserRoomName!);
+	}
 
-	public async Task<string[]> GetPlayersList(string room)
-		=> await Task.FromResult(_state.Rooms[room].Players.ToArray());
+	public async Task<RoomShortData[]> GetRoomsList()
+		=> await Task.FromResult(_state.Rooms.Select(r => r.Value.ToShortData()).ToArray());
+
+	public async Task<PlayerData[]> GetPlayersList(string room)
+		=> await Task.FromResult(_state.Rooms[room].Players.Select(p => p.Data).ToArray());
 
 	public async Task NotifyRoom(string room) =>
-		await Clients.Group($"ROOM_{room}").SendAsync("RefreshRoomData", new RoomFullData {
-			RoomName = room,
-			Players = _state.Rooms[room].Players,
-			MaxPlayers = null
-		});
+		await Clients.Group($"ROOM_{room}").SendAsync("RefreshRoomData", _state.Rooms[room].ToFullData());
+
+	public async Task UpdateRoomInfo(string room)
+		=> await Clients.All.SendAsync("UpdSingleRoomInList", _state.Rooms[room].ToShortData());
+
+	public void SendToAeon()
+	{
+		Debug.WriteLine("ВСЁ");
+	}
 
 	//public interface IClient
 	//{
