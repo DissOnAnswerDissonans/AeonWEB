@@ -4,12 +4,13 @@ public class ServerState
 {
 	internal int Number { get; set; }
 	internal Dictionary<string, Room> Rooms { get; } = new();
-	internal Dictionary<string, Room.Player> Players { get; } = new();
+	internal Dictionary<string, Player> Players { get; } = new();
+	internal Dictionary<string, GameState> Games { get; } = new();
 
 	internal bool Connected(string user)
 	{
 		if (user is null) return false;
-		Players.Add(user, new Room.Player(user));
+		Players.Add(user, new Player(user));
 		return true;
 	}
 
@@ -32,7 +33,7 @@ public class ServerState
 	internal bool JoinRoom(string roomName, string user)
 	{
 		Room? room = Rooms[roomName];
-		if (room == null || room.Status != Aeon.Base.RoomStatus.Open) return false;
+		if (room == null || room.Status != RoomStatus.Open) return false;
 		room.AddPlayer(Players[user]);
 		return true;
 	}
@@ -48,5 +49,12 @@ public class ServerState
 		if (room is null) return;
 		room.Players.ForEach(p => p.Room = null);
 		Rooms.Remove(roomName);
+	}
+
+	internal void StartGame(string roomName)
+	{
+		Room? room = Rooms[roomName];
+		if (room is null) return;
+		Games.Add(roomName, new GameState(room));
 	}
 }

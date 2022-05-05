@@ -15,7 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static Aeon.WindowsClient.ViewModels.RoomListVM;
 
 namespace Aeon.WindowsClient.Views;
 /// <summary>
@@ -23,26 +22,21 @@ namespace Aeon.WindowsClient.Views;
 /// </summary>
 public partial class RoomList : Page
 {
-	ViewModels.RoomListVM VM { get; }
+	RoomListVM VM { get; }
 	public RoomList()
 	{
 		InitializeComponent();
-		App.Inst.RefreshRoomData += RefreshRoom;
-		App.Inst.UpdSingleRoomInList += UpdSingleRoom;
-		VM = (ViewModels.RoomListVM) DataContext;
-		VM.Refresh.Execute();
-	}
 
-	public void Dispose()
-	{
-		App.Inst.RefreshRoomData -= RefreshRoom;
-		App.Inst.UpdSingleRoomInList -= UpdSingleRoom;
+		App.Lobby.RefreshRoomData.Subscribe(RefreshRoom);
+		App.Lobby.UpdSingleRoomInList.Subscribe(UpdSingleRoom);
+
+		VM = (RoomListVM) DataContext;
+		VM.Refresh.Execute();
 	}
 
 	private void RefreshRoom(RoomFullData room)
 	{
 		VM.ActiveRoom = room;
-		//VM.Refresh.Execute();
 	}
 
 	private void UpdSingleRoom(RoomShortData obj)
@@ -57,6 +51,6 @@ public partial class RoomList : Page
 	private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if (e.AddedItems.Count > 0)
-			(DataContext as ViewModels.RoomListVM)?.Join.Execute((e.AddedItems[0] as RoomVM)!.Data);
+			(DataContext as RoomListVM)?.Join.Execute((e.AddedItems[0] as RoomVM)!.Data);
 	}
 }

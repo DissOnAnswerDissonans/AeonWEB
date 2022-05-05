@@ -7,13 +7,12 @@ public class Room
 {
 	public string Name { get; }
 	public List<Player> Players { get; } = new();
+	public int NeedPlayers { get; private set; } = 2;
 	public int? RoomSize { get; private set; } = 2;
 	public RoomStatus Status { get; private set; } = RoomStatus.Open;
 
 	private DateTimeOffset? _timer = null;
 	private CancellationTokenSource? _cts = null;
-
-	public GameState? GameState { get; }
 
 	public bool IsFull => Players.Count >= RoomSize;
 
@@ -43,14 +42,14 @@ public class Room
 		return true;
 	}
 
-	internal async Task SetCountdown(double seconds, Action? action)
+	internal async Task SetCountdown(double seconds, Action<Room>? action)
 	{
 		Status |= RoomStatus.Countdown;
 		_cts = new CancellationTokenSource();
 		_timer = DateTimeOffset.UtcNow.AddSeconds(seconds);
 		await Task.Delay(TimeSpan.FromSeconds(seconds), _cts.Token);
 		_timer = null;
-		if (!_cts.IsCancellationRequested) action?.Invoke();
+		if (!_cts.IsCancellationRequested) action?.Invoke(this);
 		_cts.Dispose();
 		_cts = null;
 	}
@@ -59,25 +58,16 @@ public class Room
 		Status &= ~RoomStatus.Countdown;
 		_timer = null;
 		_cts?.Cancel();
-	} 
-
-	public class Player
-	{
-		public Room? Room { get; internal set; }
-		public PlayerData Data { get; internal set; }
-		public Player (string nickname)
-		{
-			Room = null;
-			Data = new PlayerData { PlayerName = nickname, IsObserver = false, IsReady = false };
-		}
 	}
 
+	internal void SetInGame() => Status |= RoomStatus.InGame;
+
 	internal RoomShortData ToShortData() => new() { 
-		RoomName = Name, PlayersCount = Players.Count, MaxPlayers = RoomSize, Status = Status
+		RoomName = Name, PlayersCount = Players.Count, MinPlayers = NeedPlayers, MaxPlayers = RoomSize, Status = Status
 	};
 
 	internal RoomFullData ToFullData() => new() {
-		RoomName = Name, Players = Players.Select(p => p.Data).ToList(), 
-		MaxPlayers = RoomSize, Status = Status, Countdown = _timer
+		RoomName = Name, Players = Players.Select(p => p.Data).ToList(), PlayersCount = Players.Count,
+		MinPlayers = NeedPlayers, MaxPlayers = RoomSize, Status = Status, Countdown = _timer
 	};
 }

@@ -1,4 +1,7 @@
+global using Aeon.Base;
 using AeonServer;
+using AeonServer.Services;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -39,6 +42,7 @@ srv.AddSwaggerGen();
 
 srv.AddCors();
 srv.AddSingleton<ServerState>();
+srv.AddSingleton<HeroesProvider>();
 srv.AddSignalR();
 
 var app = builder.Build();
@@ -60,10 +64,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.MapGet("/", () => "Hello World!");
 app.MapControllers();
-app.MapHub<AeonHub>("/aeon");
 
+app.MapHub<AeonGeneralHub>("/aeon");
+app.MapHub<AeonLobbyHub>("/aeon/lobby");
+app.MapHub<AeonGameHub>("/aeon/game");
 
 app.Run();
 

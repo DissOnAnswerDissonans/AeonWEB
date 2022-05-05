@@ -9,7 +9,7 @@ public class TrofCommand : ICommand
 {
 	private Action _execute;
 	private Func<bool>? _canExecute;
-	public event EventHandler CanExecuteChanged {
+	public event EventHandler? CanExecuteChanged {
 		add { CommandManager.RequerySuggested += value; }
 		remove { CommandManager.RequerySuggested -= value; }
 	}
@@ -23,14 +23,13 @@ public class TrofCommand : ICommand
 	public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
 	public void Execute(object? parameter) => _execute.Invoke();
 	public void Execute() => _execute.Invoke();
-	//public void Update() => CanExecuteChanged?.Invoke(this, new());
 }
 
 public class TrofCommand2 : ICommand
 {
 	private Action<object> _execute;
 	private Func<object, bool>? _canExecute;
-	public event EventHandler CanExecuteChanged {
+	public event EventHandler? CanExecuteChanged {
 		add { CommandManager.RequerySuggested += value; }
 		remove { CommandManager.RequerySuggested -= value; }
 	}
@@ -41,8 +40,8 @@ public class TrofCommand2 : ICommand
 		this._canExecute = canExecute;
 	}
 
-	public bool CanExecute(object parameter) => _canExecute?.Invoke(parameter) ?? true;
-	public void Execute(object parameter) => _execute.Invoke(parameter);
+	public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter!) ?? true;
+	public void Execute(object? parameter) => _execute.Invoke(parameter!);
 	//public void Update() => CanExecuteChanged?.Invoke(this, new());
 }
 
@@ -50,7 +49,7 @@ public class TrofCommand<T> : ICommand
 {
 	private Action<T> _execute;
 	private Func<T, bool>? _canExecute;
-	public event EventHandler CanExecuteChanged {
+	public event EventHandler? CanExecuteChanged {
 		add { CommandManager.RequerySuggested += value; }
 		remove { CommandManager.RequerySuggested -= value; }
 	}

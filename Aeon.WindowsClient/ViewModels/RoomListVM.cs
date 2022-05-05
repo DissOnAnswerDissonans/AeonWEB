@@ -24,6 +24,7 @@ internal class RoomListVM : INotifyPropertyChanged
 	public RoomFullData? ActiveRoom { get; set; }
 
 	public bool NotInRoom => ActiveRoomName is null;
+	public bool IsReady => ActiveRoom?.Players.Where(p => p.PlayerName == PlayerName).FirstOrDefault()?.IsReady ?? false;
 
 	public string NewRoomName { get; set; } = "";
 
@@ -32,38 +33,38 @@ internal class RoomListVM : INotifyPropertyChanged
 	public string ReadyText => ActiveRoom?.Countdown?.ToString() ?? "Ready";
 
 	public TrofCommand Refresh => _cmdRefresh ??= new TrofCommand(async () => {
-		var rooms = await App.RequestAeon<RoomShortData[]>("GetRoomsList");
+		var rooms = await App.Lobby.GetRoomsList();
 		Rooms = new(rooms.Select(r => new RoomVM(r) { IsSelected = ActiveRoomName == r.RoomName }));
 	}, () => true);
 	private TrofCommand? _cmdRefresh = null;
 
 	public TrofCommand NewRoom => _cmdNewRoom ??= new TrofCommand(async () => {
 		if (string.IsNullOrEmpty(NewRoomName)) return;
-		await App.CallAeon("CreateRoom", NewRoomName);
+		await App.Lobby.CreateRoom(NewRoomName);
 	}, () => NotInRoom);
 	private TrofCommand? _cmdNewRoom = null;
 
 	public TrofCommand<RoomShortData> Join => _cmdJoin ??= new TrofCommand<RoomShortData>(async arg => {
 		if (NotInRoom)
-			await App.CallAeon("JoinRoom", arg.RoomName);
+			await App.Lobby.JoinRoom(arg.RoomName);
 		NewRoomName = ActiveRoomName!;
 	}, arg => NotInRoom);
 	private TrofCommand<RoomShortData>? _cmdJoin = null;
 
 	public TrofCommand Leave => _cmdLeave ??= new TrofCommand(async () => {
-		await App.CallAeon("LeaveRoom");
+		await App.Lobby.LeaveRoom();
 		NewRoomName = "";
-	}, () => !NotInRoom);
+	}, () => !NotInRoom && !IsReady);
 	private TrofCommand? _cmdLeave = null;
 
 	public TrofCommand Disconnect => _cmdDisconnect ??= new TrofCommand(async () => {
 		await App.Inst.Disconnect();
-	}, () => true);
+	}, () => !IsReady);
 	private TrofCommand? _cmdDisconnect = null;
 
 	public TrofCommand Ready => _cmdReady ??= new TrofCommand(async () => {
-		await App.CallAeon("ReadyCheck");
-	}, () => true);
+		await App.Lobby.ReadyCheck();
+	}, () => !NotInRoom);
 	private TrofCommand? _cmdReady = null;
 
 

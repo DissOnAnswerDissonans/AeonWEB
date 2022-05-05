@@ -1,92 +1,86 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Aeon.Core
+namespace Aeon.Core;
+
+public class Battle
 {
-	public interface IBattle
+	private readonly IBattler _h1;
+	private readonly IBattler _h2;
+	private readonly ILogger _logger;
+
+	public Battle(IBattler battler1, IBattler battler2, ILogger logger = null)
 	{
-		public interface IBattlersProv
-		{
-			IEnumerable<IBattler> GetBattlers();
-		}
-
-		public interface ILogger
-		{
-			void LogBattlersState(IBattler battler1, IBattler battler2, LogType logType);
-
-			void LogDamage(Damage dmg1to2, Damage dmg2to1);
-		}
-
-		public enum LogType
-		{
-			InitState,
-			AfterDamage,
-			AfterHealing,
-			AfterBattle
-		}
-
-		/// <summary>
-		/// Запуск драки
-		/// </summary>
-		/// <returns>Индекс победителя (1, 2…)</returns>
-		public int Start();
+		_h1 = battler1;
+		_h2 = battler2;
+		_logger = logger;
 	}
 
-	public class Battle : IBattle
+	public int Rounds { get; private set; } = 0;
+
+	public int Winner { get; private set; } = 0;
+
+	public IEnumerator<BattleState> GetEnumerator()
 	{
-		private readonly IBattler _h1;
-		private readonly IBattler _h2;
-		private readonly IBattle.ILogger _logger;
+		_h1.OnBattleStart(_h2);
+		_h2.OnBattleStart(_h1);
 
-		public Battle(IBattle.IBattlersProv provider, IBattle.ILogger logger = null)
-		{
-			var list = provider.GetBattlers().ToList();
-			_h1 = list[0];
-			_h2 = list[1];
-			_logger = logger;
+		const int MAX_ROUNDS = 50;
+
+		yield return Log(TurnType.InitState);
+
+		while (_h1.IsAlive && _h2.IsAlive && Rounds < MAX_ROUNDS) {
+			++Rounds;
+
+			Damage dmg1to2 = _h1.GetDamageTo(_h2);
+			Damage dmg2to1 = _h2.GetDamageTo(_h1);
+
+			Damage received1 = _h1.ReceiveDamage(dmg2to1);
+			Damage received2 = _h2.ReceiveDamage(dmg1to2);
+
+			_logger?.LogDamage(received2, received1);
+			yield return Log(TurnType.AfterDamage);
+
+			if (!(_h1.IsAlive && _h2.IsAlive)) break;
+
+			_h1.AfterHit(received1, received2);
+			_h2.AfterHit(received2, received1);
+
+			yield return Log(TurnType.AfterHealing);
 		}
 
-		public int Rounds { get; private set; } = 0;
+		Winner = _h1.IsAlive ? 1 : _h2.IsAlive ? 2 : 0;
 
-		public int Winner { get; private set; } = 0;
+		_h1.AfterBattle(_h2, Winner == 1);
+		_h2.AfterBattle(_h1, Winner == 2);
 
-		public int Start()
-		{
-			_h1.OnBattleStart(_h2);
-			_h2.OnBattleStart(_h1);
+		yield return Log(TurnType.AfterBattle);
+		yield break;
+	}
 
-			const int MAX_ROUNDS = 50;
+	BattleState Log(TurnType turnType)
+	{
+		_logger?.LogBattlersState(_h1, _h2, turnType);
+		return new BattleState {
+			TurnNumber = Rounds, TurnType = turnType, Winner = Winner,
+			Battlers = new[] { _h1, _h2 }
+		};
+	}
 
-			_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.InitState);
+	public class BattleState
+	{
+		public int TurnNumber { get; set; }
+		public TurnType TurnType { get; set; }
+		public IBattler[] Battlers { get; set; }
+		public int Winner { get; set; } = -1;
+	}
 
-			while (_h1.IsAlive && _h2.IsAlive && Rounds < MAX_ROUNDS) {
-				++Rounds;
+	public enum TurnType { InitState, AfterDamage, AfterHealing, AfterBattle }
 
-				Damage dmg1to2 = _h1.GetDamageTo(_h2);
-				Damage dmg2to1 = _h2.GetDamageTo(_h1);
+	public interface ILogger
+	{
+		void LogBattlersState(IBattler battler1, IBattler battler2, TurnType logType);
 
-				Damage received1 = _h1.ReceiveDamage(dmg2to1);
-				Damage received2 = _h2.ReceiveDamage(dmg1to2);
-
-				_logger?.LogDamage(received2, received1);
-				_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterDamage);
-
-				if (!(_h1.IsAlive && _h2.IsAlive)) break;
-
-				_h1.AfterHit(received1, received2);
-				_h2.AfterHit(received2, received1);
-
-				_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterHealing);
-			}
-
-			Winner = _h1.IsAlive ? 1 : _h2.IsAlive ? 2 : 0;
-
-			_h1.AfterBattle(_h2, Winner == 1);
-			_h2.AfterBattle(_h1, Winner == 2);
-
-			_logger?.LogBattlersState(_h1, _h2, IBattle.LogType.AfterBattle);
-
-			return Rounds == MAX_ROUNDS ? 0 : Winner;
-		}
+		void LogDamage(Damage dmg1to2, Damage dmg2to1);
 	}
 }

@@ -2,41 +2,28 @@
 using Microsoft.AspNetCore.SignalR;
 using Aeon.Base;
 using System.Diagnostics;
+using Aeon.Core;
 
 namespace AeonServer;
 
+
 [Authorize]
-public class AeonHub : Hub//<AeonHub.IClient>
+public class AeonLobbyHub : Hub
 {
 	private readonly ServerState _state;
-	public AeonHub(ServerState state) => _state = state;
+	public AeonLobbyHub(ServerState state) => _state = state;
 
-	private string UserName => Context.User?.Identity?.Name!;
+	public string UserName => Context.User?.Identity?.Name!;
 	private string? UserRoomName => UserRoom?.Name;
 	private Room? UserRoom => _state.Players[UserName].Room;
 
-	public override Task OnConnectedAsync()
-	{
-		_state.Number++;
-		_state.Connected(UserName);
-		return base.OnConnectedAsync();
-	}
-
 	public override async Task OnDisconnectedAsync(Exception? exception)
 	{
-		var name = UserRoomName;
-		_state.Number--;
-		_state.Disconnected(UserName);
-		if (name is not null) {
-			await NotifyRoom(name);
-			await UpdateRoomInfo(name);
+		if (UserRoomName is not null && !_state.Rooms[UserRoomName].Status.HasFlag(RoomStatus.InGame)) {
+			await NotifyRoom(UserRoomName);
+			await UpdateRoomInfo(UserRoomName);
 		}
-		await Task.FromResult(base.OnDisconnectedAsync(exception));
-	}
-
-	public async Task<AccountInfo> GetAccountInfo()
-	{
-		return await Task.FromResult(new AccountInfo { NickName = UserName });
+		await base.OnDisconnectedAsync(exception);
 	}
 
 	public async Task CreateRoom(string roomName)
@@ -75,7 +62,7 @@ public class AeonHub : Hub//<AeonHub.IClient>
 		if (UserRoom is null) return;
 		_state.Players[UserName].Data.IsReady = !_state.Players[UserName].Data.IsReady;
 		if (UserRoom.Players.All(p => p.Data.IsReady)) {	
-			_ = UserRoom.SetCountdown(10, SendToAeon);
+			_ = UserRoom.SetCountdown(10, async r => await SendToAeon(r));
 		} else {
 			UserRoom.ResetCountdown();
 		}
@@ -89,21 +76,19 @@ public class AeonHub : Hub//<AeonHub.IClient>
 	public async Task<PlayerData[]> GetPlayersList(string room)
 		=> await Task.FromResult(_state.Rooms[room].Players.Select(p => p.Data).ToArray());
 
-	public async Task NotifyRoom(string room) =>
+
+
+	private async Task NotifyRoom(string room) =>
 		await Clients.Group($"ROOM_{room}").SendAsync("RefreshRoomData", _state.Rooms[room].ToFullData());
 
-	public async Task UpdateRoomInfo(string room)
+	private async Task UpdateRoomInfo(string room)
 		=> await Clients.All.SendAsync("UpdSingleRoomInList", _state.Rooms[room].ToShortData());
 
-	public void SendToAeon()
+	private async Task SendToAeon(Room room)
 	{
-		Debug.WriteLine("ВСЁ");
+		Debug.WriteLine($"ЗАПУСК в комнате {room.Name}");
+		room.SetInGame();
+		_state.StartGame(room.Name);
+		await Clients.Group($"ROOM_{room}").SendAsync("StartGame", room.ToFullData());
 	}
-
-	//public interface IClient
-	//{
-	//	Task RefreshRoom(RoomFullData roomData);
-	//	Task SetToRoom(string? room);
-	//}
 }
-

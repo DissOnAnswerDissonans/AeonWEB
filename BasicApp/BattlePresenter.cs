@@ -12,7 +12,7 @@ namespace Aeon.BasicApp
 		private struct LogPT
 		{
 			internal int Num { get; init; }
-			internal IBattle.LogType LogType { get; init; }
+			internal IBattle.TurnType LogType { get; init; }
 			internal int CurrentHP1 { get; init; }
 			internal int CurrentHP2 { get; init; }
 			internal int MaxHP1 { get; init; }
@@ -78,25 +78,25 @@ namespace Aeon.BasicApp
 
 			foreach (LogPT log in _log) {
 				switch (log.LogType) {
-				case IBattle.LogType.InitState:
+				case IBattle.TurnType.InitState:
 					DrawBattlers();
 					UpdateBars(hb1, hb2, log);
 					break;
 
-				case IBattle.LogType.AfterDamage:
+				case IBattle.TurnType.AfterDamage:
 					DrawAttack();
 					UpdateLogZones(log1Zone, log2Zone, log);
 					UpdateBars(hb1, hb2, log);
 					Console.Beep(200, 200);
 					break;
 
-				case IBattle.LogType.AfterHealing:
+				case IBattle.TurnType.AfterHealing:
 					UpdateLogZones(log1Zone, log2Zone, log);
 					UpdateBars(hb1, hb2, log);
 					Console.Beep(400, 200);
 					break;
 
-				case IBattle.LogType.AfterBattle:
+				case IBattle.TurnType.AfterBattle:
 					DrawScore();
 					break;
 				}
@@ -121,7 +121,7 @@ namespace Aeon.BasicApp
 		{
 			ConsoleColor color1 = ConsoleColor.Green;
 			ConsoleColor color2 = ConsoleColor.Green;
-			if (log.LogType == IBattle.LogType.AfterDamage) {
+			if (log.LogType == IBattle.TurnType.AfterDamage) {
 				color1 = _damage[_round].dmg2to1.IsCrit ? ConsoleColor.DarkYellow : ConsoleColor.Red;
 				color2 = _damage[_round].dmg1to2.IsCrit ? ConsoleColor.DarkYellow : ConsoleColor.Red;
 				_round++;
@@ -137,7 +137,7 @@ namespace Aeon.BasicApp
 			zone2.Draw();
 		}
 
-		public void LogBattlersState(IBattler battler1, IBattler battler2, IBattle.LogType logType)
+		public void LogBattlersState(IBattler battler1, IBattler battler2, IBattle.TurnType logType)
 		{
 			_log.Add(new LogPT {
 				Num = _log.Count,

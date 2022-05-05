@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Aeon.Core
 {
-	public class Game : IBattle.IBattlersProv
+	public class Game
 	{
 		public enum WinCond { Undecided, First, Second, None = -1 }
 
@@ -22,15 +22,15 @@ namespace Aeon.Core
 			Player2 = pl2;
 		}
 
-		public int Battle(out Battle battle, in IBattle.ILogger logger)
+		async public IAsyncEnumerable<Battle.BattleState> Battle(Battle.ILogger logger)
 		{
-			battle = new Battle(this, logger);
-			int winner = battle.Start();
-			Player1.End(winner == 1);
-			Player2.End(winner == 2);
-			if (Player1.IsWinner) WinStatus = WinCond.First;
-			if (Player2.IsWinner) WinStatus = WinCond.Second;
-			return winner;
+			var battle = new Battle(Player1.Hero, Player2.Hero, logger);
+
+			foreach (Battle.BattleState state in battle) {
+				yield return state;
+				if (state.TurnType == Core.Battle.TurnType.AfterBattle) yield break;
+				await System.Threading.Tasks.Task.Delay(500);
+			}
 		}
 
 		public Hero GetHero(int playerID) => playerID switch {
@@ -38,12 +38,5 @@ namespace Aeon.Core
 			2 => Player2.Hero,
 			_ => throw new ArgumentException("", nameof(playerID))
 		};
-
-		public IEnumerable<IBattler> GetBattlers()
-		{
-			yield return Player1.Hero;
-			yield return Player2.Hero;
-			yield break;
-		}
 	}
 }
