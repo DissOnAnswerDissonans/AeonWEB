@@ -14,14 +14,16 @@ namespace Aeon.Heroes
 			protected override void AddOffer<T>(int amount, int cost, bool opt)
 			{
 				if (typeof(T) == typeof(Health))
-					base.AddOffer<T>((int) (amount * HEALTH_MULTIPLIER), cost, opt);
+					base.AddOffer<T>((int) (amount * healthMultiplier), cost, opt);
 				else
 					base.AddOffer<T>(amount, cost, opt);
 			}
 		}
 
-		private const decimal HEALTH_MULTIPLIER = 1.095m;
-		private readonly Stat _regenBonus = Stat.Make<Regen>(2);
+		private static decimal healthMultiplier = 1.095m;
+		private static int regenBonus = 2;
+
+		private readonly Stat _regenBonus = Stat.Make<Regen>(regenBonus);
 		private int _addedRegen;
 		public override string AbilityText => $"Нажрал +{_addedRegen} регенерации";
 

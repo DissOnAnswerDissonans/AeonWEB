@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Aeon.Core
 {
@@ -8,6 +9,8 @@ namespace Aeon.Core
 		private readonly Dictionary<StatType, Stat> _stats = new();
 		private readonly Dictionary<StatTypeDynamic, DynStat> _dynStats = new();
 		private readonly Dictionary<StatType, StatType> _overrides = new();
+
+		public IReadOnlyList<Stat> AllStats => _stats.Values.ToList();
 
 		public Stat this[StatType type] => _stats[type];
 

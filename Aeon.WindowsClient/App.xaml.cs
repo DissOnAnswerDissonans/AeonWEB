@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Reactive;
+using AeonServer.Models;
 
 namespace Aeon.WindowsClient;
 /// <summary>
@@ -25,6 +26,7 @@ public partial class App : Application
 
 	internal static AeonGeneral General { get; private set; } = null!;
 	internal static Lobby Lobby { get; private set; } = null!;
+	internal static Game Game { get; private set; } = null!;
 	
 
 	internal static AccountInfo Account { get; private set; } = null!;
@@ -33,6 +35,12 @@ public partial class App : Application
 	{
 		General = new(token, ServerUrl);
 		Lobby = new(token, ServerUrl);
+		Game = new(token, ServerUrl);
+
+		General.OnGameStart.Subscribe(async d => await Start(d));
+
+		Game.NewRoundStarted.Subscribe(async r => await NewRound(r));
+
 		await General.Connect();
 		await Lobby.Connect();
 
@@ -43,19 +51,46 @@ public partial class App : Application
 	internal async Task Disconnect()
 	{
 		SwitchPage<Login>();
+		await D();
+	}
+
+	private async Task D()
+	{
 		await General.Disconnect();
 		await Lobby.Disconnect();
 	}
 
-	private void SwitchPage<T>() where T : Page, new()
+	private async Task Start(RoomFullData data)
 	{
-		(Window.Content as IDisposable)?.Dispose();
-		Window.Content = new T();
+		await Game.Connect();
+		SwitchPage<HeroSelect>();
+		await Lobby.Disconnect();
+	}
+
+	private Task NewRound(RoundInfo r)
+	{
+		SwitchPage<ShopPage>(r);
+		return Task.CompletedTask;
+	}
+
+	private T SwitchPage<T>() where T : Page, new()
+	{
+		//(Window.Content as IDisposable)?.Dispose();
+		var window = new T();
+		Window.Content = window;
+		return window;
+	}
+
+	private T SwitchPage<T>(object data) where T : Page
+	{
+		var window = (T) Activator.CreateInstance(typeof(T), data)!;
+		Window.Content = window;
+		return window;
 	}
 
 	protected override void OnExit(ExitEventArgs e)
 	{
-		_ = Disconnect();
+		_ = D();
 		base.OnExit(e);
 	}
 }

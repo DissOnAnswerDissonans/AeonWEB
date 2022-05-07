@@ -11,4 +11,8 @@
     <Product>Aeon Core Model</Product>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Aeon.Base\Aeon.Base.csproj" />
+  </ItemGroup>
+
 </Project>

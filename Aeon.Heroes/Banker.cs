@@ -14,12 +14,12 @@ namespace Aeon.Heroes
 		private int _optNumber;
 		private int _totalPriceDrop;
 
-		private const int MAX_DROP = 50;
+		private static int maxDrop = 50;
 
 		public override bool TryBuyOffer(Offer offer)
 		{
 			if (!base.TryBuyOffer(offer)) return false;
-			if (offer.IsOpt && _totalPriceDrop < MAX_DROP) {
+			if (offer.IsOpt && _totalPriceDrop < maxDrop) {
 				int drop = ++_optNumber % 3 == 0 ? 2 : 1;
 				Shop.ModifyOffers(o => o.IsOpt, o => new Offer(o.Stat, o.Cost - drop, o.IsOpt));
 				_totalPriceDrop += drop;

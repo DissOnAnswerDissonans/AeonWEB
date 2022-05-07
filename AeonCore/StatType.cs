@@ -20,7 +20,7 @@ namespace Aeon.Core
 
 		private static readonly Dictionary<Type, StatType> _instances;
 
-		internal static T Instance<T>() where T : StatType, new()
+		public static T Instance<T>() where T : StatType, new()
 		{
 			if (_instances.TryGetValue(typeof(T), out StatType stat)) {
 				return (T) stat;
@@ -31,7 +31,7 @@ namespace Aeon.Core
 			};
 		}
 
-		public int ID { get; protected set; }
+		public string ID { get; protected set; }
 		public Func<int, IReadOnlyStats, decimal> Convertor { get; protected set; }
 		public int MinValue { get; protected set; }
 		public int MaxValue { get; protected set; }
@@ -83,7 +83,7 @@ namespace Aeon.Core
 	{
 		public override int TopLimit(IReadOnlyStats stats) => stats.ConvInt<Health>();
 
-		protected override void Init() => ID = 1;
+		protected override void Init() => ID = "HP";
 	}
 
 	/**
@@ -95,7 +95,7 @@ namespace Aeon.Core
 
 	public class Attack : StatType
 	{
-		protected override void Init() => ID = 2;
+		protected override void Init() => ID = "ATT";
 	}
 
 	/**
@@ -109,7 +109,7 @@ namespace Aeon.Core
 
 	public class Magic : StatType
 	{
-		protected override void Init() => ID = 3;
+		protected override void Init() => ID = "MAG";
 	}
 
 	/**
@@ -125,7 +125,7 @@ namespace Aeon.Core
 	{
 		protected override void Init()
 		{
-			ID = 4;
+			ID = "CHA";
 			Convertor = (a, context) => a / 100.0m;
 			MaxValue = 100;
 		}
@@ -145,7 +145,7 @@ namespace Aeon.Core
 	{
 		protected override void Init()
 		{
-			ID = 5;
+			ID = "CDM";
 			Convertor = (a, context) => a / 100.0m;
 		}
 	}
@@ -166,7 +166,7 @@ namespace Aeon.Core
 	{
 		protected override void Init()
 		{
-			ID = 6;
+			ID = "INC";
 			Convertor = (a, context) => 1 + a / 100.0m;
 		}
 
@@ -193,7 +193,7 @@ namespace Aeon.Core
 
 	public class Block : StatType
 	{
-		protected override void Init() => ID = 7;
+		protected override void Init() => ID = "BLK";
 	}
 
 	/**
@@ -211,7 +211,7 @@ namespace Aeon.Core
 
 		protected override void Init()
 		{
-			ID = 8;
+			ID = "ARM";
 			MaxValue = 300;
 			Convertor = (t, context) => COEFF * t / (1 + COEFF * (decimal) Math.Exp(0.9 * Math.Log(t)));
 		}
@@ -229,6 +229,6 @@ namespace Aeon.Core
 
 	public class Regen : StatType
 	{
-		protected override void Init() => ID = 9;
+		protected override void Init() => ID = "REG";
 	}
 }

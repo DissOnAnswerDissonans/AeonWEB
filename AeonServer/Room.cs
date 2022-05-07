@@ -14,6 +14,8 @@ public class Room
 	private DateTimeOffset? _timer = null;
 	private CancellationTokenSource? _cts = null;
 
+	public GameState? Game { get; private set; }
+
 	public bool IsFull => Players.Count >= RoomSize;
 
 	internal Room(string name)
@@ -60,7 +62,11 @@ public class Room
 		_cts?.Cancel();
 	}
 
-	internal void SetInGame() => Status |= RoomStatus.InGame;
+	internal void SetInGame(GameState game)
+	{
+		Status |= RoomStatus.InGame;
+		Game = game;
+	}
 
 	internal RoomShortData ToShortData() => new() { 
 		RoomName = Name, PlayersCount = Players.Count, MinPlayers = NeedPlayers, MaxPlayers = RoomSize, Status = Status

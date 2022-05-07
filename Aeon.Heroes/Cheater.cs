@@ -12,15 +12,15 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Cheater : Hero
 	{
-		private const decimal ATT_MULTIPLIER = 0.93m;
-		private const decimal FIRST_ATT_X = 2m;
+		private static decimal attMultiplier = 0.93m;
+		private static decimal firstAttX = 2m;
 
 		public class Attack : Core.Attack
 		{
 			protected override void Init()
 			{
 				base.Init();
-				Convertor = (a, context) => a * ATT_MULTIPLIER;
+				Convertor = (a, context) => a * attMultiplier;
 			}
 		}
 
@@ -30,11 +30,11 @@ namespace Aeon.Heroes
 		{
 			Damage d = base.GetDamageTo(enemy);
 			if (enemy.StatsRO.DynamicValue<Health>() == enemy.StatsRO.ConvInt<Health>()) {
-				d = new Damage { Instigator = d.Instigator, IsCrit = d.IsCrit, Magic = d.Magic, Phys = (int) (d.Phys * FIRST_ATT_X) };
+				d = new Damage { Instigator = d.Instigator, IsCrit = d.IsCrit, Magic = d.Magic, Phys = (int) (d.Phys * firstAttX) };
 			}
 			return d;
 		}
 
-		public override string AbilityText => $"Первый удар: {base.GetDamageTo(default).Phys * FIRST_ATT_X} физ. урона";
+		public override string AbilityText => $"Первый удар: {base.GetDamageTo(default).Phys * firstAttX} физ. урона";
 	}
 }

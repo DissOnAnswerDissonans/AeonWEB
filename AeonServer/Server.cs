@@ -1,4 +1,5 @@
 global using Aeon.Base;
+global using AeonServer.Models;
 using AeonServer;
 using AeonServer.Services;
 
@@ -42,7 +43,10 @@ srv.AddSwaggerGen();
 
 srv.AddCors();
 srv.AddSingleton<ServerState>();
+srv.AddSingleton<GameProvider>();
 srv.AddSingleton<HeroesProvider>();
+srv.AddSingleton<IUserIdProvider, TrofUserIdProvider>();
+srv.AddSingleton<IBalanceProvider, DefaultBalanceProvider>();
 srv.AddSignalR();
 
 var app = builder.Build();

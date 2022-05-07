@@ -14,14 +14,15 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Killer : Hero
 	{
-		private const decimal CONV_RATE = 0.15m;
-		private const int LVL_COEFF = 75;
+		private static decimal conversionRate = 0.15m;
+		private static int lvlCoeff = 75;
+		private static int attackBonus;
 
-		private readonly Stat _bonus = Stat.Make<Attack>(10);
+		private readonly Stat _bonus = Stat.Make<Attack>(attackBonus);
 		private int _totalDamage;
 		private int _abilityLevel;
 
-		private int NextLevel => LVL_COEFF * (_abilityLevel + 1) * (_abilityLevel + 2);
+		private int NextLevel => lvlCoeff * (_abilityLevel + 1) * (_abilityLevel + 2);
 
 		private void AddToDamage(int damage)
 		{
@@ -35,7 +36,7 @@ namespace Aeon.Heroes
 		public override Damage GetDamageTo(IBattler enemy)
 		{
 			Damage d = base.GetDamageTo(enemy);
-			int converted = (int)(d.Phys * CONV_RATE);
+			int converted = (int)(d.Phys * conversionRate);
 			return new Damage(d.Instigator, d.Phys - converted, d.Magic + converted, d.IsCrit);
 		}
 

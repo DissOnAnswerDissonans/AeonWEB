@@ -4,9 +4,9 @@ namespace Aeon.Heroes
 {
 	public class Trickster : Hero
 	{
-		private const decimal RESET_SALVAGE = 0.80m;
+		private static decimal resetSalvage = 0.80m;
 		private int _totalSpent;
-		private int ResetMoney => (int) (RESET_SALVAGE * _totalSpent);
+		private int ResetMoney => (int) (resetSalvage * _totalSpent);
 
 		public override bool TryBuyOffer(Offer offer)
 		{

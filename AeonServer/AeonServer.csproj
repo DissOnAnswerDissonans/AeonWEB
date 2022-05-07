@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aeon.Base\Aeon.Base.csproj" />
+    <ProjectReference Include="..\Aeon.Heroes\Aeon.Heroes.csproj" />
     <ProjectReference Include="..\AeonCore\AeonCore.csproj" />
   </ItemGroup>
 

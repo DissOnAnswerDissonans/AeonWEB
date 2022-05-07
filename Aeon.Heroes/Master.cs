@@ -12,8 +12,10 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Master : Hero
 	{
-		private decimal _vamp_coeff = 0.15m;
-		private const decimal VAMP_ADDER = 0.006m;
+		private static decimal vampCoeffStart;
+		private static decimal vampAdder;
+
+		private decimal _vamp_coeff = vampCoeffStart;
 
 		private int Vamp => (int) (StatsRO.Converted<Attack>() * _vamp_coeff);
 
@@ -26,7 +28,7 @@ namespace Aeon.Heroes
 		public override void AfterBattle(IBattler enemy, bool isWon)
 		{
 			base.AfterBattle(enemy, isWon);
-			_vamp_coeff += VAMP_ADDER;
+			_vamp_coeff += vampAdder;
 		}
 
 		public override string AbilityText => $"Вампиризм {_vamp_coeff:P} ({Vamp})";

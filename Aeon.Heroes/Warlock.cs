@@ -11,16 +11,16 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Warlock : Hero
 	{
-		private const int COST = 10;
-		private const int BONUS = 17;
+		private static int cost = 10;
+		private static int bonus = 17;
 
 		private bool _abilityUsed;
 
 		public override bool UseAbility()
 		{
-			if (_abilityUsed || Money < COST)
+			if (_abilityUsed || Money < cost)
 				return false;
-			Spend(COST);
+			Spend(cost);
 			_abilityUsed = true;
 			return true;
 		}
@@ -30,12 +30,12 @@ namespace Aeon.Heroes
 			base.AfterBattle(enemy, isWon);
 			if (_abilityUsed) {
 				_abilityUsed = false;
-				Wage(BONUS);
+				Wage(bonus);
 			}
 		}
 
 		public override string AbilityText => _abilityUsed
-			? $"Вы получите завтра ${BONUS}"
-			: $"Получить завтра ${BONUS} за ${COST}";
+			? $"Вы получите завтра ${bonus}"
+			: $"Получить завтра ${bonus} за ${cost}";
 	}
 }

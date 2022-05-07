@@ -14,14 +14,14 @@ namespace Aeon.Heroes
 	public class Rogue : Hero
 	{
 		private int _battle;
-		private const decimal ROGUE_HIT = .09m;
-		private const decimal ENEMY_HIT = .11m;
-		private decimal BattleBonus => 1 + .02m * _battle;
+		private static decimal rogueHit = .09m;
+		private static decimal enemyHit = .11m;
+		private static decimal battleBonus;
+		private decimal BattleBonus => 1 + battleBonus * _battle;
 
-		// HACK сделал на *, не на ^, отличий при малом кефе не очень много, СПРОСИТЬ!
-		private decimal RogueHitPerc => ROGUE_HIT / BattleBonus;
+		private decimal RogueHitPerc => rogueHit / BattleBonus;
 
-		private decimal EnemyHitPerc => ENEMY_HIT * BattleBonus;
+		private decimal EnemyHitPerc => enemyHit * BattleBonus;
 
 		public override Damage GetDamageTo(IBattler enemy) => base.GetDamageTo(enemy)
 			.ModMag(a => a + (int) (enemy.StatsRO.DynConverted<Health>() * EnemyHitPerc));

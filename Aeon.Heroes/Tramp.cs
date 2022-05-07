@@ -8,13 +8,13 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Tramp : Hero
 	{
-		private const decimal MONEY_B = 1.1m;
+		private static decimal moneyBeg = 1.1m;
 		private decimal _coc = 0;
 		private int _grabbed;
 
 		public override Damage ReceiveDamage(Damage damage)
 		{
-			_coc += MONEY_B;
+			_coc += moneyBeg;
 			int beg = (int) _coc;
 			Wage(beg);
 			_coc -= beg;

@@ -1,5 +1,5 @@
-﻿using Aeon.Core;
-using System.Reflection;
+﻿using System.Reflection;
+using Hero = Aeon.Core.Hero;
 
 namespace AeonServer.Services;
 
@@ -29,10 +29,14 @@ public class HeroesProvider
 	internal HeroInfo[] GetHeroesInfo()
 	{
 		var test = new HeroInfo[_names.Length];
-		for (int i = 0; i < _names.Length; i++) {
-			test[i] = new() { ID = i, Name = _names[i], AssemblyName = _types[_names[i]].Assembly.FullName };
-		}
+		for (int i = 0; i < _names.Length; i++) 
+			test[i] = GetHeroInfo(i)!;	
 		return test;
 	}
 
+	internal HeroInfo? GetHeroInfo(int? heroID) => !heroID.HasValue? null : new() { 
+		ID = heroID.Value, 
+		Name = _names[heroID.Value], 
+		AssemblyName = _types[_names[heroID.Value]].Assembly.GetName().Name 
+	};
 }

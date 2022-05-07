@@ -1,46 +1,55 @@
-﻿namespace AeonServer;
+﻿using Microsoft.AspNetCore.SignalR;
+
+namespace AeonServer;
 
 public class ServerState
 {
+	private readonly IHubContext<AeonGeneralHub, AeonGeneralHub.IClient> _generalHub;
+	private readonly Services.IBalanceProvider _balance;
+	public ServerState(IHubContext<AeonGeneralHub, AeonGeneralHub.IClient> hub, Services.IBalanceProvider balance)
+	{
+		_generalHub = hub; _balance = balance;
+	}
+
 	internal int Number { get; set; }
 	internal Dictionary<string, Room> Rooms { get; } = new();
-	internal Dictionary<string, Player> Players { get; } = new();
+	internal Dictionary<string, Player> IDtoPlayers { get; } = new();
 	internal Dictionary<string, GameState> Games { get; } = new();
 
-	internal bool Connected(string user)
+	internal bool Connected(string id, string user)
 	{
-		if (user is null) return false;
-		Players.Add(user, new Player(user));
+		if (id is null) return false;
+		IDtoPlayers.Add(id, new Player(id, user));
 		return true;
 	}
 
-	internal bool Disconnected(string user)
+	internal bool Disconnected(string id)
 	{
-		if (user is null) return false;
-		LeaveRoom(user);
-		Players.Remove(user);
+		if (id is null) return false;
+		LeaveRoom(id);
+		IDtoPlayers.Remove(id);
 		return true;
 	}
 
-	internal void CreateRoom(string roomName, string? user)
+	internal void CreateRoom(string roomName, string? id)
 	{
 		var room = new Room(roomName);
 		Rooms.Add(roomName, room);
-		if (user == null) return;
-		room.AddPlayer(Players[user]);
+		if (id == null) return;
+		room.AddPlayer(IDtoPlayers[id]);
 	}
 
-	internal bool JoinRoom(string roomName, string user)
+	internal bool JoinRoom(string roomName, string id)
 	{
 		Room? room = Rooms[roomName];
 		if (room == null || room.Status != RoomStatus.Open) return false;
-		room.AddPlayer(Players[user]);
+		room.AddPlayer(IDtoPlayers[id]);
 		return true;
 	}
 
-	internal void LeaveRoom(string user)
+	internal void LeaveRoom(string id)
 	{
-		Players[user].Room?.RemovePlayer(Players[user]);
+		IDtoPlayers[id].Room?.RemovePlayer(IDtoPlayers[id]);
 	}
 
 	internal void DisposeRoom(string roomName)
@@ -51,10 +60,14 @@ public class ServerState
 		Rooms.Remove(roomName);
 	}
 
-	internal void StartGame(string roomName)
+	internal async Task StartGame(string roomName)
 	{
 		Room? room = Rooms[roomName];
-		if (room is null) return;
-		Games.Add(roomName, new GameState(room));
+		if (room is null) throw new ArgumentException($"Room [{roomName}] not found", nameof(roomName));
+		var s = new GameState(room, new VanillaRules(), _balance);
+		Games.Add(roomName, s);
+		room.SetInGame(s);
+
+		await _generalHub.RoomClients(room).StartGame(room.ToFullData());
 	}
 }

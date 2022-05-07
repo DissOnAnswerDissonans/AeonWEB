@@ -32,15 +32,17 @@ namespace Aeon.Heroes
 		private int _mana;
 		private Mode _mode;
 
-		private const int MONEY_BURN = 2;
-		private const int MONEY_BURN_COST = 3;
+		private static int moneyBurn = 2;
+		private static int moneyBurnCost = 3;
 
-		private int MagHitAdder => (int) (StatsRO.Converted<Magic>() * MAG_HIT_BONUS);
-		private const decimal MAG_HIT_BONUS = 0.3m;
-		private const int MAG_HIT_COST = 4;
+		private static decimal magHitBonus = 0.3m;
+		private static int magHitCost = 4;
 
-		private const decimal HEALING_COEFF = 0.2m;
-		private const int HEALING_COST = 5;
+		private static decimal healingCoeff = 0.2m;
+		private static int healingCost = 5;
+
+		private int MagHitAdder => (int) (StatsRO.Converted<Magic>() * magHitBonus);
+
 
 		public override bool UseAbility()
 		{
@@ -50,9 +52,9 @@ namespace Aeon.Heroes
 
 		public override string AbilityText => _mode switch {
 			Mode.AbilityOff => $"M{_mana,-2}| Накопление",
-			Mode.MoneyBurn => $"M{_mana,-2}| Сжигание ${MONEY_BURN} ~ {MONEY_BURN_COST}м",
-			Mode.MagicHit => $"M{_mana,-2}| +{MAG_HIT_BONUS:P0} ({MagHitAdder}) МАГ ~ {MAG_HIT_COST}м",
-			Mode.Healing => $"M{_mana,-2}| +{HEALING_COEFF:P0} сбитого ЗДР ~ {HEALING_COST}м",
+			Mode.MoneyBurn => $"M{_mana,-2}| Сжигание ${moneyBurn} ~ {moneyBurnCost}м",
+			Mode.MagicHit => $"M{_mana,-2}| +{magHitBonus:P0} ({MagHitAdder}) МАГ ~ {magHitCost}м",
+			Mode.Healing => $"M{_mana,-2}| +{healingCoeff:P0} сбитого ЗДР ~ {healingCost}м",
 		};
 
 		public override Damage GetDamageTo(IBattler enemy)
@@ -65,21 +67,21 @@ namespace Aeon.Heroes
 				return d;
 
 			case Mode.MoneyBurn:
-				if (_mana < MONEY_BURN_COST) return d;
-				_mana -= MONEY_BURN_COST;
-				(enemy as Hero).Spend(MONEY_BURN);
+				if (_mana < moneyBurnCost) return d;
+				_mana -= moneyBurnCost;
+				(enemy as Hero).Spend(moneyBurn);
 				return d;
 
 			case Mode.MagicHit:
-				if (_mana < MAG_HIT_COST) return d;
-				_mana -= MAG_HIT_COST;
+				if (_mana < magHitCost) return d;
+				_mana -= magHitCost;
 				return d.ModMag(a => a + MagHitAdder);
 
 			case Mode.Healing:
-				if (_mana < HEALING_COST) return d;
-				_mana -= HEALING_COST;
+				if (_mana < healingCost) return d;
+				_mana -= healingCost;
 				Stats.ModifyDyn<Health>
-					((int) ((1 - StatsRO.DynConvInt<Health>() / StatsRO.ConvInt<Health>()) * HEALING_COEFF));
+					((int) ((1 - StatsRO.DynConvInt<Health>() / StatsRO.ConvInt<Health>()) * healingCoeff));
 				return d;
 
 			default: return d;

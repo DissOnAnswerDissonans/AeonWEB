@@ -1,0 +1,53 @@
+﻿<Page x:Class="Aeon.WindowsClient.Views.ShopPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Aeon.WindowsClient.Views"
+      xmlns:vm="clr-namespace:Aeon.WindowsClient.ViewModels"
+      mc:Ignorable="d" 
+      d:DesignHeight="{StaticResource Height}" d:DesignWidth="{StaticResource Width}"
+      Title="ShopPage">
+
+  <Page.DataContext>
+    <vm:ShopPageVM/>
+  </Page.DataContext>
+
+  <Grid Background="WhiteSmoke">
+    <ItemsControl ItemsSource="{Binding Positions}"
+                  d:ItemsSource="{d:SampleData ItemCount=3}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Stat.StatId}" d:Text="0"/>
+            <TextBlock Text="|"/>
+            <TextBlock Text="{Binding Stat.RawValue}" d:Text="000"/>
+            <TextBlock Text="|"/>
+            <TextBlock Text="{Binding Stat.Value}" d:Text="00.0"/>
+            <ItemsControl ItemsSource="{Binding Offers}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button VerticalContentAlignment="Stretch"
+                          HorizontalContentAlignment="Center"
+                          Width="190">
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="{Binding StatAmount.RawValue}"
+                                 d:Text="000"/>
+                      <TextBlock Text=" for "/>
+                      <TextBlock Text="{Binding Cost}" d:Text="000"/>
+                    </StackPanel>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Grid>
+</Page>
