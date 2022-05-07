@@ -9,7 +9,7 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Beast : Hero
 	{
-		private static decimal dmgBoost = .039m;
+		[Balance] private decimal dmgBoost = .039m;
 
 		private int Stacks =>
 			(int) (StatsRO.DynamicValue<Health>() / (decimal) StatsRO.ConvInt<Health>() * 10);

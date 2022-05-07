@@ -8,7 +8,8 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Tramp : Hero
 	{
-		private static decimal moneyBeg = 1.1m;
+		[Balance] private decimal moneyBeg = 1.1m;
+
 		private decimal _coc = 0;
 		private int _grabbed;
 

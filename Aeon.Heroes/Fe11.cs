@@ -12,22 +12,22 @@ namespace Aeon.Heroes
 	{
 		private int _battles;
 
-		private static decimal StartHealthMult;
-		private static decimal StartAttackMult;
-		private static int InitIncome;
-		private static int BattlesForBonus;
+		[Balance] private decimal startHealthMult;
+		[Balance] private decimal startAttackMult;
+		[Balance] private int initIncome;
+		[Balance] private int battlesForBonus;
 
 		public Fe11()
 		{
-			Stats.Set<Health>((int) (Stats.GetStat<Health>().Value * StartHealthMult));
-			Stats.Set<Attack>((int) (Stats.GetStat<Attack>().Value * StartAttackMult));
+			Stats.Set<Health>((int) (Stats.GetStat<Health>().Value * startHealthMult));
+			Stats.Set<Attack>((int) (Stats.GetStat<Attack>().Value * startAttackMult));
 		}
 
 		public override void OnBattleStart(IBattler enemy)
 		{
 			base.OnBattleStart(enemy);
 			++_battles;
-			Stats.SetDyn<Income>(InitIncome + _battles / BattlesForBonus);
+			Stats.SetDyn<Income>(initIncome + _battles / battlesForBonus);
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace Aeon.Heroes
 		private int _optNumber;
 		private int _totalPriceDrop;
 
-		private static int maxDrop = 50;
+		[Balance] private int maxDrop = 50;
 
 		public override bool TryBuyOffer(Offer offer)
 		{

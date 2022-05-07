@@ -1,21 +1,29 @@
 ﻿using System.Reflection;
 using Hero = Aeon.Core.Hero;
+using Balance = Aeon.Core.BalanceAttribute;
+using System.Linq;
 
 namespace AeonServer.Services;
 
 public class HeroesProvider
 {
+	public static string GetNameID(Type type) => $"{type.Assembly.GetName().Name}:{type.Name}";
+
+	private IBalanceProvider _balance;
+
 	private Dictionary<string, Type> _types;
 	private Dictionary<string, Hero> _heroes;
 	private string[] _names;
-	public HeroesProvider()
+	public HeroesProvider(IBalanceProvider balance)
 	{
+		_balance = balance;
+
 		var heroesAssembly = Assembly.Load("Aeon.Heroes");
 		_types = heroesAssembly.GetTypes()
 				.Where(t => t.BaseType == typeof(Hero))
 				//.Select(t => (Hero) Activator.CreateInstance(t))
-				.ToDictionary(t => t.Name);
-		_heroes = _types.ToDictionary(t => t.Key, t => (Hero) Activator.CreateInstance(t.Value)!);
+				.ToDictionary(t => GetNameID(t));
+		_heroes = _types.ToDictionary(t => t.Key, t => MakeHero(t.Value)!);
 		_names = _heroes.Keys.ToArray();
 	}
 
@@ -39,4 +47,22 @@ public class HeroesProvider
 		Name = _names[heroID.Value], 
 		AssemblyName = _types[_names[heroID.Value]].Assembly.GetName().Name 
 	};
+
+	private Hero MakeHero(Type type)
+	{
+		Hero hero = (Hero) Activator.CreateInstance(type)!;
+		hero.GetType()
+			.GetRuntimeFields()
+			.Select(f => (f, f.GetCustomAttributes(false).Where(a => a is Balance).Cast<Balance>().FirstOrDefault()))
+			.Where(x => x.Item2 is not null).ToList().ForEach(a => {
+				(FieldInfo f, Balance? b) = a;
+				var key = "@" + (b?.BalanceKey ?? f.Name);
+
+				if (f.FieldType == typeof(int))
+					f.SetValue(hero, (int) _balance.ValueForHero(hero, key).BaseValue);
+				if (f.FieldType == typeof(decimal))
+					f.SetValue(hero, _balance.ValueForHero(hero, key).BaseValue);
+			});
+		return hero;
+	}
 }

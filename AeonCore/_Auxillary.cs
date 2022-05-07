@@ -20,3 +20,11 @@ public static class Converters
 		Value = s.Convert(default)
 	};
 }
+
+[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+public sealed class BalanceAttribute : Attribute
+{
+	public BalanceAttribute() => BalanceKey = null;
+	public BalanceAttribute(string key) => BalanceKey = key;
+	public string BalanceKey { get; }
+}

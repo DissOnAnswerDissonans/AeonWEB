@@ -32,14 +32,14 @@ namespace Aeon.Heroes
 		private int _mana;
 		private Mode _mode;
 
-		private static int moneyBurn = 2;
-		private static int moneyBurnCost = 3;
+		[Balance] private int moneyBurn = 2;
+		[Balance] private int moneyBurnCost = 3;
 
-		private static decimal magHitBonus = 0.3m;
-		private static int magHitCost = 4;
+		[Balance] private decimal magHitBonus = 0.3m;
+		[Balance] private int magHitCost = 4;
 
-		private static decimal healingCoeff = 0.2m;
-		private static int healingCost = 5;
+		[Balance] private decimal healingCoeff = 0.2m;
+		[Balance] private int healingCost = 5;
 
 		private int MagHitAdder => (int) (StatsRO.Converted<Magic>() * magHitBonus);
 

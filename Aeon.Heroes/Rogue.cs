@@ -14,9 +14,9 @@ namespace Aeon.Heroes
 	public class Rogue : Hero
 	{
 		private int _battle;
-		private static decimal rogueHit = .09m;
-		private static decimal enemyHit = .11m;
-		private static decimal battleBonus;
+		[Balance] private decimal rogueHit = .09m;
+		[Balance] private decimal enemyHit = .11m;
+		[Balance] private decimal battleBonus;
 		private decimal BattleBonus => 1 + battleBonus * _battle;
 
 		private decimal RogueHitPerc => rogueHit / BattleBonus;

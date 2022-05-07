@@ -4,7 +4,7 @@ namespace Aeon.Heroes
 {
 	public class Trickster : Hero
 	{
-		private static decimal resetSalvage = 0.80m;
+		[Balance] private decimal resetSalvage = 0.80m;
 		private int _totalSpent;
 		private int ResetMoney => (int) (resetSalvage * _totalSpent);
 

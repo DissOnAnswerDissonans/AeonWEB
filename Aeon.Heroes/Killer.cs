@@ -14,11 +14,11 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Killer : Hero
 	{
-		private static decimal conversionRate = 0.15m;
-		private static int lvlCoeff = 75;
-		private static int attackBonus;
+		[Balance] private decimal conversionRate = 0.15m;
+		[Balance] private int lvlCoeff = 75;
+		[Balance] private int attackBonus;
 
-		private readonly Stat _bonus = Stat.Make<Attack>(attackBonus);
+		private Stat _bonus => Stat.Make<Attack>(attackBonus);
 		private int _totalDamage;
 		private int _abilityLevel;
 

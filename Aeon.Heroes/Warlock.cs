@@ -11,8 +11,8 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Warlock : Hero
 	{
-		private static int cost = 10;
-		private static int bonus = 17;
+		[Balance] private int cost = 10;
+		[Balance] private int bonus = 17;
 
 		private bool _abilityUsed;
 

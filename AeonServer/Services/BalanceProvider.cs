@@ -3,19 +3,21 @@ namespace AeonServer.Services;
 
 public interface IBalanceProvider
 {
-	public BalanceSheet GetBalanceSheet();
+	internal BalanceSheet GetBalanceSheet();
+
+	public BalanceValue ValueForHero(Aeon.Core.Hero hero, string key);
 }
 
 public class DefaultBalanceProvider : IBalanceProvider
 {
 	private BalanceSheet _balance;
-	public BalanceSheet GetBalanceSheet() => throw new NotImplementedException();
+	BalanceSheet IBalanceProvider.GetBalanceSheet() => _balance;
 
 	public DefaultBalanceProvider()
 	{
 		_balance = new BalanceSheet {
 
-			GlobalBalance = new () {
+			GlobalBalance = new() {
 				["HP" ] = 100,
 				["ATT"] = 15,
 				["MAG"] = 0,
@@ -27,8 +29,8 @@ public class DefaultBalanceProvider : IBalanceProvider
 				["REG"] = 1,
 			},
 
-			HeroesBalance = new () {
-				["Aeon.Heroes:Banker"] = new () {
+			HeroesBalance = new() {
+				["Aeon.Heroes:Banker"] = new() {
 					["@maxDrop"] = 50,
 				},
 				["Aeon.Heroes:Beast"] = new() {
@@ -51,10 +53,10 @@ public class DefaultBalanceProvider : IBalanceProvider
 					["@regenBonus"] = 2,
 				},
 				["Aeon.Heroes:Fe11"] = new() {
-					["@StartHealthMult"] = 0.5m,
-					["@StartAttackMult"] = 2.0m,
-					["@InitIncome"] = 2,
-					["@BattlesForBonus"] = 10,
+					["@startHealthMult"] = 0.5m,
+					["@startAttackMult"] = 2.0m,
+					["@initIncome"] = 2,
+					["@battlesForBonus"] = 10,
 				},
 				["Aeon.Heroes:Killer"] = new() {
 					["@conversionRate"] = 0.15m,
@@ -115,6 +117,15 @@ public class DefaultBalanceProvider : IBalanceProvider
 			}
 		};
 	}
+
+	public BalanceValue ValueForHero(HeroInfo hero, string key) =>
+		_balance.HeroesBalance[hero.NameID][key];
+
+	public BalanceValue ValueForHero(Aeon.Core.Hero hero, string key) =>
+		_balance.HeroesBalance[HeroesProvider.GetNameID(hero.GetType())][key];
+
+	public BalanceValue ValueForHero<T>(string key) where T : Aeon.Core.Hero =>
+		_balance.HeroesBalance[HeroesProvider.GetNameID(typeof(T))][key];
 
 	private static Aeon.Base.Offer Offer<T>(int amount, int cost, bool opt = false) 
 		where T : StatType, new() => new() {
