@@ -18,7 +18,7 @@ namespace Aeon.Heroes
 		[Balance] private int lvlCoeff = 75;
 		[Balance] private int attackBonus;
 
-		private Stat _bonus => Stat.Make<Attack>(attackBonus);
+		protected override void PostActivate() { }
 		private int _totalDamage;
 		private int _abilityLevel;
 
@@ -29,7 +29,7 @@ namespace Aeon.Heroes
 			_totalDamage += damage;
 			while (_totalDamage >= NextLevel) {
 				_abilityLevel++;
-				Stats.AddStat(_bonus);
+				Stats.AddToValue(Attack, attackBonus);
 			}
 		}
 
@@ -47,6 +47,6 @@ namespace Aeon.Heroes
 		}
 
 		public override string AbilityText =>
-			$"+{_abilityLevel * _bonus.Value} АТК, Для +{_bonus.Value}: {NextLevel - _totalDamage} урона";
+			$"+{_abilityLevel * attackBonus} АТК, Для +{attackBonus}: {NextLevel - _totalDamage} урона";
 	}
 }

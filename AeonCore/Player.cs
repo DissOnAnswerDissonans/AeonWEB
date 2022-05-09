@@ -19,9 +19,7 @@
 			Hero.Wage(WAGE_START);
 		}
 
-		public Player() : this(new Hero())
-		{
-		}
+		public Player() { }
 
 		internal int End(bool isWin) => isWin ? Win() : Lose();
 

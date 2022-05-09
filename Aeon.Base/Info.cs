@@ -25,16 +25,16 @@ namespace Aeon.Base
 		public string OwnerID { get; set; }
 	}
 
-	public class Stat
+	public class StatData
 	{
 		public string StatId { get; set; }
 		public int RawValue { get; set; }
 		public decimal? Value { get; set; }
 	}
 
-	public class Offer
+	public class OfferData
 	{
-		public Stat StatAmount { get; set; }
+		public StatData StatAmount { get; set; }
 		public int Cost { get; set; }
 		public bool IsOpt { get; set; }
 	}
@@ -43,7 +43,7 @@ namespace Aeon.Base
 	{
 		public Dictionary<string, BalanceValue> GlobalBalance { get; set; }
 		public Dictionary<string, Dictionary<string, BalanceValue>> HeroesBalance { get; set; }
-		public List<Offer> StandardOffers { get; set; }
+		public List<OfferData> StandardOffers { get; set; }
 	}
 
 	public class BalanceValue

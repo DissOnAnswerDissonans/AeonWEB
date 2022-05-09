@@ -13,6 +13,16 @@ public class DefaultBalanceProvider : IBalanceProvider
 	private BalanceSheet _balance;
 	BalanceSheet IBalanceProvider.GetBalanceSheet() => _balance;
 
+	public const string Health = "HP";
+	public const string Attack = "ATT";
+	public const string Magic = "MAG";
+	public const string CritChance = "CHA";
+	public const string CritDamage = "DMG";
+	public const string Income = "INC";
+	public const string Block = "BLK";
+	public const string Armor = "ARM";
+	public const string Regen = "REG";
+
 	public DefaultBalanceProvider()
 	{
 		_balance = new BalanceSheet {
@@ -95,25 +105,25 @@ public class DefaultBalanceProvider : IBalanceProvider
 			},
 
 			StandardOffers = new() {
-				Offer<Health>(22, 10),
-				Offer<Attack>(3, 7),
-				Offer<Magic>(7, 15),
-				Offer<CritChance>(5, 15),
-				Offer<CritDamage>(50, 50),
-				Offer<Income>(2, 13),
-				Offer<Block>(2, 4),
-				Offer<Armor>(15, 30),
-				Offer<Regen>(5, 11),
+				Offer(Health, 22, 10),
+				Offer(Attack, 3, 7),
+				Offer(Magic, 7, 15),
+				Offer(CritChance, 5, 15),
+				Offer(CritDamage, 50, 50),
+				Offer(Income, 2, 13),
+				Offer(Block, 2, 4),
+				Offer(Armor, 15, 30),
+				Offer(Regen, 5, 11),
 
-				Offer<Health>(220, 87, opt: true),
-				Offer<Attack>(60, 120, opt: true),
-				Offer<Magic>(46, 90, opt: true),
-				Offer<CritChance>(40, 104, opt: true),
-				Offer<CritDamage>(120, 105, opt: true),
-				Offer<Income>(20, 120, opt: true),
-				Offer<Block>(80, 130, opt: true),
-				Offer<Armor>(66, 120, opt: true),
-				Offer<Regen>(62, 115, opt: true),
+				Offer(Health, 220, 87, opt: true),
+				Offer(Attack, 60, 120, opt: true),
+				Offer(Magic, 46, 90, opt: true),
+				Offer(CritChance, 40, 104, opt: true),
+				Offer(CritDamage, 120, 105, opt: true),
+				Offer(Income, 20, 120, opt: true),
+				Offer(Block, 80, 130, opt: true),
+				Offer(Armor, 66, 120, opt: true),
+				Offer(Regen, 62, 115, opt: true),
 			}
 		};
 	}
@@ -127,10 +137,9 @@ public class DefaultBalanceProvider : IBalanceProvider
 	public BalanceValue ValueForHero<T>(string key) where T : Aeon.Core.Hero =>
 		_balance.HeroesBalance[HeroesProvider.GetNameID(typeof(T))][key];
 
-	private static Aeon.Base.Offer Offer<T>(int amount, int cost, bool opt = false) 
-		where T : StatType, new() => new() {
-		Cost = cost, IsOpt = opt, StatAmount = new Aeon.Base.Stat {
-			RawValue = amount, StatId = StatType.Instance<T>().ID
+	private static Aeon.Base.OfferData Offer(string id, int amount, int cost, bool opt = false) => new() {
+		Cost = cost, IsOpt = opt, StatAmount = new Aeon.Base.StatData {
+			RawValue = amount, StatId = id
 		}
 	};
 }

@@ -10,13 +10,15 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Thief : Hero
 	{
+		protected override void PostActivate() { }
+
 		private int _stealAmount;
 		private int _stolen;
 
 		public override Damage GetDamageTo(IBattler enemy)
 		{
-			(enemy as Hero)?.Stats.Modify<Health>(-_stealAmount);
-			Stats.Modify<Health>(+_stealAmount);
+			(enemy as Hero)?.Stats.AddToValue(Health, -_stealAmount);
+			Stats.AddToValue(Health, +_stealAmount);
 			_stolen += _stealAmount;
 			return base.GetDamageTo(enemy);
 		}

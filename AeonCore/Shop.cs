@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Aeon.Base;
+using System;
 using System.Collections.Generic;
 
 namespace Aeon.Core
@@ -14,13 +15,12 @@ namespace Aeon.Core
 			var s = (Shop) MemberwiseClone();
 			s._offers = new List<Offer>();
 			foreach (Offer offer in _offers)
-				s._offers.Add((Offer) offer.Clone());
+				s._offers.Add(offer);
 			return s;
 		}
 
-		protected virtual void AddOffer<T>(int amount, int cost, bool opt = false)
-			where T : StatType, new() =>
-			_offers.Add(new Offer(Stat.Make<T>(amount), cost, opt));
+		protected virtual void AddOffer(string id, int amount, int cost, bool opt = false) =>
+			_offers.Add(new Offer(id, amount, cost, opt));
 
 		public void ModifyOffers(Func<Offer, bool> predicate, Func<Offer, Offer> func)
 		{
@@ -43,44 +43,44 @@ namespace Aeon.Core
 	{
 		public StandardShop()
 		{
-			AddOffer<Health>(22, 10);
-			AddOffer<Attack>(3, 7);
-			AddOffer<Magic>(7, 15);
-			AddOffer<CritChance>(5, 15);
-			AddOffer<CritDamage>(50, 50);
-			AddOffer<Income>(2, 13);
-			AddOffer<Block>(2, 4);
-			AddOffer<Armor>(15, 30);
-			AddOffer<Regen>(5, 11);
+			AddOffer(Hero.Health, 22, 10);
+			AddOffer(Hero.Attack, 3, 7);
+			AddOffer(Hero.Magic, 7, 15);
+			AddOffer(Hero.CritChance, 5, 15);
+			AddOffer(Hero.CritDamage, 50, 50);
+			AddOffer(Hero.Income, 2, 13);
+			AddOffer(Hero.Block, 2, 4);
+			AddOffer(Hero.Armor, 15, 30);
+			AddOffer(Hero.Regen, 5, 11);
 
-			AddOffer<Health>(220, 87, opt: true);
-			AddOffer<Attack>(60, 120, opt: true);
-			AddOffer<Magic>(46, 90, opt: true);
-			AddOffer<CritChance>(40, 104, opt: true);
-			AddOffer<CritDamage>(120, 105, opt: true);
-			AddOffer<Income>(20, 120, opt: true);
-			AddOffer<Block>(80, 130, opt: true);
-			AddOffer<Armor>(66, 120, opt: true);
-			AddOffer<Regen>(62, 115, opt: true);
+			AddOffer(Hero.Health, 220, 87, opt: true);
+			AddOffer(Hero.Attack, 60, 120, opt: true);
+			AddOffer(Hero.Magic, 46, 90, opt: true);
+			AddOffer(Hero.CritChance, 40, 104, opt: true);
+			AddOffer(Hero.CritDamage, 120, 105, opt: true);
+			AddOffer(Hero.Income, 20, 120, opt: true);
+			AddOffer(Hero.Block, 80, 130, opt: true);
+			AddOffer(Hero.Armor, 66, 120, opt: true);
+			AddOffer(Hero.Regen, 62, 115, opt: true);
 		}
 	}
 
-	public class Offer : ICloneable
+	public record class Offer
 	{
-		public Stat Stat { get; }
-		public int Cost { get; }
-		public bool IsOpt { get; }
+		public string StatID { get; init; }
+		public StatValue Value { get; init; }
+		public int Cost { get; init; }
+		public bool IsOpt { get; init; }
 
-		public Offer(Stat stat, int cost, bool opt = false)
+		public Offer(string id, StatValue value, int cost, bool opt = false)
 		{
-			Stat = stat;
+			StatID = id;
+			Value = value;
 			Cost = cost;
 			IsOpt = opt;
 		}
 
-		public object Clone() => new Offer(Stat, Cost, IsOpt);
-
 		public override string ToString() => IsOpt
-			? $"opt {Cost} => {Stat}" : $"{Cost} => {Stat}";
+			? $"{Value} {StatID} for {Cost} (opt)" : $"{Value} {StatID} for {Cost}";
 	}
 }

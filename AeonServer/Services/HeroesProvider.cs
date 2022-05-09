@@ -44,8 +44,8 @@ public class HeroesProvider
 
 	internal HeroInfo? GetHeroInfo(int? heroID) => !heroID.HasValue? null : new() { 
 		ID = heroID.Value, 
-		Name = _names[heroID.Value], 
-		AssemblyName = _types[_names[heroID.Value]].Assembly.GetName().Name 
+		Name = _names[heroID.Value].Split(':')[1],
+		AssemblyName = _names[heroID.Value].Split(':')[0],
 	};
 
 	private Hero MakeHero(Type type)

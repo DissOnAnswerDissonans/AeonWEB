@@ -11,8 +11,10 @@ namespace Aeon.Heroes
 	{
 		[Balance] private decimal dmgBoost = .039m;
 
+		protected override void PostActivate() { }
+
 		private int Stacks =>
-			(int) (StatsRO.DynamicValue<Health>() / (decimal) StatsRO.ConvInt<Health>() * 10);
+			(int) (StatsRO.GetDynValue(Health) / (decimal) StatsRO.Convert(Health) * 10);
 
 		public override Damage GetDamageTo(IBattler enemy) =>
 			base.GetDamageTo(enemy).ModPhys(d => (int) (d * (1 + Stacks * dmgBoost)));

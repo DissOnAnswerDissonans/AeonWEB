@@ -2,7 +2,7 @@
 using Humanizer;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Stat = Aeon.Base.Stat;
+using StatData = Aeon.Base.StatData;
 
 namespace AeonServer.Models;
 
@@ -17,11 +17,13 @@ public class Hero
 {
 	public int HeroId { get; set; }
 	public int Money { get; set; }
-	public List<Stat> Stats { get; set; } = null!;
+	public List<StatData> Stats { get; set; } = null!;
 
 	public static Hero FromAeon(Aeon.Core.Hero hero) => new() { 
 		Money = hero.Money, 
-		Stats = hero.Stats.AllStats.Select(s => s.ToBase()).ToList() 
+		Stats = hero.Stats.All().Select(s => new Stat { 
+			StatId = s.Stat.ID, RawValue = s.Value, Value = s.Stat.Converter(s.Value, hero.StatsRO)
+		}).ToList() 
 	};
 }
 

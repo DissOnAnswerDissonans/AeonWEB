@@ -10,5 +10,7 @@ namespace Aeon.Base
 		//{
 		//	return (T) Enum.Parse(typeof(T), (((int) @enum.GetTypeCode()) | ((int) flags.GetTypeCode())).ToString());
 		//}
+
+
 	}
 }

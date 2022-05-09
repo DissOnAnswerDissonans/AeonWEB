@@ -17,6 +17,8 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Vampire : Hero
 	{
+		protected override void PostActivate() { }
+
 		private int _abilityLvl = 1;
 		private int _charges = 0; // TODO узнать, переносятся ли заряды в след. бой
 
@@ -26,7 +28,7 @@ namespace Aeon.Heroes
 		private readonly int[] _needCharges = { 0, 3, 2, 1 };
 		private readonly decimal[] _lifestealLv = { 0, .20m, .25m, .30m };
 
-		private int Lifesteal => (int) (_lifestealLv[_abilityLvl] * StatsRO.Converted<Attack>());
+		private int Lifesteal => (int) (_lifestealLv[_abilityLvl] * StatsRO.Convert(Attack));
 		private int NeedCharges => _needCharges[_abilityLvl];
 
 		public override bool UseAbility()
@@ -42,7 +44,7 @@ namespace Aeon.Heroes
 			++_charges;
 			if (_charges < NeedCharges) return base.GetDamageTo(enemy);
 			_charges = 0;
-			Stats.Modify<Health>(Lifesteal); // TODO уточнить, когда происходит отхил
+			Stats.AddToValue(Health, Lifesteal); // TODO уточнить, когда происходит отхил
 			return base.GetDamageTo(enemy).ModPhys(a => a + Lifesteal);
 		}
 

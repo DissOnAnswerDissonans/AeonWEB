@@ -10,31 +10,23 @@ namespace Aeon.Heroes
 	/// если текущее здоровье Героя противника равно
 	/// максимальному, то урон Читера умножается на 2.
 	/// </summary>
-	//public class Cheater : Hero
-	//{
-	//	[Balance] private decimal attMultiplier = 0.93m;
-	//	[Balance] private decimal firstAttX = 2m;
+	public class Cheater : Hero
+	{
+		[Balance] private decimal attMultiplier = 0.93m;
+		[Balance] private decimal firstAttX = 2m;
 
-	//	public class Attack : Core.Attack
-	//	{
-	//		protected override void Init()
-	//		{
-	//			base.Init();
-	//			Convertor = (a, context) => a * attMultiplier;
-	//		}
-	//	}
+		protected override void PostActivate() => 
+			Stats.EditStat(Attack).Convert((x, ctx) => x * attMultiplier);
 
-	//	public Cheater() => Stats.OverrideBehaviour<Core.Attack, Attack>();
+		public override Damage GetDamageTo(IBattler enemy)
+		{
+			Damage d = base.GetDamageTo(enemy);
+			if (enemy.StatsRO.GetDynValue(Health) == enemy.StatsRO.Convert(Health)) {
+				d = new Damage { Instigator = d.Instigator, IsCrit = d.IsCrit, Magic = d.Magic, Phys = (int) (d.Phys * firstAttX) };
+			}
+			return d;
+		}
 
-	//	public override Damage GetDamageTo(IBattler enemy)
-	//	{
-	//		Damage d = base.GetDamageTo(enemy);
-	//		if (enemy.StatsRO.DynamicValue<Health>() == enemy.StatsRO.ConvInt<Health>()) {
-	//			d = new Damage { Instigator = d.Instigator, IsCrit = d.IsCrit, Magic = d.Magic, Phys = (int) (d.Phys * firstAttX) };
-	//		}
-	//		return d;
-	//	}
-
-	//	public override string AbilityText => $"Первый удар: {base.GetDamageTo(default).Phys * firstAttX} физ. урона";
-	//}
+		public override string AbilityText => $"Первый удар: {base.GetDamageTo(default).Phys * firstAttX} физ. урона";
+	}
 }

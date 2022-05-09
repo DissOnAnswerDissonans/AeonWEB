@@ -30,8 +30,8 @@ internal class ShopPageVM : INotifyPropertyChanged
 
 	internal class PositionVM
 	{
-		public Stat Stat { get; set; }
+		public StatData Stat { get; set; }
 		public string Name { get; set; }
-		public List<Offer> Offers { get; set; }
+		public List<OfferData> Offers { get; set; }
 	}
 }

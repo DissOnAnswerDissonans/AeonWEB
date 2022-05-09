@@ -10,6 +10,8 @@ namespace Aeon.Heroes
 	{
 		[Balance] private decimal moneyBeg = 1.1m;
 
+		protected override void PostActivate() { }
+
 		private decimal _coc = 0;
 		private int _grabbed;
 

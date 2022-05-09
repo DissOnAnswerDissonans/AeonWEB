@@ -41,7 +41,9 @@ namespace Aeon.Heroes
 		[Balance] private decimal healingCoeff = 0.2m;
 		[Balance] private int healingCost = 5;
 
-		private int MagHitAdder => (int) (StatsRO.Converted<Magic>() * magHitBonus);
+		protected override void PostActivate() { }
+
+		private int MagHitAdder => (int) (StatsRO.Convert(Magic) * magHitBonus);
 
 
 		public override bool UseAbility()
@@ -80,8 +82,7 @@ namespace Aeon.Heroes
 			case Mode.Healing:
 				if (_mana < healingCost) return d;
 				_mana -= healingCost;
-				Stats.ModifyDyn<Health>
-					((int) ((1 - StatsRO.DynConvInt<Health>() / StatsRO.ConvInt<Health>()) * healingCoeff));
+				Stats.AddToDynValue(Health, (int) ((1 - StatsRO.GetDynValue(Health) / StatsRO.Convert(Health)) * healingCoeff));
 				return d;
 
 			default: return d;

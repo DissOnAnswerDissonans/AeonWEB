@@ -14,6 +14,8 @@ namespace Aeon.Heroes
 		[Balance] private int cost = 10;
 		[Balance] private int bonus = 17;
 
+		protected override void PostActivate() { }
+
 		private bool _abilityUsed;
 
 		public override bool UseAbility()

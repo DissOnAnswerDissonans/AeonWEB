@@ -15,7 +15,7 @@ public class Player
 	public Models.ShopUpdate? LastShopUpdate { get; internal set; }
 	public ShopUpdate GetShopUpdate(ShopUpdate.R response) => new ShopUpdate {
 		Hero = Models.Hero.FromAeon(Hero!),
-		Offers = Hero!.Shop.Offers.Select(o => o.ToBase()).ToArray(),
+		Offers = Hero!.Shop.Offers.Select(o => o.ToBase(Hero.Stats)).ToArray(),
 		Response = response
 	};
 

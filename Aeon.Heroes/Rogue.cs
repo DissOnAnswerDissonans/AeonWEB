@@ -17,6 +17,9 @@ namespace Aeon.Heroes
 		[Balance] private decimal rogueHit = .09m;
 		[Balance] private decimal enemyHit = .11m;
 		[Balance] private decimal battleBonus;
+
+		protected override void PostActivate() { }
+
 		private decimal BattleBonus => 1 + battleBonus * _battle;
 
 		private decimal RogueHitPerc => rogueHit / BattleBonus;
@@ -24,10 +27,10 @@ namespace Aeon.Heroes
 		private decimal EnemyHitPerc => enemyHit * BattleBonus;
 
 		public override Damage GetDamageTo(IBattler enemy) => base.GetDamageTo(enemy)
-			.ModMag(a => a + (int) (enemy.StatsRO.DynConverted<Health>() * EnemyHitPerc));
+			.ModMag(a => a + (int) (enemy.StatsRO.GetDynValue(Health) * EnemyHitPerc));
 
 		public override Damage ReceiveDamage(Damage damage) => base.ReceiveDamage(damage
-			.ModMag(a => a + (int) (StatsRO.DynConverted<Health>() * RogueHitPerc)));
+			.ModMag(a => a + (int) (StatsRO.GetDynValue(Health) * RogueHitPerc)));
 
 		public override string AbilityText =>
 			$"По себе:{RogueHitPerc * 100:F2}% По врагу:{EnemyHitPerc * 100:F2}%";

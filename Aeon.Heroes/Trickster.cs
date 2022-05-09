@@ -5,6 +5,9 @@ namespace Aeon.Heroes
 	public class Trickster : Hero
 	{
 		[Balance] private decimal resetSalvage = 0.80m;
+
+		protected override void PostActivate() { }
+
 		private int _totalSpent;
 		private int ResetMoney => (int) (resetSalvage * _totalSpent);
 
@@ -20,7 +23,7 @@ namespace Aeon.Heroes
 		public override bool UseAbility()
 		{
 			if (ResetMoney == 0) return false;
-			ResetStats();
+			Stats.ResetAll();
 			Wage(ResetMoney);
 			_totalSpent = 0;
 			return true;

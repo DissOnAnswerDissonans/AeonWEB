@@ -7,35 +7,17 @@ namespace Aeon.Heroes
 	///	увеличен на 50% от магии, а критический шанс увеличен на
 	/// 10% от магии.
 	/// </summary>
-	//public class Warrior : Hero
-	//{
-	//	[Balance] private decimal critDmgBonus = 0.5m;
-	//	[Balance] private decimal critChaBonus = 0.1m;
+	public class Warrior : Hero
+	{
+		[Balance] private decimal critDmgBonus = 0.5m;
+		[Balance] private decimal critChaBonus = 0.1m;
 
-	//	public class CritDamage : Core.CritDamage
-	//	{
-	//		protected override void Init()
-	//		{
-	//			base.Init();
-	//			Convertor = (a, context) => (a + context.Converted<Magic>() * critDmgBonus) / 100.0m;
-	//		}
-	//	}
+		protected override void PostActivate()
+		{
+			Stats.EditStat(CritDamage).Convert((x, ctx) => x + (ctx.ConvertAsIs(Magic) * critDmgBonus / 100));
+			Stats.EditStat(CritChance).Convert((x, ctx) => x + (ctx.ConvertAsIs(Magic) * critChaBonus / 100));
+		}
 
-	//	public class CritChance : Core.CritChance
-	//	{
-	//		protected override void Init()
-	//		{
-	//			base.Init();
-	//			Convertor = (a, context) => (a + context.Converted<Magic>() * critChaBonus) / 100.0m;
-	//		}
-	//	}
-
-	//	public Warrior()
-	//	{
-	//		Stats.OverrideBehaviour<Core.CritChance, CritChance>();
-	//		Stats.OverrideBehaviour<Core.CritDamage, CritDamage>();
-	//	}
-
-	//	public override string AbilityText => $"+{StatsRO.Converted<Magic>() * critDmgBonus}% бонус КУР";
-	//}
+		public override string AbilityText => $"+{StatsRO.Convert(Magic) * critDmgBonus}% бонус КУР";
+	}
 }

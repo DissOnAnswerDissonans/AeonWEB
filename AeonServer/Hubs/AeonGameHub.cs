@@ -89,7 +89,7 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 		foreach (var player in game.Players) {
 			var upd = new ShopUpdate {
 				Hero = Models.Hero.FromAeon(player.Hero!),
-				Offers = player.Hero!.Shop.Offers.Select(o => o.ToBase()).ToArray(),
+				Offers = player.Hero!.Shop.Offers.Select(o => o.ToBase(player.Hero!.Stats)).ToArray(),
 				Response = ShopUpdate.R.Opened
 			};
 

@@ -12,6 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="OldStats\**" />
+    <EmbeddedResource Remove="OldStats\**" />
+    <None Remove="OldStats\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Aeon.Base\Aeon.Base.csproj" />
   </ItemGroup>
 

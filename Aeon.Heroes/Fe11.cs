@@ -17,17 +17,17 @@ namespace Aeon.Heroes
 		[Balance] private int initIncome;
 		[Balance] private int battlesForBonus;
 
-		public Fe11()
+		protected override void PostActivate()
 		{
-			Stats.Set<Health>((int) (Stats.GetStat<Health>().Value * startHealthMult));
-			Stats.Set<Attack>((int) (Stats.GetStat<Attack>().Value * startAttackMult));
+			Stats.EditStat(Health).Default((Stats.GetValue(Health) * startHealthMult).TRound());
+			Stats.EditStat(Attack).Default((Stats.GetValue(Attack) * startAttackMult).TRound());
 		}
 
 		public override void OnBattleStart(IBattler enemy)
 		{
 			base.OnBattleStart(enemy);
 			++_battles;
-			Stats.SetDyn<Income>(initIncome + _battles / battlesForBonus);
+			Stats.SetDynValue(Income, initIncome + _battles / battlesForBonus);
 		}
 	}
 }

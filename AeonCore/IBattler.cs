@@ -5,7 +5,7 @@
 		/// <summary>
 		/// Характеристики гладиатора
 		/// </summary>
-		IReadOnlyStats StatsRO { get; }
+		IStatContext StatsRO { get; }
 
 		/// <summary>
 		/// Жив ли этот гладиаторъ

@@ -15,16 +15,17 @@ namespace Aeon.Heroes
 		[Balance] private decimal vampCoeffStart;
 		[Balance] private decimal vampAdder;
 
+		protected override void PostActivate() { }
 
 		private decimal? _vamp_coeff;
 		public decimal VampCoeff => _vamp_coeff ??= vampCoeffStart;
 
-		private int Vamp => (int) (StatsRO.Converted<Attack>() * VampCoeff);
+		private int Vamp => (int) (StatsRO.ConvertAsIs(Attack) * VampCoeff);
 
 		public override void AfterHit(Damage enemyHit, Damage ourHit)
 		{
 			base.AfterHit(enemyHit, ourHit);
-			Stats.ModifyDyn<Health>(Vamp);
+			Stats.AddToDynValue(Health, Vamp);
 		}
 
 		public override void AfterBattle(IBattler enemy, bool isWon)
