@@ -41,14 +41,14 @@
 		protected void SetStats()
 		{
 			const decimal COEFF = .0075m;
-			Stats.NewStat(Health).Default(100).AddDynamicDefault();
+			Stats.NewStat(Health).Default(100).AddDynamic(true);
 			Stats.NewStat(Attack).Default(15);
 			Stats.NewStat(Magic).Default(0);
-			Stats.NewStat(CritChance).Default(0).Limit(100).Convert((x, ctx) => x / 100.0m);
-			Stats.NewStat(CritDamage).Default(150).Convert((x, ctx) => x / 100.0m);
-			Stats.NewStat(Income).Default(0).Convert((x, ctx) => 1 + x / 100.0m).AddDynamic();
+			Stats.NewStat(CritChance).Default(0).Limit(100).Convert(x => x / 100.0m);
+			Stats.NewStat(CritDamage).Default(150).Convert(x => x / 100.0m);
+			Stats.NewStat(Income).Default(0).Convert(x => 1 + x / 100.0m).AddDynamic();
 			Stats.NewStat(Block).Default(1);
-			Stats.NewStat(Armor).Default(0).Convert((x, ctx) => COEFF * x / (1 + COEFF * (decimal) Math.Exp(0.9 * Math.Log(x))));
+			Stats.NewStat(Armor).Default(0).Convert(x => COEFF * x / (1 + COEFF * (decimal) Math.Exp(0.9 * Math.Log(x))));
 			Stats.NewStat(Regen).Default(1);
 		}
 

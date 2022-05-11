@@ -7,8 +7,6 @@ using static Aeon.Core.StatType;
 
 namespace Aeon.Core;
 
-
-
 public interface IStatContext
 {
 	public event Action<StatType, StatValue> StatChanged;
@@ -50,6 +48,8 @@ public class StatsContainer : IStatContext
 	{
 		try {
 			StatType t = new StatType(id);
+			_types.Add(id, t);
+			_values.Add(id, new StatValue());
 			return new StatContext(this, _types[id], _values[id]);
 		}
 		catch (ArgumentException) {
@@ -60,10 +60,10 @@ public class StatsContainer : IStatContext
 
 	public StatContext EditStat(string id) => new(this, _types[id], _values[id]);
 
-	public int GetValue(string id) => TryGetValue(id).Value.Value;
-	public int GetDynValue(string id) => TryGetDynValue(id).Value.Value;
-	public int Convert(string id) => TryConvert(id).Value.TRound();
-	public decimal ConvertAsIs(string id) => TryConvert(id).Value;
+	public int GetValue(string id) => TryGetValue(id)?.Value ?? throw new KeyNotFoundException();
+	public int GetDynValue(string id) => TryGetDynValue(id)?.Value ?? throw new KeyNotFoundException();
+	public int Convert(string id) => TryConvert(id)?.TRound() ?? throw new KeyNotFoundException();
+	public decimal ConvertAsIs(string id) => TryConvert(id) ?? throw new KeyNotFoundException();
 
 	public StatValue? TryGetValue(string id)
 	{
@@ -76,11 +76,14 @@ public class StatsContainer : IStatContext
 	}
 	public StatValue? TryGetDynValue(string id) => TryGetValue(Dyn(id));
 
+	private StatValue SetLimitted(string id, StatValue value) => _values[id] = _types[id].Limits(value, this);
 	public bool SetValue(string id, StatValue value)
 	{		
 		if (_values.ContainsKey(id)) {
-			_values[id] = value;
+			SetLimitted(id, value);
 			StatChanged?.Invoke(_types[id], value);
+			foreach (var cx in _types[id].DependentIDs)
+				SetLimitted(cx, _values[cx]);
 			return true;
 		} else {
 			//System.Diagnostics.Debug.Fail($"Stat {id} not found, call NewStat() before");
@@ -92,9 +95,9 @@ public class StatsContainer : IStatContext
 	public StatValue? AddToValue(string id, StatValue amount)
 	{
 		try {
-			var x = _values[id] += amount;
-			StatChanged?.Invoke(_types[id], x);
-			return x;
+			StatValue value = SetLimitted(id, GetValue(id) + amount);
+			StatChanged?.Invoke(_types[id], value);
+			return value;
 		} catch (KeyNotFoundException) {
 			return null;
 		}
@@ -109,6 +112,8 @@ public class StatsContainer : IStatContext
 			_ => _types[id].Converter(value!.Value, this)
 		};
 	}
+
+	public void Reset(params string[] ids) => ids.ToList().ForEach(id => _values[id] = _types[id].Default(this));
 
 	private void Reset(Func<string, bool> predicate) => 
 		_types.Keys.Where(predicate).ToList().ForEach(x => _values[x] = _types[x].Default(this));
@@ -134,27 +139,45 @@ public class StatsContainer : IStatContext
 
 		public StatContext Limit(Limitter limitter)
 		{
-			Context._types[Stat.ID] = Stat with { Limits = limitter };
-			return this;
+			StatType s = Stat with { Limits = limitter };
+			Context._types[Stat.ID] = s;
+			StatValue v = Context.SetLimitted(Stat.ID, Value);
+			return this with { Stat = s, Value = v };
 		}
-		public StatContext Limit(Limits limits) => Limit(GetLimitter(limits));
-		public StatContext Limit(int max) => Limit(new Limits(max));
+		public StatContext Limit(Func<int, int> func) => Limit((x, ctx) => func(x));
+		public StatContext Limit(int min, int max) => Limit(GetLimitter(min, max));
+		public StatContext Limit(int max) => Limit(GetLimitter(max));
 
 		public StatContext Convert(Conv func)
 		{
-			Context._types[Stat.ID] = Stat with { Converter = func };
-			return this;
+			StatType s = Stat with { Converter = func };
+			Context._types[Stat.ID] = s;
+			return this with { Stat = s };
 		}
+		public StatContext Convert(Func<int, decimal> func) => Convert((x, ctx) => func(x));
 
-		public StatContext AddDynamic() => Context.UncheckedNewStat(Dyn(Stat.ID));
-		public StatContext AddDynamicDefault() => AddDynamic().Default(x => (int) x.TryConvert(Stat.ID));
+		public StatContext AddDynamic() => AddDynamic(x => 0);
+		public StatContext AddDynamic(bool setMax) => setMax? AddDynamic(x => x) : AddDynamic();
+		public StatContext AddDynamic(Func<int, int> @default)
+		{
+			string id = Stat.ID;
+			return Context.UncheckedNewStat(Dyn(id))?.Dependent(id).Default(ctx => @default(ctx.Convert(id)));
+		}
 
 		public StatContext Default(ContextValue<int> defaultGetter)
 		{
-			Context._types[Stat.ID] = Stat with { Default = defaultGetter };
-			return this;
+			StatType s = Stat with { Default = defaultGetter };
+			Context._types[Stat.ID] = s;
+			if (Value.Value == 0) Context.Reset(Stat.ID);
+			return this with { Stat = s, Value = Context._values[Stat.ID] };
 		}
 		public StatContext Default(int value) => Default(x => value);
+
+		public StatContext Dependent(params string[] ids)
+		{
+			ids.ToList().ForEach(id => Context._types[id].DependentIDs.Add(Stat.ID)); // осторожно, ГРЯЗЬ
+			return this;
+		}
 	}
 }
 
@@ -168,10 +191,12 @@ public record class StatType
 	public Conv Converter { get; init; } = (x, ctx) => x;
 	public Limitter Limits { get; init; } = (x, ctx) => x;
 	public ContextValue<int> Default { get; init; } = ctx => 0;
+	public HashSet<string> DependentIDs { get; } = new();
 
 	internal StatType(string id) => ID = id;
 	internal StatType(string id, Conv func) : this(id) => Converter = func;
-	internal static Limitter GetLimitter(Limits limits) => (x, ctx) => Math.Clamp(x, limits.MinValue, limits.MaxValue);
+	internal static Limitter GetLimitter(int val) => (x, ctx) => Math.Clamp(x, 0, val);
+	internal static Limitter GetLimitter(int min, int max) => (x, ctx) => Math.Clamp(x, min, max);
 }
 
 public struct StatValue
@@ -180,21 +205,4 @@ public struct StatValue
 
 	public static implicit operator int(StatValue value) => value.Value;
 	public static implicit operator StatValue(int value) => new() { Value = value };
-}
-
-public struct Limits // не факт, что нужен
-{
-	public Limits() : this(0, 0, int.MaxValue) { }
-	public Limits(int maxValue) : this(0, 0, maxValue) { }
-	public Limits(int minValue, int maxValue) : this(minValue, minValue, maxValue) { }
-	public Limits(int minValue, int defaultValue, int maxValue)
-	{
-		MinValue = minValue;
-		DefaultValue = defaultValue;
-		MaxValue = maxValue;
-	}
-
-	public int MinValue { get; } = 0;
-	public int DefaultValue { get; } = 0;
-	public int MaxValue { get; } = int.MaxValue;
 }

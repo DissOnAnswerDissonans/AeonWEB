@@ -21,7 +21,7 @@ public class Hero
 
 	public static Hero FromAeon(Aeon.Core.Hero hero) => new() { 
 		Money = hero.Money, 
-		Stats = hero.Stats.All().Select(s => new Stat { 
+		Stats = hero.Stats.All().Select(s => new StatData { 
 			StatId = s.Stat.ID, RawValue = s.Value, Value = s.Stat.Converter(s.Value, hero.StatsRO)
 		}).ToList() 
 	};
