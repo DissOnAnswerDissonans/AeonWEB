@@ -5,10 +5,13 @@ namespace AeonServer;
 
 public class Room
 {
+
+
 	public string Name { get; }
+	public IGameRules Rules { get; }
 	public List<Player> Players { get; } = new();
-	public int NeedPlayers { get; private set; } = 2;
-	public int? RoomSize { get; private set; } = 2;
+	public int NeedPlayers => Rules.MinPlayers;
+	public int? RoomSize => Rules.MaxPlayers;
 	public RoomStatus Status { get; private set; } = RoomStatus.Open;
 
 	private DateTimeOffset? _timer = null;
@@ -18,9 +21,10 @@ public class Room
 
 	public bool IsFull => Players.Count >= RoomSize;
 
-	internal Room(string name)
+	internal Room(string name, IGameRules rules)
 	{
 		Name = name;
+		Rules = rules;
 	}
 
 	internal bool AddPlayer(Player player)

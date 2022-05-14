@@ -26,21 +26,3 @@ public class Hero
 		}).ToList() 
 	};
 }
-
-
-
-
-public class BattleHero
-{ 
-	public int HeroId { get; set; }
-	public int Health { get; set; }
-	public int ExpectedDamage { get; set; }
-	public int ExpectedCrit { get; set; }
-	public float BoostBonus { get; set; }
-}
-
-public class EnemyHero
-{
-	public int HeroId { get; set; }
-	public int Health { get; set; }
-}

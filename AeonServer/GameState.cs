@@ -1,4 +1,5 @@
 ﻿using Aeon.Core;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AeonServer;
 
@@ -8,6 +9,7 @@ public class GameState
 	public IReadOnlyList<Player> Players => _players;
 	private IGameRules _rules;
 
+	private readonly IHubContext<AeonGameHub, AeonGameHub.IClient> _gameHub;
 	private Services.IBalanceProvider _balance;
 
 	public string Name { get; }
@@ -17,12 +19,16 @@ public class GameState
 
 	public string SRGroup => $"GAME_{Name}";
 
-	public GameState(Room room, IGameRules rules, Services.IBalanceProvider balance)
+	internal CancellationTokenSource? ShopCTS { get; set; }
+	internal DateTimeOffset ShopCloseTime { get; private set; }
+
+	public GameState(Room room, IHubContext<AeonGameHub, AeonGameHub.IClient> hub, Services.IBalanceProvider balance)
 	{
 		Name = room.Name;
 		_players = room.Players;
-		_rules = rules;
+		_rules = room.Rules;
 		_balance = balance;
+		_gameHub = hub;
 		Phase = P.Init;
 	}
 
@@ -42,47 +48,156 @@ public class GameState
 
 	internal RoundInfo GetRound() => new RoundInfo {
 		Number = RoundNumber,
-		//Battles = _rules.GetBattles(this).ToList(), //DEBUG
-		//Wage = _rules.GetWage(this)
+		Battles = _rules.GetBattles(this).ToList(), //DEBUG
+		Wage = _rules.GetBaseWage(this)
 	};
 
 
+	internal async Task GameStart()
+	{
+		await Task.Delay(3_000);
+		while (true) {
+			ShopCloseTime = DateTimeOffset.UtcNow.AddSeconds(30);
+			Task? s = NewRoundStart();
+			ShopCTS = new CancellationTokenSource();
+			await Task.WhenAll(s, Timer(ShopCloseTime, ShopCTS.Token));
 
-	async private IAsyncEnumerable<Battle.BattleState> Battle(Player p1, Player p2, Battle.ILogger logger)
+			foreach(Player p in _players.Where(p => p.LastShopUpdate?.Response != ShopUpdate.R.Closed))
+				await _gameHub.Clients.Users(p.ID).ShopUpdated(p.GetShopUpdate(ShopUpdate.R.Closed));
+
+			await Task.Delay(100);
+
+			IEnumerable<Task> tasks = _rules.GetBattles(this).Select(x => StartBattle(x));
+			await Task.WhenAll(tasks);
+			await Task.Delay(1_000);
+		}
+	}
+
+	internal static async Task Timer(DateTimeOffset t, CancellationToken token)
+	{
+		try {		
+			await Task.Delay((int) t.Subtract(DateTimeOffset.UtcNow).TotalMilliseconds, token);
+		} catch (TaskCanceledException) {
+			await Task.CompletedTask;
+		}
+	}
+
+	private async Task NewRoundStart()
+	{
+		NewRound();
+		await _gameHub.Clients.Group($"GAME_{Name}").NewRound(GetRound());
+		await StartShopping();
+	}
+
+	private async Task StartShopping()
+	{
+		//List<Task> t = new();
+		foreach (var player in Players) {
+			var upd = new ShopUpdate {
+				Hero = Models.Hero.FromAeon(player.Hero!),
+				Offers = player.Hero!.Shop.Offers.Select((o, id) => o.ToBase(player.Hero!.Stats, id)).ToArray(),
+				Response = ShopUpdate.R.Opened,
+				CloseIn = ShopCloseTime
+			};
+
+			var cyka = System.Text.Json.JsonSerializer.Serialize(upd);
+			var cyka2 = System.Text.Json.JsonSerializer.Deserialize<ShopUpdate>(cyka);
+
+			await _gameHub.Clients.User(player.ID).ShopUpdated(upd);
+		}
+		//await Task.WhenAll(t.ToArray());
+	}
+
+
+	private async Task StartBattle(RoundInfo.Battle battle)
+	{
+		Player p1 = _players.Find(p => p.ID == battle.First.PlayerName)!;
+		Player p2 = _players.Find(p => p.ID == battle.Second.PlayerName)!;
+		var logger = new BattleLogger(this, p1, p2);
+		foreach (Battle.BattleState state in Battle(p1, p2, logger))
+		{
+			await _gameHub.Clients.User(p1.ID).NewBattleTurn(MakeTurn(state, p1, p2));
+			await _gameHub.Clients.User(p2.ID).NewBattleTurn(MakeTurn(state, p2, p1));	
+			await Task.Delay(state.TurnType switch {
+				Aeon.Core.Battle.TurnType.InitState => 2000,
+				Aeon.Core.Battle.TurnType.AfterDamage => 500,
+				Aeon.Core.Battle.TurnType.AfterHealing => 500,
+				Aeon.Core.Battle.TurnType.AfterBattle => 0,
+				_ => 0,
+			});
+			if (state.TurnType == Aeon.Core.Battle.TurnType.AfterBattle) {
+				switch (state.Winner) {
+					case 1: p1.Hero!.Wage(battle.Prize); break;
+					case 2: p2.Hero!.Wage(battle.Prize); break;
+					default: break;
+				}
+				p1.Hero!.Wage(_rules.GetBaseWage(this));
+				p2.Hero!.Wage(_rules.GetBaseWage(this));
+			}
+		}
+		await MulticastRoundSummary();
+	}
+
+	private static BattleTurn MakeTurn(Battle.BattleState state, Player player, Player enemy)
+	{
+		return new BattleTurn {
+			TurnNumber = state.TurnNumber,
+			TurnType = state.TurnType switch {
+				Aeon.Core.Battle.TurnType.InitState => BattleTurn.T.Init,
+				Aeon.Core.Battle.TurnType.AfterDamage => BattleTurn.T.Attack,
+				Aeon.Core.Battle.TurnType.AfterHealing => BattleTurn.T.Heal,
+				Aeon.Core.Battle.TurnType.AfterBattle => BattleTurn.T.End,
+				_ => (BattleTurn.T) state.TurnType
+			},
+			Hero = new BattleHero {
+				HeroId = player.HeroName!,
+				Health = player.Hero!.StatsRO.DynConvert("HP"),
+				MaxHealth = player.Hero!.StatsRO.Convert("HP"),
+				ExpectedDamage = player.Hero!.ExpectedDamage,
+				ExpectedCrit = player.Hero!.ExpectedCrit,
+				BoostBonus = (float) player.Hero!.StatsRO.DynConvertAsIs("INC")
+			},
+			Enemy = new EnemyHero { 
+				HeroId = enemy.HeroName!, 
+				Health = enemy.Hero!.StatsRO.DynConvert("HP"),
+				MaxHealth = enemy.Hero!.StatsRO.Convert("HP"),
+			},
+		};
+	}
+
+	async private Task MulticastRoundSummary()
+	{
+		var summary = new RoundScoreSummary {
+			RoundNumber = RoundNumber,
+			IsGameOver = false,
+			Entries = _rules.GetScores().Select(x => new RoundScoreSummary.Entry { 
+				HeroName = x.Player.HeroName, Player = x.Player.ID, Score = x.Score
+			}).ToList()
+		};
+		await _gameHub.Clients.Users(_players.Select(p => p.ID)).NewRoundSummary(summary);
+	}
+
+	private static IEnumerable<Battle.BattleState> Battle(Player p1, Player p2, Battle.ILogger logger)
 	{
 		var battle = new Battle(p1.Hero, p2.Hero, logger);
 
 		foreach (Battle.BattleState state in battle) {
 			yield return state;
 			if (state.TurnType == Aeon.Core.Battle.TurnType.AfterBattle) yield break;
-			await System.Threading.Tasks.Task.Delay(500);
 		}
 	}
-}
 
-public interface IGameRules
-{
-	public int MinPlayers { get; }
-	public int MaxPlayers { get; }
+	public class BattleLogger : Battle.ILogger
+	{
+		private GameState _game;
+		private Player _p1, _p2;
+		public BattleLogger(GameState game, Player player1, Player player2) { _game = game; _p1 = player1; _p2 = player2; }
 
-	public IEnumerable<RoundInfo.Battle> GetBattles(GameState game);
-	public int GetWage(GameState game);
-}
+		public void LogBattleResult(int totalTurns, int winnerNumber)
+			=> _game._rules.LogBattleResult(_p1, _p2, winnerNumber, totalTurns);
 
-public class VanillaRules : IGameRules
-{
-	public int MinPlayers => 2;
-	public int MaxPlayers => 2;
+		public void LogBattlersState(IBattler battler1, IBattler battler2, Battle.TurnType logType) { }
 
-	public IEnumerable<RoundInfo.Battle> GetBattles(GameState game) => throw new NotImplementedException();
-	public int GetWage(GameState game) => throw new NotImplementedException();
-}
-
-public class NewRules : IGameRules
-{
-	public int MinPlayers => 2;
-	public int MaxPlayers => 8;
-
-	public IEnumerable<RoundInfo.Battle> GetBattles(GameState game) => throw new NotImplementedException();
-	public int GetWage(GameState game) => throw new NotImplementedException();
+		public void LogDamage(Damage dmg1to2, Damage dmg2to1) { }
+	}
 }

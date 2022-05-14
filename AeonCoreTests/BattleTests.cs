@@ -44,8 +44,6 @@ public class BattleTests
 		_battler2.Setup(x => x.AfterHit(
 			It.Is<Damage>(a => a.Equals(d2recieved)), It.Is<Damage>(a => a.Equals(d1recieved))));
 
-		//_battle.Start(); //undone
-
 		//Assert.Equal(2, _battle.Winner);
 		//Assert.Equal(3, _battle.Rounds);
 	}

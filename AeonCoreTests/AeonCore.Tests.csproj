@@ -9,8 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="BattleTests.cs" />
-    <Compile Remove="HeroTests.cs" />
     <Compile Remove="StatsContainerTests.cs" />
     <Compile Remove="StatTests.cs" />
   </ItemGroup>

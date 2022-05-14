@@ -19,7 +19,7 @@ namespace Aeon.Core
 			return s;
 		}
 
-		protected virtual void AddOffer(string id, int amount, int cost, bool opt = false) =>
+		public virtual void AddOffer(string id, int amount, int cost, bool opt = false) =>
 			_offers.Add(new Offer(id, amount, cost, opt));
 
 		public void ModifyOffers(Func<Offer, bool> predicate, Func<Offer, Offer> func)

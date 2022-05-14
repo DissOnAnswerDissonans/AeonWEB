@@ -6,12 +6,15 @@ public interface IBalanceProvider
 	internal BalanceSheet GetBalanceSheet();
 
 	public BalanceValue ValueForHero(Aeon.Core.Hero hero, string key);
+	public Func<Shop> ShopFactory { get; }
 }
 
 public class DefaultBalanceProvider : IBalanceProvider
 {
 	private BalanceSheet _balance;
 	BalanceSheet IBalanceProvider.GetBalanceSheet() => _balance;
+
+	public Func<Shop> ShopFactory => () => new BalancedShop(_balance);
 
 	public const string Health = "HP";
 	public const string Attack = "ATT";
@@ -137,9 +140,15 @@ public class DefaultBalanceProvider : IBalanceProvider
 	public BalanceValue ValueForHero<T>(string key) where T : Aeon.Core.Hero =>
 		_balance.HeroesBalance[HeroesProvider.GetNameID(typeof(T))][key];
 
-	private static Aeon.Base.OfferData Offer(string id, int amount, int cost, bool opt = false) => new() {
-		Cost = cost, IsOpt = opt, StatAmount = new Aeon.Base.StatData {
+	private static OfferData Offer(string id, int amount, int cost, bool opt = false) => new() {
+		Cost = cost, IsOpt = opt, StatAmount = new StatData {
 			RawValue = amount, StatId = id
 		}
 	};
+}
+
+public sealed class BalancedShop : Shop
+{
+	public BalancedShop(BalanceSheet balance) : base() => balance.StandardOffers
+		.ForEach(o => AddOffer(o.StatAmount.StatId, o.StatAmount.RawValue, o.Cost, o.IsOpt));
 }

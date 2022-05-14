@@ -62,6 +62,7 @@ public class AeonLobbyHub : AeonHub<AeonLobbyHub.IClient>
 	public async Task ReadyCheck()
 	{
 		if (UserRoom is null) return;
+		if (UserRoom.Players.Count < UserRoom.NeedPlayers) return;
 		_state.IDtoPlayers[UserID].Data.IsReady = !_state.IDtoPlayers[UserID].Data.IsReady;
 		if (UserRoom.Players.All(p => p.Data.IsReady)) {	
 			_ = UserRoom.SetCountdown(2, async r => await _state.StartGame(r.Name));

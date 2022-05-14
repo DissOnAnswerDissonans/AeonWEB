@@ -16,10 +16,13 @@ public interface IStatContext
 	public int GetDynValue(string id) => TryGetDynValue(id).Value.Value;
 	public int Convert(string id) => TryConvert(id).Value.TRound();
 	public decimal ConvertAsIs(string id) => TryConvert(id).Value;
+	public int DynConvert(string id) => TryConvertDyn(id).Value.TRound();
+	public decimal DynConvertAsIs(string id) => TryConvertDyn(id).Value;
 
 	public StatValue? TryGetValue(string id);
 	public StatValue? TryGetDynValue(string id);
 	public decimal? TryConvert(string id);
+	public decimal? TryConvertDyn(string id);
 
 	public Base.StatData GetBase(string id) => new() {
 		StatId = id, RawValue = TryGetValue(id).Value, Value = TryConvert(id),
@@ -112,6 +115,7 @@ public class StatsContainer : IStatContext
 			_ => _types[id].Converter(value!.Value, this)
 		};
 	}
+	public decimal? TryConvertDyn(string id) => TryConvert(Dyn(id));
 
 	public void Reset(params string[] ids) => ids.ToList().ForEach(id => _values[id] = _types[id].Default(this));
 
@@ -189,7 +193,7 @@ public record class StatType
 
 	public string ID { get; }
 	public Conv Converter { get; init; } = (x, ctx) => x;
-	public Limitter Limits { get; init; } = (x, ctx) => x;
+	public Limitter Limits { get; init; } = (x, ctx) => Math.Max(0, x);
 	public ContextValue<int> Default { get; init; } = ctx => 0;
 	public HashSet<string> DependentIDs { get; } = new();
 

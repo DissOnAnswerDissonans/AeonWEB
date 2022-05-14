@@ -40,6 +40,7 @@ public partial class App : Application
 		General.OnGameStart.Subscribe(async d => await Start(d));
 
 		Game.NewRoundStarted.Subscribe(async r => await NewRound(r));
+		Game.ShopUpdated.Subscribe(u => { if (u.Response == ShopUpdate.R.Closed) SwitchPage<BattleView>(); });
 
 		await General.Connect();
 		await Lobby.Connect();

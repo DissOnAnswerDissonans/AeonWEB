@@ -34,6 +34,7 @@ namespace Aeon.Base
 
 	public class OfferData
 	{
+		public int ID { get; set; } = -1;
 		public StatData StatAmount { get; set; }
 		public int Cost { get; set; }
 		public bool IsOpt { get; set; }
@@ -62,5 +63,19 @@ namespace Aeon.Base
 		public List<StatInfo> StatsList { get; set; }
 
 		public BalanceSheet Balance { get; set; }
+	}
+
+	public class RoundScoreSummary
+	{
+		public int RoundNumber { get; set; }
+		public List<Entry> Entries { get; set; }
+		public bool IsGameOver { get; set; }
+
+		public class Entry
+		{
+			public string Player { get; set; }
+			public string HeroName { get; set; }
+			public int Score { get; set; }
+		}
 	}
 }

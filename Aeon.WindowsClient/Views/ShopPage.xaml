@@ -14,16 +14,35 @@
   </Page.DataContext>
 
   <Grid Background="WhiteSmoke">
-    <ItemsControl ItemsSource="{Binding Positions}"
+    <Grid.RowDefinitions>
+      <RowDefinition Height="64"/>
+      <RowDefinition Height="64"/>
+      <RowDefinition/>
+      <RowDefinition Height="64"/>
+      <RowDefinition Height="64"/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="64"/>
+      <ColumnDefinition/>
+      <ColumnDefinition Width="64"/>
+    </Grid.ColumnDefinitions>
+    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MoneyText}"/>
+    <Button Grid.Row="1" Grid.Column="1" Width="128" Height="50"
+            Content="ВСЁ" Click="EndShoppingButton"/>
+    <TextBlock Grid.Row="1" Grid.Column="1" Width="50" Height="50" 
+               HorizontalAlignment="Right" VerticalAlignment="Center"
+               Text="{Binding ShopTimer}"/>
+    <ItemsControl Grid.Row="2" Grid.Column="1"
+                  ItemsSource="{Binding Positions}"
                   d:ItemsSource="{d:SampleData ItemCount=3}">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding Stat.StatId}" d:Text="0"/>
+            <TextBlock Text="{Binding Stat.StatId}" d:Text="0" Width="50"/>
             <TextBlock Text="|"/>
-            <TextBlock Text="{Binding Stat.RawValue}" d:Text="000"/>
+            <TextBlock Text="{Binding Stat.RawValue}" d:Text="000" Width="64"/>
             <TextBlock Text="|"/>
-            <TextBlock Text="{Binding Stat.Value}" d:Text="00.0"/>
+            <TextBlock Text="{Binding Stat.Value}" d:Text="00.0" Width="64"/>
             <ItemsControl ItemsSource="{Binding Offers}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -34,7 +53,7 @@
                 <DataTemplate>
                   <Button VerticalContentAlignment="Stretch"
                           HorizontalContentAlignment="Center"
-                          Width="190">
+                          Width="190" Click="Button_Click">
                     <StackPanel Orientation="Horizontal">
                       <TextBlock Text="{Binding StatAmount.RawValue}"
                                  d:Text="000"/>

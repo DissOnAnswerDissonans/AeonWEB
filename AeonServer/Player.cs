@@ -10,13 +10,15 @@ public class Player
 	public PlayerData Data { get; internal set; }
 
 	public int? HeroID { get; private set; }
+	public string? HeroName { get; private set; }
 	public Aeon.Core.Hero? Hero { get; private set; }
 
 	public Models.ShopUpdate? LastShopUpdate { get; internal set; }
-	public ShopUpdate GetShopUpdate(ShopUpdate.R response) => new ShopUpdate {
+	public ShopUpdate GetShopUpdate(ShopUpdate.R response) => LastShopUpdate = new ShopUpdate {
 		Hero = Models.Hero.FromAeon(Hero!),
-		Offers = Hero!.Shop.Offers.Select(o => o.ToBase(Hero.Stats)).ToArray(),
-		Response = response
+		Offers = Hero!.Shop.Offers.Select((o, id) => o.ToBase(Hero.Stats, id)).ToArray(),
+		Response = response,
+		CloseIn = Game!.ShopCloseTime
 	};
 
 	public Player(string id, string? nickname)
@@ -26,9 +28,12 @@ public class Player
 		Data = new PlayerData { PlayerName = nickname ?? "[Guest]", IsObserver = false, IsReady = false };
 	}
 
-	internal void SelectHero(int id, Aeon.Core.Hero hero)
+	internal void SelectHero(int id, string name, Aeon.Core.Hero hero)
 	{
 		HeroID = id;
+		HeroName = name;
 		Hero = hero;
 	}
+
+	internal RoundInfo.Contender Contender => new() { HeroID = HeroName, PlayerName = ID, Points = 0 };
 }

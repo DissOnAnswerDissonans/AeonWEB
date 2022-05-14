@@ -29,7 +29,7 @@ public class HeroesProvider
 
 	public int Total => _heroes.Count;
 
-	internal Hero GetHero(string name) => (Hero) Activator.CreateInstance(_types[name])!;
+	internal Hero GetHero(string name) => ((Hero) Activator.CreateInstance(_types[name])!).Activate();
 	internal Hero GetHero(int heroID) => GetHero(_names[heroID]);
 
 	internal IReadOnlyList<string> HeroesList => _heroes.Keys.ToList();
@@ -63,6 +63,7 @@ public class HeroesProvider
 				if (f.FieldType == typeof(decimal))
 					f.SetValue(hero, _balance.ValueForHero(hero, key).BaseValue);
 			});
+		hero.Activate();
 		return hero;
 	}
 }

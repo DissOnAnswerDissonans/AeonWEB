@@ -21,6 +21,10 @@
 		public const string Armor = "ARM";
 		public const string Regen = "REG";
 
+		private Func<Shop> _shopFactory;
+		public Hero() => _shopFactory = () => new StandardShop();
+		public Hero(Func<Shop> shopFactory) => _shopFactory = shopFactory;
+
 		public StatsContainer Stats { get; } = new();
 		public IStatContext StatsRO => Stats;
 
@@ -29,11 +33,13 @@
 		public int Money { get; private set; }
 		public Shop Shop { get; protected set; }
 
-		protected internal void Activate()
+		public Hero Activate()
 		{
 			SetStats();
-			Shop = new StandardShop();
+			Shop = _shopFactory();
+			Money = 100;
 			PostActivate();
+			return this;
 		}
 
 		protected abstract void PostActivate();
@@ -46,9 +52,11 @@
 			Stats.NewStat(Magic).Default(0);
 			Stats.NewStat(CritChance).Default(0).Limit(100).Convert(x => x / 100.0m);
 			Stats.NewStat(CritDamage).Default(150).Convert(x => x / 100.0m);
-			Stats.NewStat(Income).Default(0).Convert(x => 1 + x / 100.0m).AddDynamic();
+			Stats.NewStat(Income).Default(0).Convert(x => x / 100.0m)
+				.AddDynamic().Convert((x, ctx) => (1 + ctx.ConvertAsIs(Income)).Power(x));
 			Stats.NewStat(Block).Default(1);
-			Stats.NewStat(Armor).Default(0).Convert(x => COEFF * x / (1 + COEFF * (decimal) Math.Exp(0.9 * Math.Log(x))));
+			Stats.NewStat(Armor).Default(0)
+				.Convert(x => COEFF * x / (1 + COEFF * (decimal) Math.Exp(0.9 * Math.Log(x))));
 			Stats.NewStat(Regen).Default(1);
 		}
 
@@ -74,10 +82,10 @@
 
 		public virtual Damage GetDamageTo(IBattler enemy)
 		{
-			decimal d = StatsRO.GetDynValue(Income);
-			int phys = (int) (StatsRO.ConvertAsIs(Attack) * d);
+			decimal incomeX = StatsRO.DynConvertAsIs(Income);
+			int phys = (StatsRO.ConvertAsIs(Attack) * incomeX).TRound();
 			int magic = StatsRO.Convert(Magic);
-			bool procCrit = Game.RNG.NextDouble() < (double) StatsRO.ConvertAsIs(CritChance);
+			bool procCrit = RNG.TestChance(StatsRO.ConvertAsIs(CritChance));
 			return new Damage {
 				Instigator = this,
 				Phys = procCrit ? (int) (phys * StatsRO.ConvertAsIs(CritDamage)) : phys,
@@ -88,7 +96,7 @@
 
 		public virtual Damage ReceiveDamage(Damage damage)
 		{
-			int phys = (int)(damage.Phys * (1 - StatsRO.ConvertAsIs(Armor) - StatsRO.ConvertAsIs(Block)));
+			int phys = (int)(damage.Phys * (1 - StatsRO.ConvertAsIs(Armor)) - StatsRO.ConvertAsIs(Block));
 			var d = new Damage {
 				Instigator = damage.Instigator,
 				Phys = phys < 0 ? 0 : phys,
@@ -112,6 +120,11 @@
 		}
 
 		public virtual string AbilityText => "Нет способности";
+
+		public int ExpectedDamage => 
+			(StatsRO.ConvertAsIs(Attack) * StatsRO.DynConvertAsIs(Income)).TRound() + StatsRO.Convert(Magic);
+		public int ExpectedCrit => 
+			(StatsRO.ConvertAsIs(Attack) * StatsRO.DynConvertAsIs(Income) * StatsRO.ConvertAsIs(CritDamage)).TRound() + StatsRO.Convert(Magic);
 
 		public virtual bool UseAbility() => false;
 	}

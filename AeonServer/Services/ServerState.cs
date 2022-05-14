@@ -5,10 +5,12 @@ namespace AeonServer;
 public class ServerState
 {
 	private readonly IHubContext<AeonGeneralHub, AeonGeneralHub.IClient> _generalHub;
+	private readonly IHubContext<AeonGameHub, AeonGameHub.IClient> _gameHub;
 	private readonly Services.IBalanceProvider _balance;
-	public ServerState(IHubContext<AeonGeneralHub, AeonGeneralHub.IClient> hub, Services.IBalanceProvider balance)
-	{
-		_generalHub = hub; _balance = balance;
+	public ServerState(IHubContext<AeonGeneralHub, AeonGeneralHub.IClient> hub,
+		IHubContext<AeonGameHub, AeonGameHub.IClient> gameHub,
+		Services.IBalanceProvider balance) {
+		_generalHub = hub; _gameHub = gameHub; _balance = balance;
 	}
 
 	internal int Number { get; set; }
@@ -33,7 +35,7 @@ public class ServerState
 
 	internal void CreateRoom(string roomName, string? id)
 	{
-		var room = new Room(roomName);
+		var room = new Room(roomName, new VanillaRules());
 		Rooms.Add(roomName, room);
 		if (id == null) return;
 		room.AddPlayer(IDtoPlayers[id]);
@@ -64,7 +66,7 @@ public class ServerState
 	{
 		Room? room = Rooms[roomName];
 		if (room is null) throw new ArgumentException($"Room [{roomName}] not found", nameof(roomName));
-		var s = new GameState(room, new VanillaRules(), _balance);
+		var s = new GameState(room, _gameHub, _balance);
 		Games.Add(roomName, s);
 		room.SetInGame(s);
 

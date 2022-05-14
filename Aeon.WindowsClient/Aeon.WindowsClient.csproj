@@ -22,4 +22,8 @@
     <ProjectReference Include="..\AeonServer\AeonServer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
 </Project>

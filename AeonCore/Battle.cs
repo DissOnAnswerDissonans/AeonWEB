@@ -55,6 +55,7 @@ public class Battle
 		_h2.AfterBattle(_h1, Winner == 2);
 
 		yield return Log(TurnType.AfterBattle);
+		_logger?.LogBattleResult(Rounds, Winner);
 		yield break;
 	}
 
@@ -82,5 +83,7 @@ public class Battle
 		void LogBattlersState(IBattler battler1, IBattler battler2, TurnType logType);
 
 		void LogDamage(Damage dmg1to2, Damage dmg2to1);
+
+		void LogBattleResult(int totalTurns, int winnerNumber);
 	}
 }
