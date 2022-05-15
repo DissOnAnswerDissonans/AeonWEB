@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Media.Animation;
 
 namespace Aeon.WindowsClient.Views;
 /// <summary>
@@ -28,6 +29,8 @@ public partial class BattleView : Page
 		InitializeComponent();
 		VM = (BattleVM) DataContext;
 		App.Game.NewBattleTurn.Subscribe(OnNewTurn);
+		App.Game.NewRoundSummary.Subscribe(s => VM.Summary = s);
+		VM.Summary = App.Game.LastSummary ?? new();
 	}
 
 	private void OnNewTurn(BattleTurn turn)
@@ -38,6 +41,11 @@ public partial class BattleView : Page
 		}
 		_lastTurn = turn;
 		VM.BattleTurn = turn;
+
+		if (turn.TurnType == BattleTurn.T.Init) {
+			Hero1.Move(1000).ThenAttack(500);
+			Hero2.Move(1000).ThenAttack(500);
+		}
 
 	}
 

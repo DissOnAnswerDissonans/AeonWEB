@@ -13,7 +13,7 @@
     <vm:ShopPageVM/>
   </Page.DataContext>
 
-  <Grid Background="WhiteSmoke">
+  <Grid Background="{StaticResource DarkBG}">
     <Grid.RowDefinitions>
       <RowDefinition Height="64"/>
       <RowDefinition Height="64"/>

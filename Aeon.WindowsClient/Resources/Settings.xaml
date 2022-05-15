@@ -1,0 +1,20 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:aeon="clr-namespace:Aeon.WindowsClient">
+
+  <sys:Double x:Key="Width">800</sys:Double>
+  <sys:Double x:Key="Height">600</sys:Double>
+
+  <SolidColorBrush x:Key="TextColor" Color="White"/>
+  <SolidColorBrush x:Key="DarkBG" Color="#FF141428"/>
+
+  <SolidColorBrush x:Key="BorderColor" Color="Black"/>
+  <SolidColorBrush x:Key="Element" Color="DarkBlue"/>
+  <SolidColorBrush x:Key="DisabledElement" Color="#222"/>
+
+  <SolidColorBrush x:Key="Rooms_Need" Color="#ba0"/>
+  <SolidColorBrush x:Key="Rooms_Open" Color="#090"/>
+  <SolidColorBrush x:Key="Rooms_Closed" Color="#b00"/>
+
+</ResourceDictionary>

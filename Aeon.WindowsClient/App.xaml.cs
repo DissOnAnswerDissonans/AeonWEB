@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Reactive;
 using AeonServer.Models;
+using System.IO;
 
 namespace Aeon.WindowsClient;
 /// <summary>

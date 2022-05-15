@@ -9,17 +9,13 @@
              StartupUri="MainWindow.xaml"
              >
   <Application.Resources>
-    <Style x:Key="BaseText">
-      <Setter Property="Control.FontFamily" Value="Trebuchet MS"/>
-      <Setter Property="Control.FontSize" Value="20"/>
-      <Setter Property="Control.FontWeight" Value="Bold"/>
-    </Style>
-    <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey=BaseText}"/>
-    <Style TargetType="TextBox" BasedOn="{StaticResource ResourceKey=BaseText}"/>
-    <Style TargetType="PasswordBox" BasedOn="{StaticResource ResourceKey=BaseText}"/>
-
-    <sys:Double x:Key="Width">800</sys:Double>
-    <sys:Double x:Key="Height">600</sys:Double>
-    
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Resources/Wpf/luna.normalcolor.xaml"/>
+        <ResourceDictionary Source="/Resources/Settings.xaml"/>
+        <ResourceDictionary Source="/Resources/Theme.xaml"/>
+        <ResourceDictionary Source="/Resources/Sprites.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
   </Application.Resources>
 </Application>

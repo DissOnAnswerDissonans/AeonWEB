@@ -8,6 +8,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\image\aeon2.png" />
+    <None Remove="Resources\image\bg.jpg" />
+    <None Remove="Resources\image\bg2.png" />
+    <None Remove="Resources\image\bg3.jpg" />
+    <None Remove="Resources\image\heroes\daemon.png" />
+    <None Remove="Resources\image\heroes\death_knight.png" />
+    <None Remove="Resources\image\heroes\dragon.png" />
+    <None Remove="Resources\image\heroes\elven_archer.png" />
+    <None Remove="Resources\image\heroes\footman.png" />
+    <None Remove="Resources\image\heroes\grunt.png" />
+    <None Remove="Resources\image\heroes\gryphon_rider.png" />
+    <None Remove="Resources\image\heroes\knight.png" />
+    <None Remove="Resources\image\heroes\mage.png" />
+    <None Remove="Resources\image\heroes\ogre.png" />
+    <None Remove="Resources\image\heroes\peasant.png" />
+    <None Remove="Resources\image\heroes\peon.png" />
+    <None Remove="Resources\image\heroes\skeleton.png" />
+    <None Remove="Resources\image\heroes\transport.png" />
+    <None Remove="Resources\image\heroes\troll_axethrower.png" />
+    <None Remove="Resources\image\heroes\troll_destroyer.png" />
+    <None Remove="Resources\image\menu.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Fody" Version="6.6.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,7 +47,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Resource Include="Resources\image\aeon2.png" />
+    <Resource Include="Resources\image\bg.jpg" />
+    <Resource Include="Resources\image\bg2.png" />
+    <Resource Include="Resources\image\bg3.jpg" />
+    <Resource Include="Resources\image\heroes\daemon.png" />
+    <Resource Include="Resources\image\heroes\death_knight.png" />
+    <Resource Include="Resources\image\heroes\dragon.png" />
+    <Resource Include="Resources\image\heroes\elven_archer.png" />
+    <Resource Include="Resources\image\heroes\footman.png" />
+    <Resource Include="Resources\image\heroes\grunt.png" />
+    <Resource Include="Resources\image\heroes\gryphon_rider.png" />
+    <Resource Include="Resources\image\heroes\knight.png" />
+    <Resource Include="Resources\image\heroes\mage.png" />
+    <Resource Include="Resources\image\heroes\ogre.png" />
+    <Resource Include="Resources\image\heroes\peasant.png" />
+    <Resource Include="Resources\image\heroes\peon.png" />
+    <Resource Include="Resources\image\heroes\skeleton.png" />
+    <Resource Include="Resources\image\heroes\transport.png" />
+    <Resource Include="Resources\image\heroes\troll_axethrower.png" />
+    <Resource Include="Resources\image\heroes\troll_destroyer.png" />
+    <Resource Include="Resources\image\menu.jpg" />
   </ItemGroup>
 
 </Project>

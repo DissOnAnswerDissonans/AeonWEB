@@ -69,7 +69,7 @@ public class GameState
 
 			IEnumerable<Task> tasks = _rules.GetBattles(this).Select(x => StartBattle(x));
 			await Task.WhenAll(tasks);
-			await Task.Delay(1_000);
+			await Task.Delay(3_000);
 		}
 	}
 
@@ -170,11 +170,12 @@ public class GameState
 		var summary = new RoundScoreSummary {
 			RoundNumber = RoundNumber,
 			IsGameOver = false,
-			Entries = _rules.GetScores().Select(x => new RoundScoreSummary.Entry { 
+			Entries = _rules.GetScores(_players).Select(x => new RoundScoreSummary.Entry { 
 				HeroName = x.Player.HeroName, Player = x.Player.ID, Score = x.Score
 			}).ToList()
 		};
-		await _gameHub.Clients.Users(_players.Select(p => p.ID)).NewRoundSummary(summary);
+		var u = _players.Select(p => p.ID).ToList();
+		await _gameHub.Clients.Users(u).NewRoundSummary(summary);
 	}
 
 	private static IEnumerable<Battle.BattleState> Battle(Player p1, Player p2, Battle.ILogger logger)

@@ -41,16 +41,16 @@
 
     <Canvas Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2"
             d:Background="ForestGreen" x:Name="cv1">
-      <Image Canvas.Bottom="0" Canvas.Right="0" Height="128" Width="128"/>
-      <Rectangle Canvas.Bottom="0" Canvas.Right="0" Height="128" Width="128"
-                 Fill="Cyan"/>
+      <local:HeroDisplay x:Name="Hero1" Width="128" Height="128" Canvas.Bottom="0" Canvas.Right="100"
+                         HeroName="{Binding BattleTurn.Hero.HeroId}" Direction="E" Frame="0"
+                         d:HeroName="Aeon.Heroes:Beast"/>
     </Canvas>
 
     <Canvas Grid.Column="4" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2"
             d:Background="ForestGreen" x:Name="cv2">
-      <Image Canvas.Bottom="0" Canvas.Left="0" Height="128" Width="128"/>
-      <Rectangle Canvas.Bottom="0" Canvas.Left="0" Height="128" Width="128"
-                 Fill="DarkOrange"/>
+      <local:HeroDisplay x:Name="Hero2" Width="128" Height="128" Canvas.Bottom="0" Canvas.Left="100"
+                         HeroName="{Binding BattleTurn.Enemy.HeroId}" Direction="W" Frame="0"
+                         d:HeroName="Aeon.Heroes:Master"/>
     </Canvas>
 
     <Border Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Background="WhiteSmoke"
@@ -73,7 +73,7 @@
       <TextBlock Grid.Column="1" Text="{Binding HealthText}" 
                  VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
       <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" 
-                   Value="{Binding BattleTurn.Hero.Health}"
+                   Value="{Binding BattleTurn.Hero.Health}" d:Value="70"
                    Maximum="{Binding BattleTurn.Hero.MaxHealth}"/>
     </Grid>
 
@@ -91,7 +91,7 @@
       <TextBlock Grid.Column="1" Text="{Binding EHealthText}" 
                  VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
       <ProgressBar Grid.Row="1" Grid.ColumnSpan="2"
-                   Value="{Binding BattleTurn.Enemy.Health}"
+                   Value="{Binding BattleTurn.Enemy.Health}" d:Value="70"
                    Maximum="{Binding BattleTurn.Enemy.MaxHealth}"/>
     </Grid>
 
@@ -105,8 +105,8 @@
     <Border Grid.Row="1" Grid.Column="1" Grid.RowSpan="4" Grid.ColumnSpan="6"
             Margin="32 68" Background="#B2000000" BorderThickness="4"
             BorderBrush="Black" CornerRadius="32" Padding="12 4" 
-            VerticalAlignment="Top">
-      <ItemsControl d:ItemsSource="{d:SampleData ItemCount=2}">
+            VerticalAlignment="Top" Visibility="{Binding ScoreVisible}">
+      <ItemsControl ItemsSource="{Binding Summary.Entries}" d:ItemsSource="{d:SampleData ItemCount=2}">
         <ItemsControl.Resources>
           <Style TargetType="TextBlock" x:Key="TextT"
                  BasedOn="{StaticResource ResourceKey=BaseText}">
@@ -122,11 +122,11 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="75"/>
               </Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Nickname"
+              <TextBlock Grid.Column="0" d:Text="Nickname" Text="{Binding Player}"
                          Style="{StaticResource TextT}" HorizontalAlignment="Left" />
-              <TextBlock Grid.Column="1" Text="Aeon.Heroes:Hero" 
+              <TextBlock Grid.Column="1" d:Text="Aeon.Heroes:Hero" Text="{Binding HeroName}" 
                          Style="{StaticResource TextT}" HorizontalAlignment="Left" />
-              <TextBlock Grid.Column="2" Text="0000" FontSize="32"
+              <TextBlock Grid.Column="2" d:Text="0000" Text="{Binding Score}" FontSize="32"
                          Style="{StaticResource TextT}" HorizontalAlignment="Center" />
             </Grid>
           </DataTemplate>

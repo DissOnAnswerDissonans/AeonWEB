@@ -12,8 +12,8 @@
   <Page.DataContext>
     <vm:RoomListVM/>
   </Page.DataContext>
-  
-  <Grid Background="WhiteSmoke">
+
+  <Grid Background="{StaticResource DarkBG}">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="2*"/>
       <ColumnDefinition Width="32"/>
@@ -32,23 +32,27 @@
              d:ItemsSource="{d:SampleData ItemCount=50}"
              HorizontalContentAlignment="Stretch"
              SelectionChanged="ListBox_SelectionChanged"
+             d:IsEnabled="False"
              IsEnabled="{Binding NotInRoom}" Padding="4" 
              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <DockPanel Margin="4,1" Background="{Binding SelectColor}">
-            <TextBlock d:Text="4/4" Text="{Binding Data.PlayersStr}" DockPanel.Dock="Right"
-                       Foreground="{Binding AmountColor}"/>
-            <TextBlock d:Text="Room Name 123456789" Text="{Binding Data.RoomName}" 
-                       TextTrimming="CharacterEllipsis" Foreground="{Binding NameColor}"/>
-          </DockPanel>
+          <Border Margin="0" Padding="3 1 4 1" CornerRadius="5" Background="{Binding SelectColor}">
+            <DockPanel>
+              <TextBlock d:Text="4/4" Text="{Binding Data.PlayersStr}" DockPanel.Dock="Right"
+                         Foreground="{Binding AmountColor}"/>
+              <TextBlock d:Text="Room Name 123456789" Text="{Binding Data.RoomName}" 
+                         TextTrimming="CharacterEllipsis" Foreground="{Binding NameColor}"/>
+            </DockPanel>
+          </Border>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
     <DockPanel Grid.Row="2" Margin="12 8 14 8">
       <Button DockPanel.Dock="Right" Width="50" Command="{Binding NewRoom}">+</Button>
       <TextBox Height="32" Margin="0 0 8 0" Text="{Binding NewRoomName}" 
-               IsEnabled="{Binding NotInRoom}" />
+               IsEnabled="{Binding NotInRoom}"
+               d:IsEnabled="False" d:Text="1234"/>
     </DockPanel>
     <Button Grid.Row="3" Content="Refresh" Margin="12 8 14 8"
             Command="{Binding Refresh}"/>
@@ -56,19 +60,19 @@
     <Button Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="3" Margin="12" 
             Content="{Binding ReadyText}" Command="{Binding Ready}" />
 
-    <ListBox Grid.Column="2" Grid.Row="1" ItemsSource="{Binding PlayersInRoom}"
+    <ItemsControl Grid.Column="2" Grid.Row="1" ItemsSource="{Binding RoomSlots}"
              d:ItemsSource="{d:SampleData ItemCount=8}" Padding="4"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-             HorizontalContentAlignment="Stretch">
-      <ListBox.ItemTemplate>
+             HorizontalContentAlignment="Stretch" VerticalAlignment="Bottom">
+      <ItemsControl.ItemTemplate>
         <DataTemplate>
           <DockPanel>
-            <TextBlock d:Text="X" Text="{Binding ReadyDig}" DockPanel.Dock="Right"/>
-            <TextBlock Text="{Binding Data.PlayerName}"/>
+            <TextBlock d:Text="X" Text="{Binding ReadySignal}" DockPanel.Dock="Right"/>
+            <TextBlock Text="{Binding Name}" Foreground="{Binding NickBrush}"/>
           </DockPanel>
         </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
 
     <Button Grid.Column="2" Grid.Row="2" Margin="12" Content="Leave"
             Command="{Binding Leave}"/>

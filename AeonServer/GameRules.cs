@@ -9,7 +9,7 @@ public interface IGameRules
 	public int GetBaseWage(GameState game);
 	public Player? GetWinner(GameState game);
 	public int GetScore(Player player);
-	public List<(Player Player, int Score)> GetScores();
+	public List<(Player Player, int Score)> GetScores(List<Player> players);
 
 	public void LogBattleResult(Player p1, Player p2, int winner, int turns);
 }
@@ -30,10 +30,10 @@ public class VanillaRules : IGameRules
 	public Player? GetWinner(GameState game) => _winner;
 	public int GetScore(Player player) => (_scores.TryGetValue(player, out int value)) ? value : 0;
 
-	public List<(Player Player, int Score)> GetScores()
+	public List<(Player Player, int Score)> GetScores(List<Player> players)
 	{
-		var list = _scores.Select(x => (x.Key, x.Value)).ToList();
-		list.Sort((x, y) => x.Value.CompareTo(y.Value));
+		var list = players.Select(pl => (pl, GetScore(pl))).ToList();
+		list.Sort((x, y) => y.Item2.CompareTo(x.Item2));
 		return list;
 	}
 
@@ -64,5 +64,5 @@ public class NewRules : IGameRules
 
 
 	public void LogBattleResult(Player p1, Player p2, int winner, int turns) => throw new NotImplementedException();
-	public List<(Player Player, int Score)> GetScores() => throw new NotImplementedException();
+	public List<(Player Player, int Score)> GetScores(List<Player> players) => throw new NotImplementedException();
 }

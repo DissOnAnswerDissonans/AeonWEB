@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:aeon="clr-namespace:Aeon.WindowsClient">
+
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Banker" Source="/Resources/image/heroes/dragon.png" 
+                   MoveFrames="4" AttackFrames="2" DeadFrames="4"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Beast" Source="/Resources/image/heroes/troll_axethrower.png" 
+                   MoveFrames="5" AttackFrames="4" DeadFrames="3"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:BloodyElf" Source="/Resources/image/heroes/mage.png" 
+                   MoveFrames="5" AttackFrames="4" DeadFrames="7"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Cheater" Source="/Resources/image/heroes/gryphon_rider.png" 
+                   MoveFrames="4" AttackFrames="3" DeadFrames="6"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Fatty" Source="/Resources/image/heroes/ogre.png" 
+                   MoveFrames="5" AttackFrames="4" DeadFrames="5"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Fe11" Source="/Resources/image/heroes/peon.png" 
+                   MoveFrames="5" AttackFrames="5" DeadFrames="3"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Killer" Source="/Resources/image/heroes/grunt.png" 
+                   MoveFrames="5" AttackFrames="4" DeadFrames="3"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Master" Source="/Resources/image/heroes/daemon.png" 
+                   MoveFrames="4" AttackFrames="6" DeadFrames="5"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Rogue" Source="/Resources/image/heroes/elven_archer.png" 
+                   MoveFrames="5" AttackFrames="2" DeadFrames="3"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Thief" Source="/Resources/image/heroes/knight.png" 
+                   MoveFrames="5" AttackFrames="4" DeadFrames="5"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Tramp" Source="/Resources/image/heroes/peasant.png" 
+                   MoveFrames="5" AttackFrames="5" DeadFrames="3"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Trickster" Source="/Resources/image/heroes/skeleton.png" 
+                   MoveFrames="5" AttackFrames="4" DeadFrames="5"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Vampire" Source="/Resources/image/heroes/daemon2.png" 
+                   MoveFrames="4" AttackFrames="6" DeadFrames="5"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Warlock" Source="/Resources/image/heroes/death_knight.png" 
+                   MoveFrames="5" AttackFrames="4" DeadFrames="4"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Warrior" Source="/Resources/image/heroes/footman.png" 
+                   MoveFrames="5" AttackFrames="4" DeadFrames="3"/>
+
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Unused1" Source="/Resources/image/heroes/transport.png" 
+                   MoveFrames="1" AttackFrames="1" DeadFrames="1"/>
+  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Unused2" Source="/Resources/image/heroes/troll_destroyer.png" 
+                   MoveFrames="1" AttackFrames="1" DeadFrames="1"/>
+  
+</ResourceDictionary>

@@ -18,6 +18,7 @@ internal class BattleVM : INotifyPropertyChanged
 {
 	public event PropertyChangedEventHandler? PropertyChanged;
 	public BattleTurn? BattleTurn { get; set; }
+	public RoundScoreSummary Summary { get; set; } = new();
 
 	public Visibility EnemyWait => BattleTurn is null ? Visibility.Visible : Visibility.Hidden;
 	public Visibility ScoreVisible => 

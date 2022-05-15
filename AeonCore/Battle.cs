@@ -54,8 +54,9 @@ public class Battle
 		_h1.AfterBattle(_h2, Winner == 1);
 		_h2.AfterBattle(_h1, Winner == 2);
 
-		yield return Log(TurnType.AfterBattle);
 		_logger?.LogBattleResult(Rounds, Winner);
+
+		yield return Log(TurnType.AfterBattle);
 		yield break;
 	}
 

@@ -22,6 +22,7 @@ public partial class Login : Page
 	public Login()
 	{
 		InitializeComponent();
+		AnimTest.Move(2000).ThenStop(500).ThenAttack(1000).ThenDie(1000);
 	}
 
 	private void PasswordChanged(object sender, RoutedEventArgs e)
@@ -29,6 +30,7 @@ public partial class Login : Page
 		if (DataContext != null) {
 			((ViewModels.SignInVM) DataContext).Password = ((PasswordBox) sender).Password;
 		}
+		AnimTest.Move(2000);
 	}
 
 	private void ConfPasswordChanged(object sender, RoutedEventArgs e)

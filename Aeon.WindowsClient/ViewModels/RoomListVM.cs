@@ -17,8 +17,16 @@ internal class RoomListVM : INotifyPropertyChanged
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public ObservableCollection<RoomVM> Rooms { get; set; } = new();
-	public ObservableCollection<PlayerVM> PlayersInRoom 
-		=> new(ActiveRoom?.Players.Select(p => new PlayerVM(p)) ?? new List<PlayerVM>());
+	public ObservableCollection<RoomSlot> RoomSlots { get {
+			if (ActiveRoom is null) return new();
+
+			List<RoomSlot> list = ActiveRoom.Players.Select(p => new RoomSlot(p)).ToList();
+			for (int plN = list.Count; plN < ActiveRoom.MaxPlayers; ++plN) {
+				list.Add(plN < ActiveRoom.MinPlayers ? RoomSlot.Need : RoomSlot.Open);
+			}
+			return new(list);
+		}
+	}
 
 	public string? ActiveRoomName => ActiveRoom?.RoomName;
 	public RoomFullData? ActiveRoom { get; set; }
@@ -70,13 +78,24 @@ internal class RoomListVM : INotifyPropertyChanged
 
 }
 
-public class PlayerVM
+public class RoomSlot
 {
-	public PlayerData Data { get; }
-	public PlayerVM(PlayerData data) => Data = data;
-	public string ReadyDig => Data.IsReady ? "X" : "-";
+	public string Name { get; set; } = "";
+	public string ReadySignal { get; set; } = "";
+	private RoomSlot() { }
+	public RoomSlot(PlayerData p)
+	{
+		Name = p.PlayerName;
+		ReadySignal = p.IsReady ? "X" : "-";
+	}
+	public static RoomSlot Need => new() { Name = "{need}" };
+	public static RoomSlot Open => new() { Name = "(open)" };
 
-	public event PropertyChangedEventHandler? PropertyChanged;
+	public Brush NickBrush => (Brush) App.Inst.FindResource(Name switch {
+		"{need}" => "Rooms_Need",
+		"(open)" => "Rooms_Open",
+		_ => "TextColor"
+	});
 }
 
 public class RoomVM
@@ -87,14 +106,16 @@ public class RoomVM
 	public bool IsFull => Data.Status.HasFlag(RoomStatus.Full);
 	public bool IsClosedRoom => Data.Status.HasFlag(RoomStatus.Closed);
 	public bool IsSelected { get; set; }
-	public Brush NameColor => IsAvailiable ? colorOpen : colorClosed;
-	public Brush AmountColor => !IsFull ? colorOpen : colorClosed;
+	public Brush NameColor => (Brush)
+		App.Inst.FindResource(IsAvailiable ? "Rooms_Open" : "Rooms_Closed");
+	public Brush AmountColor => (Brush)
+		App.Inst.FindResource(IsFull ? "Rooms_Closed" 
+			: Data.PlayersCount < Data.MinPlayers? "Rooms_Need"
+			: "Rooms_Open");
 	public Brush SelectColor => IsSelected ? selected : empty;
 
-	public static readonly Brush colorOpen = new SolidColorBrush(new(){ R = 0, G = 64, B = 0, A = 255 });
-	public static readonly Brush colorClosed = new SolidColorBrush(new(){ R = 192, G = 0, B = 0, A = 255 });
 	public static readonly Brush empty = new SolidColorBrush(new(){ R = 0, G = 0, B = 0, A = 0 });
-	public static readonly Brush selected = new SolidColorBrush(new(){ R = 0, G = 0, B = 0, A = 32 });
+	public static readonly Brush selected = new SolidColorBrush(new(){ R = 0, G = 255, B = 255, A = 32 });
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 }
