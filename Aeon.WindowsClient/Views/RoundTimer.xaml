@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="Aeon.WindowsClient.Views.RoundTimer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Aeon.WindowsClient.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="128" d:DesignWidth="128">
+  <Grid>
+    <Ellipse Stroke="DarkRed" StrokeThickness="8" Fill="Black" />
+    <TextBlock x:Name="val" Text="00" FontSize="64" 
+               VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    <Path x:Name="path" Stroke="Green" Fill="GreenYellow" StrokeThickness="2">
+      <Path.Data>
+        <CombinedGeometry GeometryCombineMode="Exclude">
+          <CombinedGeometry.Geometry1>
+            <EllipseGeometry Center="64, 64" RadiusX="63" RadiusY="63"/>
+          </CombinedGeometry.Geometry1>
+          <CombinedGeometry.Geometry2>
+            <GeometryGroup FillRule="Nonzero">
+              <EllipseGeometry Center="64, 64" RadiusX="57" RadiusY="57" />
+              <PathGeometry FillRule="Nonzero">
+                <PathFigure StartPoint="64, 64">
+                  <LineSegment Point="64, 0"/>
+                  <ArcSegment Point="128, 64" Size="64 64" 
+                              IsLargeArc="True" SweepDirection="Clockwise"/>
+                </PathFigure>
+              </PathGeometry>
+            </GeometryGroup>
+          </CombinedGeometry.Geometry2>
+        </CombinedGeometry>
+      </Path.Data>
+    </Path>
+  </Grid>
+</UserControl>

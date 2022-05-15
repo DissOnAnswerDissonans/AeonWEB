@@ -8,8 +8,7 @@
              d:DesignHeight="128" d:DesignWidth="128">
   <Grid SnapsToDevicePixels="True" ClipToBounds="True">
     <Image x:Name="img" Stretch="Fill" StretchDirection="Both" 
-           RenderTransformOrigin="0.25, 0.0"
-           Source="/Resources/image/heroes/dragon.png">
+           RenderTransformOrigin="0.25, 0.0" >
       <Image.RenderTransform>
         <ScaleTransform ScaleX="5" ScaleY="10"/>
       </Image.RenderTransform>

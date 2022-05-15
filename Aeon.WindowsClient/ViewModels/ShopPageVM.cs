@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -21,7 +22,8 @@ internal class ShopPageVM : INotifyPropertyChanged
 	public ObservableCollection<PositionVM> Positions { get; set; } = new();
 	public int Money { get; set; }
 	public string MoneyText => $"Денег {Money}₽";
-	public double ShopTimer { get; set; }
+	public string TimerText { get; set; }
+
 
 	internal void OnShopUpd(ShopUpdate upd)
 	{

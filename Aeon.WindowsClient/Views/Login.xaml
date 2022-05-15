@@ -41,9 +41,12 @@
       <RowDefinition Height="64"/>
     </Grid.RowDefinitions>
     <local:HeroDisplay x:Name="AnimTest" Grid.Row="1" Grid.Column="1" Width="128" HorizontalAlignment="Left" 
-                       HeroName="Aeon.Heroes:Vampire" Direction="SE" Frame="0"/>
-    <Image Grid.Column="2" Grid.RowSpan="2" Margin="16"
-           Source="/Resources/image/aeon2.png"/>
+                       HeroName="Auxillary:Default" Direction="SE" Frame="0" RenderTransformOrigin="0.5,0.5">
+      <local:HeroDisplay.RenderTransform>
+        <TranslateTransform X="32"/>
+      </local:HeroDisplay.RenderTransform>
+    </local:HeroDisplay>
+    <Image Grid.Column="2" Grid.RowSpan="2" Margin="16" Source="/Resources/image/aeon2.png"/>
     <StackPanel Grid.Row="2" Grid.Column="2">
       <DockPanel>
         <TextBlock FontSize="28" Text="{Binding TrText}" VerticalAlignment="Center"/>

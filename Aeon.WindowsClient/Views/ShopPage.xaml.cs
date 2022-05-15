@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Media.Animation;
 
 namespace Aeon.WindowsClient.Views;
 /// <summary>
@@ -24,9 +25,6 @@ public partial class ShopPage : Page
 {
 	ShopPageVM VM { get; }
 
-	private Timer? _timer;
-	private DateTimeOffset _timeOffset;
-
 	public ShopPage(RoundInfo r)
 	{
 		InitializeComponent();
@@ -34,15 +32,20 @@ public partial class ShopPage : Page
 		VM.Round = r;
 
 		App.Game.ShopUpdated.Subscribe(VM.OnShopUpd);
-		App.Game.ShopUpdated.Subscribe(x => _timeOffset = x.CloseIn);
+		App.Game.ShopUpdated.Subscribe(SetTimer);
 		if (App.Game.LastShopUpdate is not null) 
 			VM.OnShopUpd(App.Game.LastShopUpdate);
+	}
 
-		_timer = new(100);
-		_timer.Elapsed += (a, s) => {
-			VM.ShopTimer = Math.Round((_timeOffset.UtcDateTime - DateTimeOffset.UtcNow).TotalSeconds, 1);
-		};
-		_timer.Start();
+	private void SetTimer(ShopUpdate upd)
+	{
+		if (timer.Time == 0) {
+			TimeSpan t = upd.CloseIn - DateTimeOffset.UtcNow;
+			double time = t.TotalSeconds;
+			timer.SetTime(time);
+		}
+		if (upd.Response == ShopUpdate.R.Closed)
+			timer.SetTime(0);
 	}
 
 	private async void Button_Click(object sender, RoutedEventArgs e)

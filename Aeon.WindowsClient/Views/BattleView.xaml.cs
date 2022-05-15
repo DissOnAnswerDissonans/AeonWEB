@@ -42,13 +42,21 @@ public partial class BattleView : Page
 		_lastTurn = turn;
 		VM.BattleTurn = turn;
 
+		int delay = turn.NextTurnAfterMS;
+
 		if (turn.TurnType == BattleTurn.T.Init) {
-			Hero1.Move(1500, 2).Attack(500).StartAnim();
-			Hero2.Move(1500, 2).Attack(500).StartAnim();
+			Hero1.Move(delay - delay/4, 2).Attack(delay / 4).StartAnim();
+			Hero2.Move(delay - delay/4, 2).Attack(delay / 4).StartAnim();
+
+			var a1 = new DoubleAnimation(-200, 0, TimeSpan.FromMilliseconds(delay - delay/4));
+			var a2 = new DoubleAnimation(+200, 0, TimeSpan.FromMilliseconds(delay - delay/4));
+
+			Hero1.RenderTransform.BeginAnimation(TranslateTransform.XProperty, a1);
+			Hero2.RenderTransform.BeginAnimation(TranslateTransform.XProperty, a2);
 		}
 		if (turn.TurnType == BattleTurn.T.Heal) {
-			Hero1.Attack(500).StartAnim();
-			Hero2.Attack(500).StartAnim();
+			Hero1.Attack(delay).StartAnim();
+			Hero2.Attack(delay).StartAnim();
 		}
 		if (turn.TurnType == BattleTurn.T.End) {
 			if (turn.Hero.Health <= 0)  Hero1.Die(1000).StartAnim();

@@ -10,6 +10,7 @@ namespace Aeon.Base
 		public T TurnType { get; set; }
 		public BattleHero Hero { get; set; }
 		public EnemyHero Enemy { get; set; }
+		public int NextTurnAfterMS { get; set; }
 
 		public enum T { Init, Attack, Heal, End }
 	}

@@ -33,7 +33,7 @@ public partial class HeroDisplay : UserControl
 	}
 	public static readonly DependencyProperty HeroNameProperty =
 	DependencyProperty.Register("HeroName", typeof(string),
-		typeof(HeroDisplay), new PropertyMetadata("Aeon.Heroes:Unused1",
+		typeof(HeroDisplay), new PropertyMetadata("Auxillary:Default",
 			(d, args) => ((HeroDisplay)d).UpdateHeroName((string)args.NewValue)));
 
 	public Dir Direction {

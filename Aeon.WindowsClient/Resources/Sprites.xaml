@@ -34,9 +34,9 @@
   <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Warrior" Source="/Resources/image/heroes/footman.png" 
                    MoveFrames="5" AttackFrames="4" DeadFrames="3"/>
 
-  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Unused1" Source="/Resources/image/heroes/transport.png" 
+  <aeon:SpriteInfo x:Key="Sprite:Auxillary:Default" Source="/Resources/image/heroes/transport.png" 
                    MoveFrames="1" AttackFrames="1" DeadFrames="1"/>
-  <aeon:SpriteInfo x:Key="Sprite:Aeon.Heroes:Unused2" Source="/Resources/image/heroes/troll_destroyer.png" 
+  <aeon:SpriteInfo x:Key="Sprite:Auxillary:Unused" Source="/Resources/image/heroes/troll_destroyer.png" 
                    MoveFrames="1" AttackFrames="1" DeadFrames="1"/>
   
 </ResourceDictionary>

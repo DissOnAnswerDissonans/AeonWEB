@@ -39,19 +39,25 @@
       <TextBlock Text="Ожидание противника…"/>
     </Border>
 
-    <Canvas Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2"
-            d:Background="ForestGreen" x:Name="cv1">
-      <local:HeroDisplay x:Name="Hero1" Width="128" Height="128" Canvas.Bottom="0" Canvas.Right="100"
+    <Grid Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2" d:Background="ForestGreen" x:Name="cv1">
+      <local:HeroDisplay x:Name="Hero1" Width="128" Height="128" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                          HeroName="{Binding BattleTurn.Hero.HeroId}" Direction="E" Frame="0"
-                         d:HeroName="Aeon.Heroes:Beast"/>
-    </Canvas>
+                         d:HeroName="Aeon.Heroes:Beast" RenderTransformOrigin="0.5,0.5">
+        <local:HeroDisplay.RenderTransform>
+          <TranslateTransform X="-200"/>
+        </local:HeroDisplay.RenderTransform>
+      </local:HeroDisplay>
+    </Grid>
 
-    <Canvas Grid.Column="4" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2"
-            d:Background="ForestGreen" x:Name="cv2">
-      <local:HeroDisplay x:Name="Hero2" Width="128" Height="128" Canvas.Bottom="0" Canvas.Left="100"
+    <Grid Grid.Column="4" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2" d:Background="ForestGreen" x:Name="cv2">
+      <local:HeroDisplay x:Name="Hero2" Width="128" Height="128" VerticalAlignment="Bottom" HorizontalAlignment="Left"
                          HeroName="{Binding BattleTurn.Enemy.HeroId}" Direction="W" Frame="0"
-                         d:HeroName="Aeon.Heroes:Master"/>
-    </Canvas>
+                         d:HeroName="Aeon.Heroes:Master">
+        <local:HeroDisplay.RenderTransform>
+          <TranslateTransform X="200"/>
+        </local:HeroDisplay.RenderTransform>
+      </local:HeroDisplay>
+    </Grid>
 
     <Border Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Background="WhiteSmoke"
             VerticalAlignment="Center" HorizontalAlignment="Center" Padding="16" 

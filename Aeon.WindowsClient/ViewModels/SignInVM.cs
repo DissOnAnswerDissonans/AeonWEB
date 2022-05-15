@@ -64,7 +64,6 @@ internal class SignInVM : INotifyPropertyChanged
 	public string OkText => "ПЫЩЬ!";
 
 
-
 	private async Task Register(HttpClient http, string url, LoginModel model)
 	{
 		ErrorMessage = "Регистрация…";

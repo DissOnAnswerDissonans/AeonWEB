@@ -91,21 +91,10 @@ public class GameState
 
 	private async Task StartShopping()
 	{
-		//List<Task> t = new();
-		foreach (var player in Players) {
-			var upd = new ShopUpdate {
-				Hero = Models.Hero.FromAeon(player.Hero!),
-				Offers = player.Hero!.Shop.Offers.Select((o, id) => o.ToBase(player.Hero!.Stats, id)).ToArray(),
-				Response = ShopUpdate.R.Opened,
-				CloseIn = ShopCloseTime
-			};
-
-			var cyka = System.Text.Json.JsonSerializer.Serialize(upd);
-			var cyka2 = System.Text.Json.JsonSerializer.Deserialize<ShopUpdate>(cyka);
-
+		foreach (Player player in Players) {
+			ShopUpdate upd = player.GetShopUpdate(ShopUpdate.R.Opened);
 			await _gameHub.Clients.User(player.ID).ShopUpdated(upd);
 		}
-		//await Task.WhenAll(t.ToArray());
 	}
 
 
@@ -116,15 +105,17 @@ public class GameState
 		var logger = new BattleLogger(this, p1, p2);
 		foreach (Battle.BattleState state in Battle(p1, p2, logger))
 		{
-			await _gameHub.Clients.User(p1.ID).NewBattleTurn(MakeTurn(state, p1, p2));
-			await _gameHub.Clients.User(p2.ID).NewBattleTurn(MakeTurn(state, p2, p1));	
-			await Task.Delay(state.TurnType switch {
+			int delayMS = state.TurnType switch {
 				Aeon.Core.Battle.TurnType.InitState => 2000,
 				Aeon.Core.Battle.TurnType.AfterDamage => 500,
 				Aeon.Core.Battle.TurnType.AfterHealing => 500,
 				Aeon.Core.Battle.TurnType.AfterBattle => 0,
 				_ => 0,
-			});
+			};
+			await _gameHub.Clients.User(p1.ID).NewBattleTurn(MakeTurn(state, p1, p2, delayMS));
+			await _gameHub.Clients.User(p2.ID).NewBattleTurn(MakeTurn(state, p2, p1, delayMS));	
+			await Task.Delay(delayMS);
+
 			if (state.TurnType == Aeon.Core.Battle.TurnType.AfterBattle) {
 				switch (state.Winner) {
 					case 1: p1.Hero!.Wage(battle.Prize); break;
@@ -138,7 +129,7 @@ public class GameState
 		await MulticastRoundSummary();
 	}
 
-	private static BattleTurn MakeTurn(Battle.BattleState state, Player player, Player enemy)
+	private static BattleTurn MakeTurn(Battle.BattleState state, Player player, Player enemy, int delay)
 	{
 		return new BattleTurn {
 			TurnNumber = state.TurnNumber,
@@ -157,11 +148,12 @@ public class GameState
 				ExpectedCrit = player.Hero!.ExpectedCrit,
 				BoostBonus = (float) player.Hero!.StatsRO.DynConvertAsIs("INC")
 			},
-			Enemy = new EnemyHero { 
-				HeroId = enemy.HeroName!, 
+			Enemy = new EnemyHero {
+				HeroId = enemy.HeroName!,
 				Health = enemy.Hero!.StatsRO.DynConvert("HP"),
 				MaxHealth = enemy.Hero!.StatsRO.Convert("HP"),
 			},
+			NextTurnAfterMS = delay,
 		};
 	}
 
