@@ -41,7 +41,7 @@
       <RowDefinition Height="64"/>
     </Grid.RowDefinitions>
     <local:HeroDisplay x:Name="AnimTest" Grid.Row="1" Grid.Column="1" Width="128" HorizontalAlignment="Left" 
-                       HeroName="Aeon.Heroes:Fe11" Direction="W" Frame="0"/>
+                       HeroName="Aeon.Heroes:Vampire" Direction="SE" Frame="0"/>
     <Image Grid.Column="2" Grid.RowSpan="2" Margin="16"
            Source="/Resources/image/aeon2.png"/>
     <StackPanel Grid.Row="2" Grid.Column="2">

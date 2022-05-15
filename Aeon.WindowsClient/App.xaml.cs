@@ -58,6 +58,7 @@ public partial class App : Application
 
 	private async Task D()
 	{
+		if (General is null) return;
 		await General.Disconnect();
 		await Lobby.Disconnect();
 	}

@@ -23,9 +23,9 @@ public partial class HeroDisplay : UserControl
 	private SpriteInfo? _sprite;
 	private Size? _spriteSize;
 
-	private Int32KeyFrameCollection _framesMove;
-	private Int32KeyFrameCollection _framesAttack;
-	private Int32KeyFrameCollection _framesDead;
+	private List<int> _framesMove = new() {0};
+	private List<int> _framesAttack = new() {1};
+	private List<int> _framesDead = new() {2};
 
 	public string HeroName {
 		get { return (string) GetValue(HeroNameProperty); }
@@ -33,7 +33,7 @@ public partial class HeroDisplay : UserControl
 	}
 	public static readonly DependencyProperty HeroNameProperty =
 	DependencyProperty.Register("HeroName", typeof(string),
-		typeof(HeroDisplay), new PropertyMetadata("Aeon.Heroes:Banker",
+		typeof(HeroDisplay), new PropertyMetadata("Aeon.Heroes:Unused1",
 			(d, args) => ((HeroDisplay)d).UpdateHeroName((string)args.NewValue)));
 
 	public Dir Direction {
@@ -60,28 +60,27 @@ public partial class HeroDisplay : UserControl
 		img.RenderTransform = new ScaleTransform(5, _sprite.TotalFrames);
 		img.Source = _sprite.Source;
 		_spriteSize = new(img.Source.Width / 5, img.Source.Height / _sprite.TotalFrames);
-		CompileAnimations();
+		SetFrames();
 		UpdateFrame();
 	}
 
-	private void CompileAnimations()
+	private void SetFrames()
 	{
-		_framesMove = new Int32KeyFrameCollection();
-		(_sprite!.MoveFrames switch {
-			5 => new List<int>() { 0, 2, 1, 2, 0, 4, 3, 4 },
-			4 => new List<int>() { 0, 1, 0, 2, 3, 2 },
+		_framesMove = _sprite!.MoveFrames switch {
+			5 => new List<int>() { 2, 1, 2, 0, 4, 3, 4, 0 },
+			4 => new List<int>() { 1, 0, 2, 3, 2, 0 },
 			1 => new List<int>() { 0 },
 			_ => throw new NotImplementedException()
-		}).ForEach(f => _framesMove.Add(new DiscreteInt32KeyFrame(f)));
+		};
 
-		_framesAttack = new Int32KeyFrameCollection();
+		_framesAttack = new();
 		for (int f = _sprite.MoveFrames; f < _sprite.MoveFrames + _sprite.AttackFrames; ++f)
-			_framesAttack.Add(new DiscreteInt32KeyFrame(f));
-		_framesAttack.Add(new DiscreteInt32KeyFrame(0));
+			_framesAttack.Add(f);
+		_framesAttack.Add(0);
 
-		_framesDead = new Int32KeyFrameCollection();
+		_framesDead = new();
 		for (int f = _sprite.MoveFrames + _sprite.AttackFrames; f < _sprite.TotalFrames; ++f)
-			_framesDead.Add(new DiscreteInt32KeyFrame(f));
+			_framesDead.Add(f);
 	}
 
 	private void UpdateFrame()
@@ -99,62 +98,67 @@ public partial class HeroDisplay : UserControl
 		}
 	}
 
-	public HeroDisplay Move(int ms) => Move(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay Move(TimeSpan duration) => AnimMove(duration, HandoffBehavior.SnapshotAndReplace);
-	public HeroDisplay ThenMove(int ms) => ThenMove(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay ThenMove(TimeSpan duration) => AnimMove(duration, HandoffBehavior.Compose);
+	public HeroDisplay Move(int ms, int cycles = 1) => Move(TimeSpan.FromMilliseconds(ms), cycles);
+	public HeroDisplay Move(TimeSpan duration, int cycles = 1)
+	{
+		var d = duration/cycles;
+		for (int i = 0; i < cycles; ++i)
+			AnimMove(d);
+		return this;
+	}
 
 	public HeroDisplay Attack(int ms) => Attack(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay Attack(TimeSpan duration) => AnimAttack(duration, HandoffBehavior.SnapshotAndReplace);
-	public HeroDisplay ThenAttack(int ms) => ThenAttack(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay ThenAttack(TimeSpan duration) => AnimAttack(duration, HandoffBehavior.Compose);
+	public HeroDisplay Attack(TimeSpan duration) => AnimAttack(duration);
 
 	public HeroDisplay Stop(int ms) => Stop(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay Stop(TimeSpan duration) => AnimStop(duration, HandoffBehavior.SnapshotAndReplace);
-	public HeroDisplay ThenStop(int ms) => ThenStop(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay ThenStop(TimeSpan duration) => AnimStop(duration, HandoffBehavior.Compose);
+	public HeroDisplay Stop(TimeSpan duration) => AnimStop(duration);
 
 	public HeroDisplay Die(int ms) => Die(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay Die(TimeSpan duration) => AnimDie(duration, HandoffBehavior.SnapshotAndReplace);
-	public HeroDisplay ThenDie(int ms) => ThenDie(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay ThenDie(TimeSpan duration) => AnimDie(duration, HandoffBehavior.Compose);
+	public HeroDisplay Die(TimeSpan duration) => AnimDie(duration);
 
 
-	private HeroDisplay AnimMove(TimeSpan duration, HandoffBehavior behavior)
+	public void StartAnim()
 	{
-		Int32AnimationUsingKeyFrames a = new();
-		a.KeyFrames = _framesMove;
-		a.RepeatBehavior = new RepeatBehavior(duration);
-		BeginAnimation(FrameProperty, a, behavior);
+		_cFrames.Duration = new(_time);
+		BeginAnimation(FrameProperty, _cFrames, HandoffBehavior.SnapshotAndReplace);
+		_cFrames = new();
+		_time = TimeSpan.Zero;
+	}
+
+	private Int32AnimationUsingKeyFrames _cFrames = new();
+	private TimeSpan _time = TimeSpan.Zero;
+
+	private HeroDisplay AnimMove(TimeSpan duration)
+	{
+		TimeSpan tx = duration / _framesMove.Count;
+		_framesMove.ForEach(f => AddFrame(f, tx));
 		return this;
 	}
 
-	private HeroDisplay AnimAttack(TimeSpan duration, HandoffBehavior behavior)
+	private void AddFrame(int frame, TimeSpan tx)
 	{
-		Int32AnimationUsingKeyFrames a = new();
-		a.KeyFrames = _framesAttack;
-		a.Duration = new Duration(duration);
-		BeginAnimation(FrameProperty, a, behavior);
+		var f = new DiscreteInt32KeyFrame{ KeyTime = _time, Value = frame };
+		_cFrames.KeyFrames.Add(f);
+		_time += tx;
+	}
+
+	private HeroDisplay AnimAttack(TimeSpan duration)
+	{
+		TimeSpan tx = duration / _framesAttack.Count;
+		_framesAttack.ForEach(f => AddFrame(f, tx));
 		return this;
 	}
 
-	private HeroDisplay AnimStop(TimeSpan duration, HandoffBehavior behavior)
+	private HeroDisplay AnimStop(TimeSpan duration)
 	{
-		Int32AnimationUsingKeyFrames a = new();
-		var st = new Int32KeyFrameCollection();
-		st.Add(new DiscreteInt32KeyFrame(0));
-		a.KeyFrames = st;
-		a.Duration = new(duration);
-		BeginAnimation(FrameProperty, a, behavior);
+		AddFrame(0, duration);
 		return this;
 	}
 
-	private HeroDisplay AnimDie(TimeSpan duration, HandoffBehavior behavior)
+	private HeroDisplay AnimDie(TimeSpan duration)
 	{
-		Int32AnimationUsingKeyFrames a = new();
-		a.KeyFrames = _framesDead;
-		a.Duration = new Duration(duration);
-		BeginAnimation(FrameProperty, a, behavior);
+		TimeSpan tx = duration / _framesDead.Count;
+		_framesDead.ForEach(f => AddFrame(f, tx));
 		return this;
 	}
 

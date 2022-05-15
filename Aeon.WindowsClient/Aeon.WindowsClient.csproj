@@ -13,6 +13,7 @@
     <None Remove="Resources\image\bg2.png" />
     <None Remove="Resources\image\bg3.jpg" />
     <None Remove="Resources\image\heroes\daemon.png" />
+    <None Remove="Resources\image\heroes\daemon2.png" />
     <None Remove="Resources\image\heroes\death_knight.png" />
     <None Remove="Resources\image\heroes\dragon.png" />
     <None Remove="Resources\image\heroes\elven_archer.png" />
@@ -52,6 +53,7 @@
     <Resource Include="Resources\image\bg2.png" />
     <Resource Include="Resources\image\bg3.jpg" />
     <Resource Include="Resources\image\heroes\daemon.png" />
+    <Resource Include="Resources\image\heroes\daemon2.png" />
     <Resource Include="Resources\image\heroes\death_knight.png" />
     <Resource Include="Resources\image\heroes\dragon.png" />
     <Resource Include="Resources\image\heroes\elven_archer.png" />

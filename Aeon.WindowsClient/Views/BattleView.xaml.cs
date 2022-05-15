@@ -43,8 +43,16 @@ public partial class BattleView : Page
 		VM.BattleTurn = turn;
 
 		if (turn.TurnType == BattleTurn.T.Init) {
-			Hero1.Move(1000).ThenAttack(500);
-			Hero2.Move(1000).ThenAttack(500);
+			Hero1.Move(1500, 2).Attack(500).StartAnim();
+			Hero2.Move(1500, 2).Attack(500).StartAnim();
+		}
+		if (turn.TurnType == BattleTurn.T.Heal) {
+			Hero1.Attack(500).StartAnim();
+			Hero2.Attack(500).StartAnim();
+		}
+		if (turn.TurnType == BattleTurn.T.End) {
+			if (turn.Hero.Health <= 0)  Hero1.Die(1000).StartAnim();
+			if (turn.Enemy.Health <= 0) Hero2.Die(1000).StartAnim();
 		}
 
 	}

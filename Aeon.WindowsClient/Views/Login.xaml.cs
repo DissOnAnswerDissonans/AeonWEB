@@ -22,7 +22,7 @@ public partial class Login : Page
 	public Login()
 	{
 		InitializeComponent();
-		AnimTest.Move(2000).ThenStop(500).ThenAttack(1000).ThenDie(1000);
+		AnimTest.Move(3000, 3).Stop(300).Attack(500).Stop(300).Attack(500).Move(1000).Die(500).StartAnim();
 	}
 
 	private void PasswordChanged(object sender, RoutedEventArgs e)
