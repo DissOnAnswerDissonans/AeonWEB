@@ -1,4 +1,5 @@
 ﻿using Aeon.Core;
+using static Aeon.Core.Hero;
 namespace AeonServer.Services;
 
 public interface IBalanceProvider
@@ -16,30 +17,20 @@ public class DefaultBalanceProvider : IBalanceProvider
 
 	public Func<Shop> ShopFactory => () => new BalancedShop(_balance);
 
-	public const string Health = "HP";
-	public const string Attack = "ATT";
-	public const string Magic = "MAG";
-	public const string CritChance = "CHA";
-	public const string CritDamage = "DMG";
-	public const string Income = "INC";
-	public const string Block = "BLK";
-	public const string Armor = "ARM";
-	public const string Regen = "REG";
-
 	public DefaultBalanceProvider()
 	{
 		_balance = new BalanceSheet {
 
 			GlobalBalance = new() {
-				["HP" ] = 100,
-				["ATT"] = 15,
-				["MAG"] = 0,
-				["CHA"] = 0,
-				["CDM"] = 150,
-				["INC"] = 0,
-				["BLK"] = 1,
-				["ARM"] = 0,
-				["REG"] = 1,
+				[Health] = 100,
+				[Attack] = 15,
+				[Magic] = 0,
+				[CritChance] = 0,
+				[CritDamage] = 150,
+				[Income] = 0,
+				[Block] = 1,
+				[Armor] = 0,
+				[Regen] = 1,
 			},
 
 			HeroesBalance = new() {
@@ -135,10 +126,7 @@ public class DefaultBalanceProvider : IBalanceProvider
 		_balance.HeroesBalance[hero.NameID][key];
 
 	public BalanceValue ValueForHero(Aeon.Core.Hero hero, string key) =>
-		_balance.HeroesBalance[HeroesProvider.GetNameID(hero.GetType())][key];
-
-	public BalanceValue ValueForHero<T>(string key) where T : Aeon.Core.Hero =>
-		_balance.HeroesBalance[HeroesProvider.GetNameID(typeof(T))][key];
+		_balance.HeroesBalance[hero.ID][key];
 
 	private static OfferData Offer(string id, int amount, int cost, bool opt = false) => new() {
 		Cost = cost, IsOpt = opt, StatAmount = new StatData {

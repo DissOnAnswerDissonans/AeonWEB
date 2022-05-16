@@ -1,12 +1,11 @@
 ﻿using Aeon.Base;
 using Aeon.Core;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AeonServer;
 
 public class Room
 {
-
-
 	public string Name { get; }
 	public IGameRules Rules { get; }
 	public List<Player> Players { get; } = new();

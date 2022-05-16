@@ -39,29 +39,13 @@ namespace Aeon.Core
 		}
 	}
 
-	public class StandardShop : Shop
+	public class BalancedShop : Shop
 	{
-		public StandardShop()
+		public BalancedShop(BalanceSheet balance)
 		{
-			AddOffer(Hero.Health, 22, 10);
-			AddOffer(Hero.Attack, 3, 7);
-			AddOffer(Hero.Magic, 7, 15);
-			AddOffer(Hero.CritChance, 5, 15);
-			AddOffer(Hero.CritDamage, 50, 50);
-			AddOffer(Hero.Income, 2, 13);
-			AddOffer(Hero.Block, 2, 4);
-			AddOffer(Hero.Armor, 15, 30);
-			AddOffer(Hero.Regen, 5, 11);
-
-			AddOffer(Hero.Health, 220, 87, opt: true);
-			AddOffer(Hero.Attack, 60, 120, opt: true);
-			AddOffer(Hero.Magic, 46, 90, opt: true);
-			AddOffer(Hero.CritChance, 40, 104, opt: true);
-			AddOffer(Hero.CritDamage, 120, 105, opt: true);
-			AddOffer(Hero.Income, 20, 120, opt: true);
-			AddOffer(Hero.Block, 80, 130, opt: true);
-			AddOffer(Hero.Armor, 66, 120, opt: true);
-			AddOffer(Hero.Regen, 62, 115, opt: true);
+			foreach(var offer in balance.StandardOffers) {
+				AddOffer(offer.StatAmount.StatId, offer.StatAmount.RawValue, offer.Cost, offer.IsOpt);
+			}
 		}
 	}
 

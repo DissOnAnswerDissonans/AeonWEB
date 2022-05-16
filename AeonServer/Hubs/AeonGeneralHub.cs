@@ -17,6 +17,7 @@ public class AeonGeneralHub : AeonHub<AeonGeneralHub.IClient>
 	{
 		return await Task.FromResult(new AccountInfo { NickName = UserName });
 	}
+
 	public override async Task OnConnectedAsync()
 {
 		_state.Number++;
@@ -27,7 +28,7 @@ public class AeonGeneralHub : AeonHub<AeonGeneralHub.IClient>
 	public override async Task OnDisconnectedAsync(Exception? exception)
 	{
 		_state.Number--;
-		_state.Disconnected(UserID);
+		await _state.Disconnected(UserID);
 		await base.OnDisconnectedAsync(exception);
 	}
 

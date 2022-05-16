@@ -19,14 +19,6 @@ public class AeonLobbyHub : AeonHub<AeonLobbyHub.IClient>
 	private string? UserRoomName => UserRoom?.Name;
 	private Room? UserRoom => _state.IDtoPlayers[UserID].Room;
 
-	public override async Task OnDisconnectedAsync(Exception? exception)
-	{
-		if (UserRoomName is not null && !_state.Rooms[UserRoomName].Status.HasFlag(RoomStatus.InGame)) {
-			await NotifyRoom(UserRoomName);
-			await UpdateRoomInfo(UserRoomName);
-		}
-		await base.OnDisconnectedAsync(exception);
-	}
 
 	public async Task CreateRoom(string roomName)
 	{

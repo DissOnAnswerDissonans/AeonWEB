@@ -11,6 +11,7 @@ public class GameState
 
 	private readonly IHubContext<AeonGameHub, AeonGameHub.IClient> _gameHub;
 	private Services.IBalanceProvider _balance;
+	private ILogger _logger;
 
 	public string Name { get; }
 	public P Phase { get; private set; }
@@ -22,13 +23,15 @@ public class GameState
 	internal CancellationTokenSource? ShopCTS { get; set; }
 	internal DateTimeOffset ShopCloseTime { get; private set; }
 
-	public GameState(Room room, IHubContext<AeonGameHub, AeonGameHub.IClient> hub, Services.IBalanceProvider balance)
+	public GameState(Room room, IHubContext<AeonGameHub, AeonGameHub.IClient> hub, 
+		Services.IBalanceProvider balance, ILoggerFactory loggerFactory)
 	{
 		Name = room.Name;
 		_players = room.Players;
 		_rules = room.Rules;
 		_balance = balance;
 		_gameHub = hub;
+		_logger = loggerFactory.CreateLogger($"Aeon.GameState.{room.Name}");
 		Phase = P.Init;
 	}
 
@@ -38,12 +41,14 @@ public class GameState
 	{
 		if (Phase != P.Init) return;
 		Phase = P.Pick;
+		_logger.LogInformation("Pick started");
 	}
 
 	internal void NewRound()
 	{
 		RoundNumber++;
 		Phase = P.Shop;
+		_logger.LogInformation("Round {number} started", RoundNumber);
 	}
 
 	internal RoundInfo GetRound() => new RoundInfo {
@@ -55,6 +60,7 @@ public class GameState
 
 	internal async Task GameStart()
 	{
+		_logger.LogInformation("Game is ready to start");
 		await Task.Delay(3_000);
 		while (true) {
 			ShopCloseTime = DateTimeOffset.UtcNow.AddSeconds(30);
@@ -64,6 +70,8 @@ public class GameState
 
 			foreach(Player p in _players.Where(p => p.LastShopUpdate?.Response != ShopUpdate.R.Closed))
 				await _gameHub.Clients.Users(p.ID).ShopUpdated(p.GetShopUpdate(ShopUpdate.R.Closed));
+
+			_logger.LogInformation("Starting battles...");
 
 			await Task.Delay(100);
 
@@ -102,7 +110,9 @@ public class GameState
 	{
 		Player p1 = _players.Find(p => p.ID == battle.First.PlayerName)!;
 		Player p2 = _players.Find(p => p.ID == battle.Second.PlayerName)!;
-		var logger = new BattleLogger(this, p1, p2);
+		var logger = new BattleLogger(this, p1, p2, _logger);
+		_logger.LogInformation("Battle [{p1} vs {p2}] started", p1, p2);
+
 		foreach (Battle.BattleState state in Battle(p1, p2, logger))
 		{
 			int delayMS = state.TurnType switch {
@@ -126,6 +136,7 @@ public class GameState
 				p2.Hero!.Wage(_rules.GetBaseWage(this));
 			}
 		}
+		_logger.LogInformation("Battle [{p1} vs {p2}] ended", p1, p2);
 		await MulticastRoundSummary();
 	}
 
@@ -184,13 +195,31 @@ public class GameState
 	{
 		private GameState _game;
 		private Player _p1, _p2;
-		public BattleLogger(GameState game, Player player1, Player player2) { _game = game; _p1 = player1; _p2 = player2; }
+		private ILogger _logger;
+		public BattleLogger(GameState game, Player player1, Player player2, ILogger logger) 
+		{ _game = game; _p1 = player1; _p2 = player2; _logger = logger; }
 
 		public void LogBattleResult(int totalTurns, int winnerNumber)
-			=> _game._rules.LogBattleResult(_p1, _p2, winnerNumber, totalTurns);
+		{
+			_game._rules.LogBattleResult(_p1, _p2, winnerNumber, totalTurns);
+			_logger.LogTrace("[{p1} vs {p2}]: Got battle result", _p1.ID, _p2.ID);
+		}
 
-		public void LogBattlersState(IBattler battler1, IBattler battler2, Battle.TurnType logType) { }
+		public void LogBattlersState(IBattler battler1, IBattler battler2, Battle.TurnType logType) 
+		{
+			_logger.LogDebug("[{p1} vs {p2}]: Turn {turn}" + "\n\t" +
+				"P1 ({h1}) => HP: {hp1}, INC: {inc1}" + "\n\t" +
+				"P2 ({h2}) => HP: {hp2}, INC: {inc2}", _p1.ID, _p2.ID, logType,
+				battler1.ID, battler1.StatsRO.GetDynValue("HP"), battler1.StatsRO.DynConvertAsIs("INC"),
+				battler2.ID, battler2.StatsRO.GetDynValue("HP"), battler2.StatsRO.DynConvertAsIs("INC")
+			);
+		}
 
-		public void LogDamage(Damage dmg1to2, Damage dmg2to1) { }
+		public void LogDamage(Damage dmg1to2, Damage dmg2to1)
+		{
+			_logger.LogDebug("\t" +
+				"[{p1} => {p2}]: {dmg}" + "\n\t" +
+				"[{p1} <= {p2}]: {dmg}", _p1.ID, _p2.ID, dmg1to2, _p1.ID, _p2.ID, dmg2to1);
+		}
 	}
 }

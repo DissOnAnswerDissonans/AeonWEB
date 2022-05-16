@@ -20,7 +20,7 @@ namespace Aeon.Heroes
 		protected override void PostActivate() { }
 
 		private int _abilityLvl = 1;
-		private int _charges = 0; // TODO узнать, переносятся ли заряды в след. бой
+		private int _charges = 0;
 
 		private const int UPGRADE_COST = 100;
 		private const int MAX_LVL = 3;

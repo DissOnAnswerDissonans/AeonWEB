@@ -36,4 +36,6 @@ public class Player
 	}
 
 	internal RoundInfo.Contender Contender => new() { HeroID = HeroName, PlayerName = ID, Points = 0 };
+
+	public override string ToString() => $"{ID} ({HeroName})";
 }

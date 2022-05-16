@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Aeon.Core.StatType;
+using static Aeon.Core.Hero;
+using Aeon.Base;
 
 namespace Aeon.Core;
 
@@ -209,4 +208,36 @@ public struct StatValue
 
 	public static implicit operator int(StatValue value) => value.Value;
 	public static implicit operator StatValue(int value) => new() { Value = value };
+}
+
+internal class BalancedStats : StatsContainer
+{
+	const decimal COEFF = .0075m;
+	BalanceSheet _balance;
+
+	private int Prop(string key) => _balance.GlobalBalance[key].BaseValue.TRound();
+	internal BalancedStats(BalanceSheet balance)
+	{
+		_balance = balance;
+
+		NewStat(Health).Default(Prop(Health)).AddDynamic(true);
+		
+		NewStat(Attack).Default(Prop(Attack));
+		
+		NewStat(Magic).Default(Prop(Magic));
+		
+		NewStat(CritChance).Default(Prop(CritChance)).Limit(100).Convert(x => x / 100.0m);
+		
+		NewStat(CritDamage).Default(Prop(CritDamage)).Convert(x => x / 100.0m);
+		
+		NewStat(Income).Default(Prop(Income)).Convert(x => x / 100.0m)
+			.AddDynamic().Convert((x, ctx) => (1 + ctx.ConvertAsIs(Income)).Power(x));
+		
+		NewStat(Block).Default(Prop(Block));
+		
+		NewStat(Armor).Default(Prop(Armor))
+			.Convert(x => COEFF * x / (1 + COEFF * (decimal) Math.Exp(0.9 * Math.Log(x))));
+		
+		NewStat(Regen).Default(Prop(Regen));
+	}
 }

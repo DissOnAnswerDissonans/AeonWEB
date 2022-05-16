@@ -52,17 +52,6 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 			Hero = _heroes.GetHeroInfo(p.HeroID)
 		}));
 
-	/////
-
-	//public async Task<HeroModel> GetOwnHero()
-	//{
-
-	//}
-
-	//public async Task<OfferModel[]> GetOffers()
-	//{
-
-	//}
 
 	public async Task BuyOffer(int offerId)
 	{
