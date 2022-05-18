@@ -19,10 +19,10 @@ class Lobby : ServerConnection
 	public IObservable<RoomFullData> RefreshRoomData { get; }
 	public IObservable<RoomShortData> UpdSingleRoomInList { get; }
 
-	public async Task CreateRoom(string roomName) => await Call("CreateRoom", roomName);
+	public async Task CreateRoom(string roomName, string rules) => await Connection.SendAsync("CreateRoom", roomName, rules);
 	public async Task JoinRoom(string roomName) => await Call("JoinRoom", roomName);
 	public async Task LeaveRoom() => await Call("LeaveRoom");
 	public async Task ReadyCheck() => await Call("ReadyCheck");
 	public async Task<RoomShortData[]> GetRoomsList() => await Request<RoomShortData[]>("GetRoomsList");
-	public async Task<PlayerData[]> GetPlayersList(string room) => await Request<PlayerData[]>("GetPlayersList", room);
+	public async Task<ClientData[]> GetPlayersList(string room) => await Request<ClientData[]>("GetPlayersList", room);
 }

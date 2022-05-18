@@ -21,7 +21,7 @@ public class ServerState
 
 	internal int Number { get; set; }
 	internal Dictionary<string, Room> Rooms { get; } = new();
-	internal Dictionary<string, Player> IDtoPlayers { get; } = new();
+	internal Dictionary<string, PlayerClient> IDtoPlayers { get; } = new();
 	internal Dictionary<string, GameState> Games { get; } = new();
 
 	internal bool Connected(string id, string user)
@@ -30,7 +30,7 @@ public class ServerState
 			_logger.LogWarning("Connected() called with null ID"); 
 			return false; 
 		}
-		IDtoPlayers.Add(id, new Player(id, user));
+		IDtoPlayers.Add(id, new PlayerClient(id, user));
 		_logger.LogInformation("Player {id} connected", id);
 		return true;
 	}
@@ -54,9 +54,9 @@ public class ServerState
 		return true;
 	}
 
-	internal void CreateRoom(string roomName, string? id)
+	internal void CreateRoom(string roomName, string rules, string? id)
 	{
-		var room = new Room(roomName, new VanillaRules());
+		var room = new Room(roomName, GetRules(rules));
 		Rooms.Add(roomName, room);
 		if (id == null)
 			_logger.LogInformation("Room {name} created", roomName);
@@ -64,6 +64,13 @@ public class ServerState
 			room.AddPlayer(IDtoPlayers[id]);
 			_logger.LogInformation("Room {name} created with player {player}", roomName, id);
 		}
+
+		IGameRules GetRules(string rulesName) => rulesName switch {
+			"SingleDebug" => new SingleTestRules(),
+			"Vanilla" => new VanillaRules(),
+			"Tournament" => new NewRules(),
+			_ => throw new ArgumentException()
+		};
 	}
 
 	internal bool JoinRoom(string roomName, string id)

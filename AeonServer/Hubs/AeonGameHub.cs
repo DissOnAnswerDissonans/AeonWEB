@@ -16,7 +16,7 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 		_heroes = heroes;
 	}
 
-	public Player Player => _games.GetPlayer(UserID);
+	public PlayerClient Player => _games.GetPlayer(UserID);
 	public string UserGroup => $"GAME_{_games.FromUser(UserID).Name}";
 
 	public override async Task OnConnectedAsync()
@@ -47,7 +47,7 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 	}
 
 	public async Task PicksUpdate(GameState game) => await Clients.Group(game.SRGroup).HeroSelectedAnyone(
-		game.Players.Select(p => new HeroSelection {
+		game.Clients.Select(p => new HeroSelection {
 			Nickname = p.Data.PlayerName,
 			Hero = _heroes.GetHeroInfo(p.HeroID)
 		}));
@@ -66,7 +66,7 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 	public async Task DoneShopping()
 	{
 		await Clients.Caller.ShopUpdated(Player.GetShopUpdate(ShopUpdate.R.Closed));
-		if (Player.Game!.Players.Select(p => p.LastShopUpdate).All(u => u?.Response == ShopUpdate.R.Closed))
+		if (Player.Game!.Clients.Select(p => p.LastShopUpdate).All(u => u?.Response == ShopUpdate.R.Closed))
 			Player.Game!.ShopCTS!.Cancel();
 	}
 

@@ -5,8 +5,10 @@ namespace AeonServer;
 
 public class GameState
 {
-	private List<Player> _players;
-	public IReadOnlyList<Player> Players => _players;
+	public IReadOnlyList<PlayerClient> Clients => _clients;
+	private List<PlayerClient> _clients;
+	private List<PlayerBot> _bots = new();
+	public IReadOnlyList<Player> Players => _clients.Cast<Player>().Concat(_bots).ToList();
 	private IGameRules _rules;
 
 	private readonly IHubContext<AeonGameHub, AeonGameHub.IClient> _gameHub;
@@ -27,7 +29,7 @@ public class GameState
 		Services.IBalanceProvider balance, ILoggerFactory loggerFactory)
 	{
 		Name = room.Name;
-		_players = room.Players;
+		_clients = room.Players;
 		_rules = room.Rules;
 		_balance = balance;
 		_gameHub = hub;
@@ -36,6 +38,8 @@ public class GameState
 	}
 
 	public enum P { Init, Pick, Shop, Battle, End }
+
+	public void AddDummy(string name) => _bots.Add(new(name));
 
 	internal void Pick()
 	{
@@ -57,10 +61,10 @@ public class GameState
 		Wage = _rules.GetBaseWage(this)
 	};
 
-
 	internal async Task GameStart()
 	{
 		_logger.LogInformation("Game is ready to start");
+		_rules.BeforeGame(this);
 		await Task.Delay(3_000);
 		while (true) {
 			ShopCloseTime = DateTimeOffset.UtcNow.AddSeconds(30);
@@ -68,7 +72,7 @@ public class GameState
 			ShopCTS = new CancellationTokenSource();
 			await Task.WhenAll(s, Timer(ShopCloseTime, ShopCTS.Token));
 
-			foreach(Player p in _players.Where(p => p.LastShopUpdate?.Response != ShopUpdate.R.Closed))
+			foreach(PlayerClient p in _clients.Where(p => p.LastShopUpdate?.Response != ShopUpdate.R.Closed))
 				await _gameHub.Clients.Users(p.ID).ShopUpdated(p.GetShopUpdate(ShopUpdate.R.Closed));
 
 			_logger.LogInformation("Starting battles...");
@@ -99,7 +103,7 @@ public class GameState
 
 	private async Task StartShopping()
 	{
-		foreach (Player player in Players) {
+		foreach (PlayerClient player in Players) {
 			ShopUpdate upd = player.GetShopUpdate(ShopUpdate.R.Opened);
 			await _gameHub.Clients.User(player.ID).ShopUpdated(upd);
 		}
@@ -108,8 +112,8 @@ public class GameState
 
 	private async Task StartBattle(RoundInfo.Battle battle)
 	{
-		Player p1 = _players.Find(p => p.ID == battle.First.PlayerName)!;
-		Player p2 = _players.Find(p => p.ID == battle.Second.PlayerName)!;
+		Player? p1 = _clients.Find(p => p.ID == battle.First.PlayerName);
+		Player? p2 = _clients.Find(p => p.ID == battle.Second.PlayerName);
 		var logger = new BattleLogger(this, p1, p2, _logger);
 		_logger.LogInformation("Battle [{p1} vs {p2}] started", p1, p2);
 
@@ -173,18 +177,18 @@ public class GameState
 		var summary = new RoundScoreSummary {
 			RoundNumber = RoundNumber,
 			IsGameOver = false,
-			Entries = _rules.GetScores(_players).Select(x => new RoundScoreSummary.Entry { 
+			Entries = _rules.GetScores(Players).Select(x => new RoundScoreSummary.Entry { 
 				HeroName = x.Player.HeroName, Player = x.Player.ID, Score = x.Score
 			}).ToList()
 		};
-		var u = _players.Select(p => p.ID).ToList();
+		var u = _clients.Select(p => p.ID).ToList();
 		await _gameHub.Clients.Users(u).NewRoundSummary(summary);
 	}
 
 	private static IEnumerable<Battle.BattleState> Battle(Player p1, Player p2, Battle.ILogger logger)
 	{
 		var battle = new Battle(p1.Hero, p2.Hero, logger);
-
+		
 		foreach (Battle.BattleState state in battle) {
 			yield return state;
 			if (state.TurnType == Aeon.Core.Battle.TurnType.AfterBattle) yield break;
@@ -202,14 +206,14 @@ public class GameState
 		public void LogBattleResult(int totalTurns, int winnerNumber)
 		{
 			_game._rules.LogBattleResult(_p1, _p2, winnerNumber, totalTurns);
-			_logger.LogTrace("[{p1} vs {p2}]: Got battle result", _p1.ID, _p2.ID);
+			_logger.LogTrace("[{p1} vs {p2}]: Got battle result", _p1?.ID, _p2?.ID);
 		}
 
 		public void LogBattlersState(IBattler battler1, IBattler battler2, Battle.TurnType logType) 
 		{
 			_logger.LogDebug("[{p1} vs {p2}]: Turn {turn}" + "\n\t" +
 				"P1 ({h1}) => HP: {hp1}, INC: {inc1}" + "\n\t" +
-				"P2 ({h2}) => HP: {hp2}, INC: {inc2}", _p1.ID, _p2.ID, logType,
+				"P2 ({h2}) => HP: {hp2}, INC: {inc2}", _p1?.ID, _p2?.ID, logType,
 				battler1.ID, battler1.StatsRO.GetDynValue("HP"), battler1.StatsRO.DynConvertAsIs("INC"),
 				battler2.ID, battler2.StatsRO.GetDynValue("HP"), battler2.StatsRO.DynConvertAsIs("INC")
 			);
@@ -219,7 +223,7 @@ public class GameState
 		{
 			_logger.LogDebug("\t" +
 				"[{p1} => {p2}]: {dmg}" + "\n\t" +
-				"[{p1} <= {p2}]: {dmg}", _p1.ID, _p2.ID, dmg1to2, _p1.ID, _p2.ID, dmg2to1);
+				"[{p1} <= {p2}]: {dmg}", _p1?.ID, _p2?.ID, dmg1to2, _p1?.ID, _p2?.ID, dmg2to1);
 		}
 	}
 }

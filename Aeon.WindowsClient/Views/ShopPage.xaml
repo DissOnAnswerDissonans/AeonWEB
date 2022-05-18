@@ -23,49 +23,68 @@
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="64"/>
-      <ColumnDefinition/>
+      <ColumnDefinition Width="2*"/>
+      <ColumnDefinition Width="64"/>
+      <ColumnDefinition Width="3*"/>
       <ColumnDefinition Width="64"/>
     </Grid.ColumnDefinitions>
-    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MoneyText}"/>
-    <Button Grid.Row="1" Grid.Column="1" Width="128" Height="50"
+    
+    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MoneyText}" 
+               VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    
+    <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Width="128" Height="50"
             Content="ВСЁ" Click="EndShoppingButton"/>
-    <local:RoundTimer x:Name="timer" Grid.RowSpan="2" Grid.Column="1" Width="100" Height="100" Time="30"
+    
+    <local:RoundTimer x:Name="timer" Grid.RowSpan="2" Grid.Column="3" Width="100" Height="100" Time="30"
                HorizontalAlignment="Right" VerticalAlignment="Center"/>
-    <ItemsControl Grid.Row="2" Grid.Column="1"
-                  ItemsSource="{Binding Positions}"
-                  d:ItemsSource="{d:SampleData ItemCount=2}">
-      <ItemsControl.ItemTemplate>
+    
+    <ListBox Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" HorizontalContentAlignment="Stretch"
+             ItemsSource="{Binding Positions}"
+             d:ItemsSource="{d:SampleData ItemCount=12}" Background="Black"
+             SelectedItem="{Binding SelectedPosition}" SelectedIndex="{Binding SelectedID}">
+      <ListBox.ItemTemplate>
         <DataTemplate>
-          <StackPanel Orientation="Horizontal" Margin="0 2">
-            <TextBlock Text="{Binding Stat.StatId}" d:Text="0" Width="50" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="|"/>
-            <TextBlock Text="{Binding Stat.RawValue}" d:Text="000" Width="64" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="|"/>
-            <TextBlock Text="{Binding Stat.Value}" d:Text="00.0" Width="64" VerticalAlignment="Center" TextAlignment="Center"/>
-            <ItemsControl ItemsSource="{Binding Offers}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <Button VerticalContentAlignment="Stretch"
-                          HorizontalContentAlignment="Center"
-                          Width="190" Click="Button_Click">
-                    <StackPanel Orientation="Horizontal">
-                      <TextBlock Text="{Binding StatAmount.RawValue}"
-                                 d:Text="000"/>
-                      <TextBlock Text=" for "/>
-                      <TextBlock Text="{Binding Cost}" d:Text="000"/>
-                    </StackPanel>
-                  </Button>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-          </StackPanel>
+          <DockPanel Margin="5 0">
+            <TextBlock Text="{Binding Stat.RawValue}" DockPanel.Dock="Right"/>
+            <TextBlock Text="{Binding Stat.StatId}" DockPanel.Dock="Left"/>
+          </DockPanel>
         </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <Border Grid.Row="2" Grid.Column="3" BorderThickness="8" BorderBrush="Blue" CornerRadius="8"
+            Background="{StaticResource DarkBG}">
+      <DockPanel LastChildFill="False" Margin="4">
+        <DockPanel DockPanel.Dock="Top" Margin="8">
+          <TextBlock Text="{Binding SelectedPosition.Stat.Value}" d:Text="(00.0)" FontSize="32" 
+                     DockPanel.Dock="Right" Margin="10 0 0 0" 
+                     Visibility="{Binding SelectedPosition.ConvertedVis}"/>
+          <TextBlock Text="{Binding SelectedPosition.Stat.RawValue}" d:Text="000" FontSize="32" 
+                     DockPanel.Dock="Right"/>
+          <TextBlock Text="{Binding SelectedPosition.Name}" d:Text="ATT" FontSize="24"
+                     VerticalAlignment="Center"/>
+        </DockPanel>
+
+        <TextBlock DockPanel.Dock="Top" Margin="16 0" TextWrapping="Wrap">
+          qwe qwe qwe qwe qwe qwe 123 123 123 123 123
+        </TextBlock>
+
+        <ItemsControl DockPanel.Dock="Bottom" d:ItemsSource="{d:SampleData ItemCount=2}"
+                      ItemsSource="{Binding SelectedPosition.Offers}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Vertical"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Button Margin="20 2" Click="Button_Click" Content="{Binding OfferText}" 
+                      IsEnabled="{Binding IsAvailiable}"/>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </DockPanel>
+    </Border>
+
   </Grid>
 </Page>

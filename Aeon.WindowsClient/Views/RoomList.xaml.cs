@@ -32,11 +32,13 @@ public partial class RoomList : Page
 
 		VM = (RoomListVM) DataContext;
 		VM.Refresh.Execute();
+		CommandManager.InvalidateRequerySuggested();
 	}
 
 	private void RefreshRoom(RoomFullData room)
 	{
 		VM.ActiveRoom = room;
+		CommandManager.InvalidateRequerySuggested();
 	}
 
 	private void UpdSingleRoom(RoomShortData obj)
@@ -46,11 +48,13 @@ public partial class RoomList : Page
 			VM.Rooms.Add(new RoomVM(obj) { IsSelected = VM.ActiveRoomName == obj.RoomName });
 		else
 			VM.Rooms[VM.Rooms.IndexOf(room)] = new RoomVM(obj) { IsSelected = VM.ActiveRoomName == obj.RoomName };
+		CommandManager.InvalidateRequerySuggested();
 	}
 
 	private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if (e.AddedItems.Count > 0)
 			(DataContext as RoomListVM)?.Join.Execute((e.AddedItems[0] as RoomVM)!.Data);
+		CommandManager.InvalidateRequerySuggested();
 	}
 }

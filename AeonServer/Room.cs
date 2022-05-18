@@ -8,7 +8,7 @@ public class Room
 {
 	public string Name { get; }
 	public IGameRules Rules { get; }
-	public List<Player> Players { get; } = new();
+	public List<PlayerClient> Players { get; } = new();
 	public int NeedPlayers => Rules.MinPlayers;
 	public int? RoomSize => Rules.MaxPlayers;
 	public RoomStatus Status { get; private set; } = RoomStatus.Open;
@@ -26,7 +26,7 @@ public class Room
 		Rules = rules;
 	}
 
-	internal bool AddPlayer(Player player)
+	internal bool AddPlayer(PlayerClient player)
 	{
 		if (IsFull || Players.Contains(player)) return false;
 		player.Room?.RemovePlayer(player);
@@ -37,7 +37,7 @@ public class Room
 		return true;
 	}
 
-	internal bool RemovePlayer(Player player)
+	internal bool RemovePlayer(PlayerClient player)
 	{
 		int index = Players.IndexOf(player);
 		if (index == -1) return false;

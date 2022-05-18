@@ -8,9 +8,7 @@ public class GameProvider
 	public GameState FromUser(string username) => _state.IDtoPlayers[username].Game!;
 	public GameState FromRoom(string roomName) => _state.Games[roomName];
 
-	public Player GetPlayer(string userName) => _state.IDtoPlayers[userName];
-
-
+	public PlayerClient GetPlayer(string userName) => _state.IDtoPlayers[userName];
 
 	public TotalInfoDownload GetTotalInfo(string userName)
 	{

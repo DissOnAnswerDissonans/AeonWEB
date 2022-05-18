@@ -35,10 +35,14 @@ internal class RoomListVM : INotifyPropertyChanged
 	public bool IsReady => ActiveRoom?.Players.Where(p => p.PlayerName == PlayerName).FirstOrDefault()?.IsReady ?? false;
 
 	public string NewRoomName { get; set; } = "";
+	public string SelectedMode { get; set; } = "SingleDebug";
+
+	public ObservableCollection<string> Modes { get; } = new(){ "SingleDebug", "Vanilla", "Tournament" };
 
 	public string PlayerName => App.Account.NickName;
 
-	public string ReadyText => ActiveRoom?.Countdown?.ToString() ?? "Ready";
+	public string ReadyText => ActiveRoom?.PlayersCount < ActiveRoom?.MinPlayers ? "Waiting for players…"
+		: ActiveRoom?.Countdown is null ? "Ready" : "Game is starting…";
 
 	public TrofCommand Refresh => _cmdRefresh ??= new TrofCommand(async () => {
 		var rooms = await App.Lobby.GetRoomsList();
@@ -48,7 +52,7 @@ internal class RoomListVM : INotifyPropertyChanged
 
 	public TrofCommand NewRoom => _cmdNewRoom ??= new TrofCommand(async () => {
 		if (string.IsNullOrEmpty(NewRoomName)) return;
-		await App.Lobby.CreateRoom(NewRoomName);
+		await App.Lobby.CreateRoom(NewRoomName, SelectedMode);
 	}, () => NotInRoom);
 	private TrofCommand? _cmdNewRoom = null;
 
@@ -72,7 +76,7 @@ internal class RoomListVM : INotifyPropertyChanged
 
 	public TrofCommand Ready => _cmdReady ??= new TrofCommand(async () => {
 		await App.Lobby.ReadyCheck();
-	}, () => !NotInRoom);
+	}, () => !NotInRoom && ActiveRoom?.PlayersCount >= ActiveRoom?.MinPlayers);
 	private TrofCommand? _cmdReady = null;
 
 
@@ -83,7 +87,7 @@ public class RoomSlot
 	public string Name { get; set; } = "";
 	public string ReadySignal { get; set; } = "";
 	private RoomSlot() { }
-	public RoomSlot(PlayerData p)
+	public RoomSlot(ClientData p)
 	{
 		Name = p.PlayerName;
 		ReadySignal = p.IsReady ? "X" : "-";

@@ -45,14 +45,14 @@ public class AeonHub<T> : Hub<T> where T: class
 	public string UserName => Context.User?.Identity?.Name!;
 	public T UserClient => Clients.User(UserID);
 
-	public T PlayerClient(Player player) => Clients.User(player.ID);
+	public T PlayerClient(PlayerClient player) => Clients.User(player.ID);
 
 	public T RoomClients(Room room) => Clients.Users(room.Players.Select(p => p.ID));
 }
 
 public static class AeonHubExtensions
 {
-	public static T PlayerClient<Thub, T>(this IHubContext<Thub, T> context, Player player)
+	public static T PlayerClient<Thub, T>(this IHubContext<Thub, T> context, PlayerClient player)
 		where Thub : Hub<T> where T : class => context.Clients.User(player.ID);
 	public static T RoomClients<Thub, T>(this IHubContext<Thub, T> context, Room room) 
 		where Thub : Hub<T> where T : class => context.Clients.Users(room.Players.Select(p => p.ID));

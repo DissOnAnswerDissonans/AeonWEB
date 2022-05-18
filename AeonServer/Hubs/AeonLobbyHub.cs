@@ -20,10 +20,10 @@ public class AeonLobbyHub : AeonHub<AeonLobbyHub.IClient>
 	private Room? UserRoom => _state.IDtoPlayers[UserID].Room;
 
 
-	public async Task CreateRoom(string roomName)
+	public async Task CreateRoom(string roomName, string rules)
 	{
 		await Groups.AddToGroupAsync(Context.ConnectionId, $"ROOM_{roomName}");
-		_state.CreateRoom(roomName, null);
+		_state.CreateRoom(roomName, rules, null);
 		await JoinRoom(roomName);
 		return;
 	}
@@ -68,7 +68,7 @@ public class AeonLobbyHub : AeonHub<AeonLobbyHub.IClient>
 	public async Task<RoomShortData[]> GetRoomsList()
 		=> await Task.FromResult(_state.Rooms.Select(r => r.Value.ToShortData()).ToArray());
 
-	public async Task<PlayerData[]> GetPlayersList(string room)
+	public async Task<ClientData[]> GetPlayersList(string room)
 		=> await Task.FromResult(_state.Rooms[room].Players.Select(p => p.Data).ToArray());
 
 

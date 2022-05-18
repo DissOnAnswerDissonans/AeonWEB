@@ -6,7 +6,7 @@
     <Setter Property="Control.FontSize" Value="20"/>
     <Setter Property="Control.FontWeight" Value="Bold"/>
   </Style>
-  
+
   <Style x:Key="BaseBorder" TargetType="Border">
     <Style.Triggers>
       <Trigger Property="IsEnabled" Value="False">
@@ -17,6 +17,14 @@
     <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
     <Setter Property="CornerRadius" Value="5"/>
     <Setter Property="Background" Value="{StaticResource Element}"/>
+  </Style>
+
+  <Style x:Key="ActiveBorder" TargetType="Border" BasedOn="{StaticResource BaseBorder}">
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Background" Value="{StaticResource ActiveElement}"/>
+      </Trigger>
+    </Style.Triggers>
   </Style>
 
   <Style x:Key="BaseBox" TargetType="Control" BasedOn="{StaticResource BaseText}">
@@ -71,11 +79,11 @@
     </Setter>
   </Style>
 
-  <Style TargetType="Button" BasedOn="{StaticResource BaseBox}">
+  <Style x:Key="ButtonBase" TargetType="{x:Type ButtonBase}" BasedOn="{StaticResource BaseBox}">
     <Setter Property="Template">
       <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Border Style="{StaticResource BaseBorder}">
+        <ControlTemplate TargetType="{x:Type ButtonBase}">
+          <Border x:Name="border" Style="{StaticResource ActiveBorder}">
             <ContentPresenter 
               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -89,14 +97,49 @@
     </Setter>
   </Style>
 
+  <Style TargetType="Button" BasedOn="{StaticResource ButtonBase}"/>
+  <Style TargetType="ToggleButton" BasedOn="{StaticResource ButtonBase}"/>
+  <Style TargetType="RibbonButton" BasedOn="{StaticResource ButtonBase}"/>
+
   <Style TargetType="ListBox" BasedOn="{StaticResource BaseBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ListBox">
-          <Border Style="{StaticResource BaseBorder}">
+          <Border Style="{StaticResource BaseBorder}" Background="{TemplateBinding Background}" Padding="2"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
             <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="False">
-              <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+              <StackPanel IsItemsHost="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
             </ScrollViewer>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsGrouping" Value="True">
+              <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="ListBoxItem" BasedOn="{StaticResource BaseBox}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ListBoxItem">
+          <Border x:Name="Border" Style="{StaticResource ActiveBorder}" Margin="1">
+            <VisualStateManager.VisualStateGroups>
+              <VisualStateGroup Name="SelectionStates">
+                <VisualState Name="Unselected"/>
+                <VisualState Name="Selected">
+                  <Storyboard>
+                    <ObjectAnimationUsingKeyFrames 
+                      Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
+                      <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SelectedItem}"/>
+                    </ObjectAnimationUsingKeyFrames>
+                  </Storyboard>
+                </VisualState>
+              </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <ContentPresenter />
           </Border>
         </ControlTemplate>
       </Setter.Value>
@@ -104,5 +147,50 @@
   </Style>
 
   <Style TargetType="ScrollBar" BasedOn="{StaticResource BaseBox}"/>
+
+  <ControlTemplate x:Key="ComboBoxTextBox"
+                 TargetType="{x:Type TextBox}">
+    <Border x:Name="PART_ContentHost"
+          Focusable="False"
+          Background="{TemplateBinding Background}" />
+  </ControlTemplate>
+
+  <Style TargetType="ComboBox" BasedOn="{StaticResource BaseBox}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ComboBox">
+          <Grid>
+            <ToggleButton x:Name="ToggleButton" ClickMode="Press"
+                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+            <ContentPresenter x:Name="ContentSite" Margin="5 0 20 0" IsHitTestVisible="False" 
+                              VerticalAlignment="Center" HorizontalAlignment="Left" 
+                              Content="{TemplateBinding SelectedItem}" 
+                              ContentTemplate="{TemplateBinding ItemTemplate}"
+                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
+            <TextBox x:Name="PART_EditableTextBox" Margin="5 0 20 0" 
+                     Focusable="True" Background="Transparent" Visibility="Hidden" IsReadOnly="{TemplateBinding IsReadOnly}" />
+            <Popup x:Name="Popup" Placement="Relative" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                   AllowsTransparency="True" Focusable="False" PopupAnimation="Slide" HorizontalAlignment="Stretch">
+              <Grid Margin="5 0" MinWidth="{TemplateBinding ActualWidth}">
+                <StackPanel IsItemsHost="True" />
+              </Grid>
+            </Popup>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="ComboBoxItem">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ComboBoxItem">
+          <Border x:Name="Border" Style="{StaticResource ActiveBorder}">
+            <ContentPresenter />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
   
 </ResourceDictionary>

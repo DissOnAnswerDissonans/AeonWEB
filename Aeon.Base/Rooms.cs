@@ -16,7 +16,7 @@ namespace Aeon.Base
 
 	public class RoomFullData : RoomShortData
 	{
-		public List<PlayerData> Players { get; set; }
+		public List<ClientData> Players { get; set; }
 		public DateTimeOffset? Countdown { get; set; } = null;
 	}
 
@@ -31,7 +31,7 @@ namespace Aeon.Base
 		Blocked = 0x80
 	}
 
-	public class PlayerData
+	public class ClientData
 	{
 		public string PlayerName { get; set; }
 		public bool IsObserver { get; set; }

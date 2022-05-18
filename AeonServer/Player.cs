@@ -2,16 +2,25 @@
 
 namespace AeonServer;
 
-public class Player
+
+abstract public class Player
 {
-	public string ID { get; }
+	public string ID { get; protected set; } = null!;
+
 	public Room? Room { get; internal set; }
 	public GameState? Game { get; internal set; }
-	public PlayerData Data { get; internal set; }
 
-	public int? HeroID { get; private set; }
-	public string? HeroName { get; private set; }
-	public Aeon.Core.Hero? Hero { get; private set; }
+	public int? HeroID { get; protected set; }
+	public string? HeroName { get; protected set; }
+	public Aeon.Core.Hero? Hero { get; protected set; }
+
+	internal RoundInfo.Contender Contender => new() { HeroID = HeroName, PlayerName = ID, Points = 0 };
+	public override string ToString() => $"{ID} ({HeroName})";
+}
+
+public class PlayerClient : Player
+{
+	public ClientData Data { get; internal set; }
 
 	public Models.ShopUpdate? LastShopUpdate { get; internal set; }
 	public ShopUpdate GetShopUpdate(ShopUpdate.R response) => LastShopUpdate = new ShopUpdate {
@@ -21,11 +30,11 @@ public class Player
 		CloseIn = Game!.ShopCloseTime
 	};
 
-	public Player(string id, string? nickname)
+	public PlayerClient(string id, string? nickname)
 	{
 		ID = id;
 		Room = null;
-		Data = new PlayerData { PlayerName = nickname ?? "[Guest]", IsObserver = false, IsReady = false };
+		Data = new ClientData { PlayerName = nickname ?? "[Guest]", IsObserver = false, IsReady = false };
 	}
 
 	internal void SelectHero(int id, string name, Aeon.Core.Hero hero)
@@ -34,8 +43,9 @@ public class Player
 		HeroName = name;
 		Hero = hero;
 	}
+}
 
-	internal RoundInfo.Contender Contender => new() { HeroID = HeroName, PlayerName = ID, Points = 0 };
-
-	public override string ToString() => $"{ID} ({HeroName})";
+public class PlayerBot : Player
+{
+	public PlayerBot(string name) => ID = $"<BOT>{name}";
 }

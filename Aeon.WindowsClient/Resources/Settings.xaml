@@ -12,6 +12,8 @@
   <SolidColorBrush x:Key="BorderColor" Color="Black"/>
   <SolidColorBrush x:Key="Element" Color="DarkBlue"/>
   <SolidColorBrush x:Key="DisabledElement" Color="#222"/>
+  <SolidColorBrush x:Key="ActiveElement" Color="Blue"/>
+  <SolidColorBrush x:Key="SelectedItem" Color="DarkSlateBlue"/>
 
   <SolidColorBrush x:Key="Rooms_Need" Color="#ba0"/>
   <SolidColorBrush x:Key="Rooms_Open" Color="#090"/>

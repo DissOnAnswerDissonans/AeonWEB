@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Animation;
+using static Aeon.WindowsClient.ViewModels.ShopPageVM;
 
 namespace Aeon.WindowsClient.Views;
 /// <summary>
@@ -50,8 +51,8 @@ public partial class ShopPage : Page
 
 	private async void Button_Click(object sender, RoutedEventArgs e)
 	{
-		var offer = (OfferData) (sender as Button)!.DataContext;
-		await App.Game.BuyOffer(offer.ID);
+		var offer = (OfferVM) (sender as Button)!.DataContext;
+		await App.Game.BuyOffer(offer.Offer.ID);
 	}
 
 	private async void EndShoppingButton(object sender, RoutedEventArgs e)
