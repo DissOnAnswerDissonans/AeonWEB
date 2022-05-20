@@ -11,7 +11,6 @@ namespace Aeon.Heroes
 	{
 		[Balance] private decimal dmgBoost = .039m;
 
-		protected override void PostActivate() { }
 
 		private int Stacks =>
 			(int) (StatsRO.GetDynValue(Health) / (decimal) StatsRO.Convert(Health) * 10);

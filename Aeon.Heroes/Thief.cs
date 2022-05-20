@@ -12,23 +12,23 @@ namespace Aeon.Heroes
 	{
 		protected override void PostActivate() { }
 
-		private int _stealAmount;
-		private int _stolen;
+		private StatDef StealAmount { get; set; }
+		private StatDef Stolen { get; set; }
 
 		public override Damage GetDamageTo(IBattler enemy)
 		{
-			(enemy as Hero)?.Stats.AddToValue(Health, -_stealAmount);
-			Stats.AddToValue(Health, +_stealAmount);
-			_stolen += _stealAmount;
+			(enemy as Hero)?.Stats.AddToValue(Health, -StealAmount);
+			Stats.AddToValue(Health, +StealAmount);
+			Stolen.Add(StealAmount);
 			return base.GetDamageTo(enemy);
 		}
 
 		public override void AfterBattle(IBattler enemy, bool isWon)
 		{
 			base.AfterBattle(enemy, isWon);
-			if (isWon) _stealAmount += 1;
+			if (isWon) StealAmount.Add(1);
 		}
 
-		public override string AbilityText => $"Спижжено {_stolen} здоровья";
+		public override string AbilityText => $"Спижжено {Stolen} здоровья";
 	}
 }

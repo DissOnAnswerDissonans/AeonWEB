@@ -15,11 +15,12 @@ public class PlayerStatus
 
 public class Hero
 {
-	public int HeroId { get; set; }
+	public string HeroId { get; set; } = null!;
 	public int Money { get; set; }
 	public List<StatData> Stats { get; set; } = null!;
 
 	public static Hero FromAeon(Aeon.Core.Hero hero) => new() { 
+		HeroId = hero.ID,
 		Money = hero.Money, 
 		Stats = hero.Stats.All().Select(s => new StatData { 
 			StatId = s.Stat.ID, RawValue = s.Value, Value = s.Stat.Converter(s.Value, hero.StatsRO)

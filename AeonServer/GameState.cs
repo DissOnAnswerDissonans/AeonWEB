@@ -52,6 +52,7 @@ public class GameState
 	{
 		RoundNumber++;
 		Phase = P.Shop;
+		Players.Select(p => p.Hero).ToList().ForEach(h => h?.OnRoundStart());
 		_logger.LogInformation("Round {number} started", RoundNumber);
 	}
 

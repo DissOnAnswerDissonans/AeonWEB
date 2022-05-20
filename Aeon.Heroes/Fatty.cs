@@ -9,20 +9,20 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Fatty : Hero
 	{
-		[Balance] private decimal healthMultiplier = 1.095m;
-		[Balance] private int regenBonus = 2;
+		[Balance] private decimal healthMultiplier;
+		[Balance] private int regenBonus;
 
 		protected override void PostActivate() => 
 			Shop.ModifyOffers(o => o.StatID == Health, o => o with { Value = (o.Value.Value * healthMultiplier).TRound() } );
 
-		private int _addedRegen;
-		public override string AbilityText => $"Нажрал +{_addedRegen} регенерации";
+		StatDef AddedRegen { get; set; }
+		public override string AbilityText => $"Нажрал +{AddedRegen} регенерации";
 
 		public override void AfterBattle(IBattler enemy, bool isWon)
 		{
 			base.AfterBattle(enemy, isWon);
 			Stats.AddToValue(Regen, regenBonus);
-			_addedRegen += regenBonus;
+			AddedRegen.Add(regenBonus);
 		}
 	}
 }

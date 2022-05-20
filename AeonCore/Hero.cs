@@ -1,4 +1,6 @@
-﻿namespace Aeon.Core;
+﻿using System.Linq;
+using System.Reflection;
+namespace Aeon.Core;
 
 public interface IShopper
 {
@@ -24,25 +26,51 @@ abstract public class Hero : IBattler, IShopper
 	public StatsContainer Stats { get; private set; } = new();
 	public IStatContext StatsRO => Stats;
 
-	public bool IsAlive => StatsRO.TryGetDynValue("HP") > 0;
+	public bool IsAlive => StatsRO.TryGetDynValue(Health) > 0;
 
 	public int Money { get; private set; }
 	public Shop Shop { get; protected set; }
 
-
+	
 	public Hero() => ID = GetNameID(GetType());
-	public static string GetNameID(Type type) => $"{type.Assembly.GetName().Name}:{type.Name}";
+	public static string GetNameID(Type type)
+	{
+		var name = type.Assembly.GetName().Name;
+		if (name == "Aeon.Heroes") name = "";
+		return $"{name}:{type.Name}";
+	}
 	public Hero Activate(Shop shop = null, StatsContainer stats = null)
 	{
 		Stats = stats ?? Defaults.Stats;
 		Shop = shop ?? Defaults.Shop;
 		Money = 100;
+		ActivateAttributes(this);
 		PostActivate();
 		Stats.ResetAll();
 		return this;
 	}
 
-	protected abstract void PostActivate();
+	private static void ActivateAttributes(Hero hero)
+	{
+		var test = hero.GetType().GetRuntimeProperties();
+		hero.GetType().GetRuntimeProperties().Where(m => m.PropertyType == typeof(StatDef)).ToList().ForEach(x => 
+		{
+			var id = x.GetCustomAttribute<StatIDAttribute>();
+			var limit = x.GetCustomAttribute<LimitAttribute>();
+			var def = x.GetCustomAttribute<DefaultAttribute>();
+
+			var name = $"{hero.ID}.{id?.ID ?? x.Name}";
+			x.SetValue(hero, new StatDef(name, hero.Stats));
+			hero.Stats.NewStat(name);
+		});
+	}
+
+	protected virtual void PostActivate() { }
+
+	//internal StatsContainer.StatContext NewHeroStat(string stat) => Stats.NewStat($"{ID}.{stat}");
+	//protected int HeroValue(string stat) => Stats.GetValue($"{ID}.{stat}");
+	//protected bool HeroValueSet(string stat, StatValue value) => Stats.SetValue($"{ID}.{stat}", value);
+	//protected StatValue? HeroValueAdd(string stat, StatValue amount) => Stats.AddToValue($"{ID}.{stat}", amount);
 
 	public int Wage(int amount) => Money += amount >= 0 ? amount
 		: throw new ArgumentOutOfRangeException(nameof(amount), "Can't be negative");
@@ -52,6 +80,11 @@ abstract public class Hero : IBattler, IShopper
 		if (Money < amount)
 			throw new ArgumentException("Not enough money", nameof(amount));
 		return Money -= amount;
+	}
+
+	public virtual void OnRoundStart()
+	{
+
 	}
 
 	public virtual bool TryBuyOffer(Offer offer)

@@ -29,7 +29,7 @@ namespace Aeon.Heroes
 			Healing,
 		}
 
-		private int _mana;
+		StatDef Mana { get; set; }
 		private Mode _mode;
 
 		[Balance] private int moneyBurn = 2;
@@ -41,7 +41,6 @@ namespace Aeon.Heroes
 		[Balance] private decimal healingCoeff = 0.2m;
 		[Balance] private int healingCost = 5;
 
-		protected override void PostActivate() { }
 
 		private int MagHitAdder => (int) (StatsRO.Convert(Magic) * magHitBonus);
 
@@ -53,35 +52,35 @@ namespace Aeon.Heroes
 		}
 
 		public override string AbilityText => _mode switch {
-			Mode.AbilityOff => $"M{_mana,-2}| Накопление",
-			Mode.MoneyBurn => $"M{_mana,-2}| Сжигание ${moneyBurn} ~ {moneyBurnCost}м",
-			Mode.MagicHit => $"M{_mana,-2}| +{magHitBonus:P0} ({MagHitAdder}) МАГ ~ {magHitCost}м",
-			Mode.Healing => $"M{_mana,-2}| +{healingCoeff:P0} сбитого ЗДР ~ {healingCost}м",
+			Mode.AbilityOff => $"M{Mana,-2}| Накопление",
+			Mode.MoneyBurn => $"M{Mana,-2}| Сжигание ${moneyBurn} ~ {moneyBurnCost}м",
+			Mode.MagicHit => $"M{Mana,-2}| +{magHitBonus:P0} ({MagHitAdder}) МАГ ~ {magHitCost}м",
+			Mode.Healing => $"M{Mana,-2}| +{healingCoeff:P0} сбитого ЗДР ~ {healingCost}м",
 		};
 
 		public override Damage GetDamageTo(IBattler enemy)
 		{
 			Damage d = base.GetDamageTo(enemy);
-			++_mana;
+			Mana.Add(1);
 
 			switch (_mode) {
 			case Mode.AbilityOff:
 				return d;
 
 			case Mode.MoneyBurn:
-				if (_mana < moneyBurnCost) return d;
-				_mana -= moneyBurnCost;
+				if (Mana < moneyBurnCost) return d;
+				Mana.Add(-moneyBurnCost);
 				(enemy as Hero).Spend(moneyBurn);
 				return d;
 
 			case Mode.MagicHit:
-				if (_mana < magHitCost) return d;
-				_mana -= magHitCost;
+				if (Mana < magHitCost) return d;
+				Mana.Add(-magHitCost);
 				return d.ModMag(a => a + MagHitAdder);
 
 			case Mode.Healing:
-				if (_mana < healingCost) return d;
-				_mana -= healingCost;
+				if (Mana < healingCost) return d;
+				Mana.Add(-healingCost);
 				Stats.AddToDynValue(Health, (int) ((1 - StatsRO.GetDynValue(Health) / StatsRO.Convert(Health)) * healingCoeff));
 				return d;
 

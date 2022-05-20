@@ -17,10 +17,10 @@ namespace Aeon.Heroes
 	/// </summary>
 	public class Vampire : Hero
 	{
-		protected override void PostActivate() { }
+		protected override void PostActivate() => AbilityLvl.Set(1);
 
-		private int _abilityLvl = 1;
-		private int _charges = 0;
+		private StatDef AbilityLvl { get; set; }
+		private StatDef Charges { get; set; }
 
 		private const int UPGRADE_COST = 100;
 		private const int MAX_LVL = 3;
@@ -28,26 +28,26 @@ namespace Aeon.Heroes
 		private readonly int[] _needCharges = { 0, 3, 2, 1 };
 		private readonly decimal[] _lifestealLv = { 0, .20m, .25m, .30m };
 
-		private int Lifesteal => (int) (_lifestealLv[_abilityLvl] * StatsRO.Convert(Attack));
-		private int NeedCharges => _needCharges[_abilityLvl];
+		private int Lifesteal => (int) (_lifestealLv[AbilityLvl] * StatsRO.Convert(Attack));
+		private int NeedCharges => _needCharges[AbilityLvl];
 
 		public override bool UseAbility()
 		{
-			if (Money < UPGRADE_COST || _abilityLvl >= MAX_LVL) return false;
+			if (Money < UPGRADE_COST || AbilityLvl >= MAX_LVL) return false;
 			Spend(UPGRADE_COST);
-			_abilityLvl++;
+			AbilityLvl.Add(1);
 			return true;
 		}
 
 		public override Damage GetDamageTo(IBattler enemy)
 		{
-			++_charges;
-			if (_charges < NeedCharges) return base.GetDamageTo(enemy);
-			_charges = 0;
+			Charges.Add(1);
+			if (Charges < NeedCharges) return base.GetDamageTo(enemy);
+			Charges.Set(0);
 			Stats.AddToValue(Health, Lifesteal); // TODO уточнить, когда происходит отхил
 			return base.GetDamageTo(enemy).ModPhys(a => a + Lifesteal);
 		}
 
-		public override string AbilityText => $"Уровень {_abilityLvl}, {_charges} зарядов";
+		public override string AbilityText => $"Уровень {AbilityLvl}, {Charges} зарядов";
 	}
 }

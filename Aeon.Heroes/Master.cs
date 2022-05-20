@@ -15,12 +15,15 @@ namespace Aeon.Heroes
 		[Balance] private decimal vampCoeffStart;
 		[Balance] private decimal vampAdder;
 
-		protected override void PostActivate() { }
+		private StatDef VampCoeff { get; set; }
+		private StatDef Vamp { get; set; }
 
-		private decimal? _vamp_coeff;
-		public decimal VampCoeff => _vamp_coeff ??= vampCoeffStart;
-
-		private int Vamp => (int) (StatsRO.ConvertAsIs(Attack) * VampCoeff);
+		protected override void PostActivate()
+		{
+			VampCoeff.Edit.Convert(x => vampCoeffStart + vampAdder * x);
+			Vamp.Edit.Dependent(Attack, VampCoeff)
+				.Convert((x, ctx) => ctx.ConvertAsIs(Attack) * ctx.ConvertAsIs(VampCoeff));
+		}
 
 		public override void AfterHit(Damage enemyHit, Damage ourHit)
 		{
@@ -31,7 +34,7 @@ namespace Aeon.Heroes
 		public override void AfterBattle(IBattler enemy, bool isWon)
 		{
 			base.AfterBattle(enemy, isWon);
-			_vamp_coeff += vampAdder;
+			VampCoeff.Add(1);
 		}
 
 		public override string AbilityText => $"Вампиризм {VampCoeff:P} ({Vamp})";

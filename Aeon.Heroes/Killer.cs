@@ -19,19 +19,24 @@ namespace Aeon.Heroes
 		[Balance] private int attackBonus;
 
 		protected override void PostActivate() { }
-		private int _totalDamage;
-		private int _abilityLevel;
+		private StatDef TotalDamage { get; set; }
+		private StatDef BonusAttack { get; set; }
+		private StatDef ToNextLevel { get; set; }
+		private int _lvl = 0;
 
-		private int NextLevel => lvlCoeff * (_abilityLevel + 1) * (_abilityLevel + 2);
+		private int NextLevel => lvlCoeff * (_lvl + 1) * (_lvl + 2);
 
 		private void AddToDamage(int damage)
 		{
-			_totalDamage += damage;
-			while (_totalDamage >= NextLevel) {
-				_abilityLevel++;
+			_lvl++;
+			TotalDamage.Add(damage);
+			while (TotalDamage >= NextLevel) {
+				BonusAttack.Add(attackBonus);
 				Stats.AddToValue(Attack, attackBonus);
 			}
 		}
+
+		public override void OnRoundStart() => ToNextLevel.Set(NextLevel - TotalDamage);
 
 		public override Damage GetDamageTo(IBattler enemy)
 		{
@@ -47,6 +52,6 @@ namespace Aeon.Heroes
 		}
 
 		public override string AbilityText =>
-			$"+{_abilityLevel * attackBonus} АТК, Для +{attackBonus}: {NextLevel - _totalDamage} урона";
+			$"+{BonusAttack * attackBonus} АТК, Для +{attackBonus}: {ToNextLevel} урона";
 	}
 }

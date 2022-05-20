@@ -44,11 +44,17 @@ public class HeroesProvider
 		return test;
 	}
 
-	internal HeroInfo? GetHeroInfo(int? heroID) => !heroID.HasValue? null : new() { 
-		ID = heroID.Value, 
-		Name = _names[heroID.Value].Split(':')[1],
-		AssemblyName = _names[heroID.Value].Split(':')[0],
-	};
-
+	internal HeroInfo? GetHeroInfo(int? heroID) => !heroID.HasValue? null 
+		: _names[heroID.Value].StartsWith(":") 
+		? new() {
+			ID = heroID.Value,
+			Name = _names[heroID.Value].TrimStart(':'),
+			AssemblyName = "",
+		}
+		: new() { 
+			ID = heroID.Value, 
+			Name = _names[heroID.Value].Split(':')[1],
+			AssemblyName = _names[heroID.Value].Split(':')[0],
+		};
 
 }

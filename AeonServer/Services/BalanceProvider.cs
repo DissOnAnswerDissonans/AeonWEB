@@ -34,13 +34,13 @@ public class DefaultBalanceProvider : IBalanceProvider
 			},
 
 			HeroesBalance = new() {
-				["Aeon.Heroes:Banker"] = new() {
+				[":Banker"] = new() {
 					["@maxDrop"] = 50,
 				},
-				["Aeon.Heroes:Beast"] = new() {
+				[":Beast"] = new() {
 					["@dmgBoost"] = .039m,
 				},
-				["Aeon.Heroes:BloodyElf"] = new() {
+				[":BloodyElf"] = new() {
 					["@moneyBurn"] = 2,
 					["@moneyBurnCost"] = 3,
 					["@magHitBonus"] = 0.3m,
@@ -48,51 +48,51 @@ public class DefaultBalanceProvider : IBalanceProvider
 					["@healingCoeff"] = 0.2m,
 					["@healingCost"] = 5,
 				},
-				["Aeon.Heroes:Cheater"] = new() {
+				[":Cheater"] = new() {
 					["@attMultiplier"] = 0.93m,
 					["@firstAttX"] = 2.0m,
 				},
-				["Aeon.Heroes:Fatty"] = new() {
+				[":Fatty"] = new() {
 					["@healthMultiplier"] = 1.095m,
 					["@regenBonus"] = 2,
 				},
-				["Aeon.Heroes:Fe11"] = new() {
+				[":Fe11"] = new() {
 					["@startHealthMult"] = 0.5m,
 					["@startAttackMult"] = 2.0m,
 					["@initIncome"] = 2,
 					["@battlesForBonus"] = 10,
 				},
-				["Aeon.Heroes:Killer"] = new() {
+				[":Killer"] = new() {
 					["@conversionRate"] = 0.15m,
 					["@lvlCoeff"] = 75,
 					["@attackBonus"] = 10,
 				},
-				["Aeon.Heroes:Master"] = new() {
+				[":Master"] = new() {
 					["@vampCoeffStart"] = 0.15m,
 					["@vampAdder"] = .006m,
 				},
-				["Aeon.Heroes:Rogue"] = new() {
+				[":Rogue"] = new() {
 					["@rogueHit"] = 0.09m,
 					["@enemyHit"] = 0.11m,
 					["@battleBonus"] = 0.02m,
 				},
-				["Aeon.Heroes:Thief"] = new() {
+				[":Thief"] = new() {
 					["@"] = 0,
 				},
-				["Aeon.Heroes:Tramp"] = new() {
+				[":Tramp"] = new() {
 					["@moneyBeg"] = 1.1m,
 				},
-				["Aeon.Heroes:Trickster"] = new() {
+				[":Trickster"] = new() {
 					["@resetSalvage"] = .80m,
 				},
-				["Aeon.Heroes:Vampire"] = new() {
+				[":Vampire"] = new() {
 					["@"] = 0, //UNDONE
 				},
-				["Aeon.Heroes:Warlock"] = new() {
+				[":Warlock"] = new() {
 					["@cost"] = 10,
 					["@bonus"] = 17,
 				},
-				["Aeon.Heroes:Warrior"] = new() {
+				[":Warrior"] = new() {
 					["@critDmgBonus"] = 0.5m,
 					["@critChaBonus"] = 0.1m,
 				},

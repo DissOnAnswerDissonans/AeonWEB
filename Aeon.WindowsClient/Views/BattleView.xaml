@@ -130,7 +130,7 @@
               </Grid.ColumnDefinitions>
               <TextBlock Grid.Column="0" d:Text="Nickname" Text="{Binding Player}"
                          Style="{StaticResource TextT}" HorizontalAlignment="Left" />
-              <TextBlock Grid.Column="1" d:Text="Aeon.Heroes:Hero" Text="{Binding HeroName}" 
+              <TextBlock Grid.Column="1" d:Text="::Hero" Text="{Binding HeroName}" 
                          Style="{StaticResource TextT}" HorizontalAlignment="Left" />
               <TextBlock Grid.Column="2" d:Text="0000" Text="{Binding Score}" FontSize="32"
                          Style="{StaticResource TextT}" HorizontalAlignment="Center" />

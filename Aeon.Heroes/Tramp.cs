@@ -13,7 +13,7 @@ namespace Aeon.Heroes
 		protected override void PostActivate() { }
 
 		private decimal _coc = 0;
-		private int _grabbed;
+		private StatDef Grabbed { get; set; }
 
 		public override Damage ReceiveDamage(Damage damage)
 		{
@@ -21,10 +21,10 @@ namespace Aeon.Heroes
 			int beg = (int) _coc;
 			Wage(beg);
 			_coc -= beg;
-			_grabbed += beg;
+			Grabbed.Add(beg);
 			return base.ReceiveDamage(damage);
 		}
 
-		public override string AbilityText => $"Намошнил ${_grabbed}";
+		public override string AbilityText => $"Намошнил ${Grabbed}";
 	}
 }

@@ -12,23 +12,21 @@ namespace Aeon.Heroes
 	public class Banker : Hero
 	{
 		private int _optNumber;
-		private int _totalPriceDrop;
 
 		[Balance] private int maxDrop = 50;
-
-		protected override void PostActivate() { }
+		StatDef PriceDrop { get; set; }
 
 		public override bool TryBuyOffer(Offer offer)
 		{
 			if (!base.TryBuyOffer(offer)) return false;
-			if (offer.IsOpt && _totalPriceDrop < maxDrop) {
+			if (offer.IsOpt && PriceDrop < maxDrop) {
 				int drop = ++_optNumber % 3 == 0 ? 2 : 1;
 				Shop.ModifyOffers(o => o.IsOpt, o => new Offer(o.StatID, o.Value, o.Cost - drop, o.IsOpt));
-				_totalPriceDrop += drop;
+				PriceDrop.Add(drop);
 			}
 			return true;
 		}
 
-		public override string AbilityText => $"Скидка на весь опт ${_totalPriceDrop}";
+		public override string AbilityText => $"Скидка на весь опт ${PriceDrop}";
 	}
 }

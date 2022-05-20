@@ -6,15 +6,15 @@ namespace Aeon.Heroes
 	{
 		[Balance] private decimal resetSalvage = 0.80m;
 
-		protected override void PostActivate() { }
+		private StatDef Chargeback { get; set; }
 
-		private int _totalSpent;
-		private int ResetMoney => (int) (resetSalvage * _totalSpent);
+		protected override void PostActivate() => Chargeback.Edit.Convert(x => (x * resetSalvage).TRound());
+
 
 		public override bool TryBuyOffer(Offer offer)
 		{
 			if (base.TryBuyOffer(offer)) {
-				_totalSpent += offer.Cost;
+				Chargeback.Add(offer.Cost);
 				return true;
 			}
 			return false;
@@ -22,14 +22,14 @@ namespace Aeon.Heroes
 
 		public override bool UseAbility()
 		{
-			if (ResetMoney == 0) return false;
+			if (Chargeback == 0) return false;
+			var back = Chargeback.Converted.TRound();
 			Stats.ResetAll();
-			Wage(ResetMoney);
-			_totalSpent = 0;
+			Wage(back);
 			return true;
 		}
 
 		public override string AbilityText =>
-			$"Сбросить всё и получить ${ResetMoney}";
+			$"Сбросить всё и получить ${Chargeback.Converted}";
 	}
 }

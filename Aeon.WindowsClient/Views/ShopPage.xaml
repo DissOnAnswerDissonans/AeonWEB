@@ -29,28 +29,52 @@
       <ColumnDefinition Width="64"/>
     </Grid.ColumnDefinitions>
     
-    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MoneyText}" 
-               VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
     
-    <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Width="128" Height="50"
+    <Button Grid.Row="1" Grid.Column="3" Width="128" Height="50"
             Content="ВСЁ" Click="EndShoppingButton"/>
     
     <local:RoundTimer x:Name="timer" Grid.RowSpan="2" Grid.Column="3" Width="100" Height="100" Time="30"
                HorizontalAlignment="Right" VerticalAlignment="Center"/>
-    
-    <ListBox Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" HorizontalContentAlignment="Stretch"
-             ItemsSource="{Binding Positions}"
-             d:ItemsSource="{d:SampleData ItemCount=12}" Background="Black"
+
+    <DockPanel Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" LastChildFill="False">
+
+      <Button DockPanel.Dock="Top" HorizontalContentAlignment="Stretch" Background="DarkGreen" >
+        <StackPanel Margin="0 5 0 0">
+          <Grid Margin="5 0">
+            <TextBlock d:Text="000₽" Text="{Binding MoneyText}" TextAlignment="Right" />
+            <TextBlock d:Text=":Banker" Text="{Binding Hero.HeroId}" />
+          </Grid>
+          <ListBox DockPanel.Dock="Top" BorderThickness="0" Background="DarkGreen"
+                   d:ItemsSource="{d:SampleData ItemCount=4}" ItemsSource="{Binding OtherStats}">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Grid Margin="5 0">
+                  <TextBlock d:Text="000" Text="{Binding Stat.Value}" TextAlignment="Right" />
+                  <TextBlock d:Text="Stat" Text="{Binding Name}" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </StackPanel>
+      </Button>
+
+      <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding Positions}"
+             d:ItemsSource="{d:SampleData ItemCount=9}" Background="Black"
              SelectedItem="{Binding SelectedPosition}" SelectedIndex="{Binding SelectedID}">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <DockPanel Margin="5 0">
-            <TextBlock Text="{Binding Stat.RawValue}" DockPanel.Dock="Right"/>
-            <TextBlock Text="{Binding Stat.StatId}" DockPanel.Dock="Left"/>
-          </DockPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <DockPanel Margin="5 0">
+              <TextBlock Text="{Binding Stat.RawValue}" DockPanel.Dock="Right" d:Text="000"/>
+              <TextBlock Text="{Binding Stat.StatId}" DockPanel.Dock="Left"/>
+            </DockPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      
+      
+
+    </DockPanel>
 
     <Border Grid.Row="2" Grid.Column="3" BorderThickness="8" BorderBrush="Blue" CornerRadius="8"
             Background="{StaticResource DarkBG}">

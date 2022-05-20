@@ -83,7 +83,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ButtonBase}">
-          <Border x:Name="border" Style="{StaticResource ActiveBorder}">
+          <Border x:Name="border" Style="{StaticResource ActiveBorder}" Background="{TemplateBinding Background}">
             <ContentPresenter 
               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -125,7 +125,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ListBoxItem">
-          <Border x:Name="Border" Style="{StaticResource ActiveBorder}" Margin="1">
+          <Border x:Name="Border" Style="{StaticResource ActiveBorder}" Margin="1" Background="{TemplateBinding Background}">
             <VisualStateManager.VisualStateGroups>
               <VisualStateGroup Name="SelectionStates">
                 <VisualState Name="Unselected"/>

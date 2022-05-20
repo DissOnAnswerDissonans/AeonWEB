@@ -17,8 +17,11 @@ namespace Aeon.Heroes
 		[Balance] private int initIncome;
 		[Balance] private int battlesForBonus;
 
+		StatDef StartIncome { get; set; }
+
 		protected override void PostActivate()
 		{
+			StartIncome.Edit.Convert((x, ctx) => (1 + ctx.ConvertAsIs(Income)).Power(x) - 1).Default(initIncome);
 			Stats.EditStat(Health).Default((Stats.GetValue(Health) * startHealthMult).TRound());
 			Stats.EditStat(Attack).Default((Stats.GetValue(Attack) * startAttackMult).TRound());
 		}
@@ -28,6 +31,12 @@ namespace Aeon.Heroes
 			base.OnBattleStart(enemy);
 			++_battles;
 			Stats.SetDynValue(Income, initIncome + _battles / battlesForBonus);
+		}
+
+		public override void AfterBattle(IBattler enemy, bool isWon) 
+		{
+			base.AfterBattle(enemy, isWon);
+			StartIncome.Set(initIncome + _battles / battlesForBonus);
 		}
 	}
 }
