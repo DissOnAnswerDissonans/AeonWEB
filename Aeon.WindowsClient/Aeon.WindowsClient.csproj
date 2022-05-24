@@ -5,6 +5,7 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <StartupObject>Aeon.WindowsClient.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,7 +45,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aeon.Base\Aeon.Base.csproj" />
-    <ProjectReference Include="..\AeonServer\AeonServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

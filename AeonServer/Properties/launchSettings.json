@@ -1,28 +1,20 @@
-﻿{
-  //"iisSettings": {
-  //  "windowsAuthentication": false,
-  //  "anonymousAuthentication": true,
-  //  "iisExpress": {
-  //    "applicationUrl": "http://localhost:2363",
-  //    "sslPort": 2366
-  //  }
-  //},
+{
   "profiles": {
     "AeonServer": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "applicationUrl": "https://localhost:2366;http://localhost:2363",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:2366;http://localhost:2363",
+      "dotnetRunMessages": true
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "useSSL": true,
+      "dockerfileRunArguments": "-p 2366:2366 -p 2363:2363",
+      "httpPort": 80,
+      "sslPort": 443
     }
-    //"IIS Express": {
-    //  "commandName": "IISExpress",
-    //  "launchBrowser": true,
-    //  "environmentVariables": {
-    //    "ASPNETCORE_ENVIRONMENT": "Development"
-    //  }
-    //}
   }
 }

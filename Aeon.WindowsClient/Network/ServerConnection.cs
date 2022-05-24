@@ -7,7 +7,7 @@ namespace Aeon.WindowsClient;
 class ServerConnection
 {
 	public HubConnection Connection { get; }
-	private string? JWToken { get; }
+	public string? JWToken { private get; set; }
 
 
 	public ServerConnection(string? token, string url)

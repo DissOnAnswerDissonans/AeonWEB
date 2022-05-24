@@ -1,4 +1,6 @@
 ﻿
+using System.Linq;
+
 namespace Aeon.Core;
 
 public static class Converters
@@ -11,6 +13,14 @@ public static class Converters
 			_ => StatDiff(o.StatID, ctx, ctx.GetValue(o.StatID), o.Value)
 		}},
 		IsOpt = o.IsOpt,
+	};
+
+	public static Base.Hero FromAeon(Hero hero) => new() {
+		HeroId = hero.ID,
+		Money = hero.Money,
+		Stats = hero.Stats.All().Select(s => new StatData {
+			StatId = s.Stat.ID, RawValue = s.Value, Value = s.Stat.Converter(s.Value, hero.StatsRO)
+		}).ToList()
 	};
 
 	private static decimal StatDiff(string id, IStatContext ctx, int start, int add)

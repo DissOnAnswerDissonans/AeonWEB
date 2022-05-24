@@ -46,6 +46,8 @@ public partial class RoomList : Page
 		RoomVM? room = VM.Rooms.Where(r => r.Data.RoomName == obj.RoomName).FirstOrDefault();
 		if (room is null)
 			VM.Rooms.Add(new RoomVM(obj) { IsSelected = VM.ActiveRoomName == obj.RoomName });
+		else if (obj.Status.HasFlag(RoomStatus.Disposing))
+			VM.Rooms.Remove(room);
 		else
 			VM.Rooms[VM.Rooms.IndexOf(room)] = new RoomVM(obj) { IsSelected = VM.ActiveRoomName == obj.RoomName };
 		CommandManager.InvalidateRequerySuggested();

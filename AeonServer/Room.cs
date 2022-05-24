@@ -71,6 +71,14 @@ public class Room
 		Game = game;
 	}
 
+	internal async Task SetDisposing()
+	{
+		Status |= RoomStatus.Disposing | RoomStatus.Blocked;
+		await Task.Delay(10);
+		Game?.CTS.Cancel();
+		Players.ForEach(p => p.Room = null);
+	}
+
 	internal RoomShortData ToShortData() => new() { 
 		RoomName = Name, PlayersCount = Players.Count, MinPlayers = NeedPlayers, MaxPlayers = RoomSize, Status = Status
 	};

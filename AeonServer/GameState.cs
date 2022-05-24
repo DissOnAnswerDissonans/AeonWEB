@@ -22,6 +22,7 @@ public class GameState
 
 	public string SRGroup => $"GAME_{Name}";
 
+	internal CancellationTokenSource CTS { get; }
 	internal CancellationTokenSource? ShopCTS { get; set; }
 	internal DateTimeOffset ShopCloseTime { get; private set; }
 
@@ -35,6 +36,7 @@ public class GameState
 		_gameHub = hub;
 		_logger = loggerFactory.CreateLogger($"Aeon.GameState.{room.Name}");
 		Phase = P.Init;
+		CTS = new();
 	}
 
 	public enum P { Init, Pick, Shop, Battle, End }
@@ -66,8 +68,8 @@ public class GameState
 	{
 		_logger.LogInformation("Game is ready to start");
 		_rules.BeforeGame(this);
-		await Task.Delay(3_000);
-		while (true) {
+		await Task.Delay(3_000, CTS.Token);
+		while (_rules.GetWinner(this) is null) {
 			ShopCloseTime = DateTimeOffset.UtcNow.AddSeconds(30);
 			Task? s = NewRoundStart();
 			ShopCTS = new CancellationTokenSource();
@@ -78,12 +80,22 @@ public class GameState
 
 			_logger.LogInformation("Starting battles...");
 
-			await Task.Delay(100);
+			await Task.Delay(100, CTS.Token);
 
 			IEnumerable<Task> tasks = _rules.GetBattles(this).Select(x => StartBattle(x));
 			await Task.WhenAll(tasks);
-			await Task.Delay(3_000);
+			await Task.Delay(3_000, CTS.Token);
 		}
+		var result = FinalResult;
+		_logger.LogWarning("Game over! Winner is {winner}", result.Winner);
+		await _gameHub.Clients.Group($"GAME_{Name}").GameOver(result);
+	}
+
+	internal void PlayerLeft(PlayerClient player)
+	{
+		_logger.LogWarning("Player {p} left", player.ID);
+		_clients.Remove(player);
+		//_bots.Add();
 	}
 
 	internal static async Task Timer(DateTimeOffset t, CancellationToken token)
@@ -175,15 +187,8 @@ public class GameState
 
 	async private Task MulticastRoundSummary()
 	{
-		var summary = new RoundScoreSummary {
-			RoundNumber = RoundNumber,
-			IsGameOver = false,
-			Entries = _rules.GetScores(Players).Select(x => new RoundScoreSummary.Entry { 
-				HeroName = x.Player.HeroName, Player = x.Player.ID, Score = x.Score
-			}).ToList()
-		};
 		var u = _clients.Select(p => p.ID).ToList();
-		await _gameHub.Clients.Users(u).NewRoundSummary(summary);
+		await _gameHub.Clients.Users(u).NewRoundSummary(RoundScoreSummary);
 	}
 
 	private static IEnumerable<Battle.BattleState> Battle(Player p1, Player p2, Battle.ILogger logger)
@@ -227,4 +232,18 @@ public class GameState
 				"[{p1} <= {p2}]: {dmg}", _p1?.ID, _p2?.ID, dmg1to2, _p1?.ID, _p2?.ID, dmg2to1);
 		}
 	}
+
+
+	public RoundScoreSummary RoundScoreSummary => new() {
+		RoundNumber = RoundNumber,
+		Entries = _rules.GetScores(Players).Select(x => new RoundScoreSummary.Entry {
+			HeroName = x.Player.HeroName, Player = x.Player.ID, Score = x.Score
+		}).ToList()
+	};
+
+	public FinalResult FinalResult => new() {
+		Scores = RoundScoreSummary,
+		Winner = _rules.GetWinner(this)!.ID,
+		Players = Players.ToDictionary(p => p.ID, p => Converters.FromAeon(p.Hero!))
+	};
 }

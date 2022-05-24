@@ -85,17 +85,19 @@ public class ServerState
 	internal void LeaveRoom(string id)
 	{
 		Room? room = IDtoPlayers[id].Room;
-		room?.RemovePlayer(IDtoPlayers[id]);
-		_logger.LogInformation("Player {player} left room {room}", id, room?.Name);
+		if (room is null) return;
+		room.RemovePlayer(IDtoPlayers[id]);
+		_logger.LogInformation("Player {player} left room {room}", id, room.Name);
+		if (room.Players.Count == 0)
+			_ = DisposeRoom(room);
 	}
 
-	internal void DisposeRoom(string roomName)
+	internal async Task DisposeRoom(Room room)
 	{
-		Room? room = Rooms[roomName];
 		if (room is null) return;
-		room.Players.ForEach(p => p.Room = null);
-		Rooms.Remove(roomName);
-		_logger.LogInformation("Room {room} disposed", roomName);
+		await room.SetDisposing();
+		Rooms.Remove(room.Name);
+		_logger.LogInformation("Room {room} disposed", room.Name);
 	}
 
 	internal async Task NotifyRoom(string roomName) 
@@ -115,5 +117,15 @@ public class ServerState
 		room.SetInGame(s);
 
 		await _generalHub.RoomClients(room).StartGame(room.ToFullData());
+
+		room.Players.ForEach(p => p.Data.IsReady = false);
+	}
+
+	internal async Task EndGame(string roomName)
+	{
+		_logger.LogInformation("Ending game in {room}", roomName);
+
+		Room? room = Rooms[roomName];
+		room.Players.ForEach(p => p.Reset());
 	}
 }

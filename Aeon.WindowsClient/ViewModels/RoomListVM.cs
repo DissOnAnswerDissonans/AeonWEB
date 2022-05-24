@@ -35,7 +35,7 @@ internal class RoomListVM : INotifyPropertyChanged
 	public bool IsReady => ActiveRoom?.Players.Where(p => p.PlayerName == PlayerName).FirstOrDefault()?.IsReady ?? false;
 
 	public string NewRoomName { get; set; } = "";
-	public string SelectedMode { get; set; } = "SingleDebug";
+	public string SelectedMode { get; set; } = "Vanilla";
 
 	public ObservableCollection<string> Modes { get; } = new(){ "SingleDebug", "Vanilla", "Tournament" };
 
@@ -51,7 +51,8 @@ internal class RoomListVM : INotifyPropertyChanged
 	private TrofCommand? _cmdRefresh = null;
 
 	public TrofCommand NewRoom => _cmdNewRoom ??= new TrofCommand(async () => {
-		if (string.IsNullOrEmpty(NewRoomName)) return;
+		if (string.IsNullOrEmpty(NewRoomName))
+			NewRoomName = $"{SelectedMode}_{Random.Shared.Next(1000, 10000)}";
 		await App.Lobby.CreateRoom(NewRoomName, SelectedMode);
 	}, () => NotInRoom);
 	private TrofCommand? _cmdNewRoom = null;
@@ -78,8 +79,6 @@ internal class RoomListVM : INotifyPropertyChanged
 		await App.Lobby.ReadyCheck();
 	}, () => !NotInRoom && ActiveRoom?.PlayersCount >= ActiveRoom?.MinPlayers);
 	private TrofCommand? _cmdReady = null;
-
-
 }
 
 public class RoomSlot

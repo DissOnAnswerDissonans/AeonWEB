@@ -28,9 +28,9 @@ namespace Aeon.Heroes
 
 		private void AddToDamage(int damage)
 		{
-			_lvl++;
 			TotalDamage.Add(damage);
 			while (TotalDamage >= NextLevel) {
+				_lvl++;
 				BonusAttack.Add(attackBonus);
 				Stats.AddToValue(Attack, attackBonus);
 			}

@@ -42,6 +42,7 @@ public class SingleTestRules : IGameRules
 
 public class VanillaRules : IGameRules
 {
+	const int NEED_WIN = 5;
 	public int MinPlayers => 2;
 	public int MaxPlayers => 2;
 
@@ -75,7 +76,7 @@ public class VanillaRules : IGameRules
 	{
 		if (winner > 0) {
 			var pt = AddPointTo(winner switch { 1 => p1!, 2 => p2!, _ => throw null! });
-			if (pt >= 5) _winner = _scores.Where(s => s.Value >= 5).Select(x => x.Key).FirstOrDefault();
+			if (pt >= NEED_WIN) _winner = _scores.Where(s => s.Value >= NEED_WIN).Select(x => x.Key).FirstOrDefault();
 		}
 	}
 }

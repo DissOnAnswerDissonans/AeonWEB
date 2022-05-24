@@ -27,6 +27,7 @@ namespace Aeon.Base
 		Closed	= 0x02,
 		InGame	= 0x04,
 
+		Disposing=0x20,
 		Countdown=0x40,
 		Blocked = 0x80
 	}

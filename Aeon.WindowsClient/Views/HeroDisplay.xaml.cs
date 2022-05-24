@@ -98,38 +98,44 @@ public partial class HeroDisplay : UserControl
 		}
 	}
 
-	public HeroDisplay Move(int ms, int cycles = 1) => Move(TimeSpan.FromMilliseconds(ms), cycles);
-	public HeroDisplay Move(TimeSpan duration, int cycles = 1)
+	public HeroDisplay Move(int ms, int cycles = 1, Dir? direction = null) => Move(TimeSpan.FromMilliseconds(ms), cycles, direction);
+	public HeroDisplay Move(TimeSpan duration, int cycles = 1, Dir? direction = null)
 	{
 		var d = duration/cycles;
 		for (int i = 0; i < cycles; ++i)
-			AnimMove(d);
+			AnimMove(d, direction);
 		return this;
 	}
 
-	public HeroDisplay Attack(int ms) => Attack(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay Attack(TimeSpan duration) => AnimAttack(duration);
+	public HeroDisplay Attack(int ms, Dir? direction = null) => Attack(TimeSpan.FromMilliseconds(ms), direction);
+	public HeroDisplay Attack(TimeSpan duration, Dir? direction = null) => AnimAttack(duration, direction);
 
-	public HeroDisplay Stop(int ms) => Stop(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay Stop(TimeSpan duration) => AnimStop(duration);
+	public HeroDisplay Stop(int ms, Dir? direction = null) => Stop(TimeSpan.FromMilliseconds(ms), direction);
+	public HeroDisplay Stop(TimeSpan duration, Dir? direction = null) => AnimStop(duration, direction);
 
-	public HeroDisplay Die(int ms) => Die(TimeSpan.FromMilliseconds(ms));
-	public HeroDisplay Die(TimeSpan duration) => AnimDie(duration);
+	public HeroDisplay Die(int ms, Dir? direction = null) => Die(TimeSpan.FromMilliseconds(ms), direction);
+	public HeroDisplay Die(TimeSpan duration, Dir? direction = null) => AnimDie(duration, direction);
 
 
 	public void StartAnim()
 	{
 		_cFrames.Duration = new(_time);
+		_dFrames.Duration = new(_time);
 		BeginAnimation(FrameProperty, _cFrames, HandoffBehavior.SnapshotAndReplace);
+		BeginAnimation(DirectionProperty, _dFrames, HandoffBehavior.SnapshotAndReplace);
 		_cFrames = new();
+		_dFrames = new();
 		_time = TimeSpan.Zero;
 	}
 
 	private Int32AnimationUsingKeyFrames _cFrames = new();
+	private ObjectAnimationUsingKeyFrames _dFrames = new();
 	private TimeSpan _time = TimeSpan.Zero;
 
-	private HeroDisplay AnimMove(TimeSpan duration)
+	private HeroDisplay AnimMove(TimeSpan duration, Dir? direction = null)
 	{
+		if (direction is not null) 
+			_dFrames.KeyFrames.Add(new DiscreteObjectKeyFrame { KeyTime = _time, Value = direction });
 		TimeSpan tx = duration / _framesMove.Count;
 		_framesMove.ForEach(f => AddFrame(f, tx));
 		return this;
@@ -142,21 +148,27 @@ public partial class HeroDisplay : UserControl
 		_time += tx;
 	}
 
-	private HeroDisplay AnimAttack(TimeSpan duration)
+	private HeroDisplay AnimAttack(TimeSpan duration, Dir? direction = null)
 	{
+		if (direction is not null)
+			_dFrames.KeyFrames.Add(new DiscreteObjectKeyFrame { KeyTime = _time, Value = direction });
 		TimeSpan tx = duration / _framesAttack.Count;
 		_framesAttack.ForEach(f => AddFrame(f, tx));
 		return this;
 	}
 
-	private HeroDisplay AnimStop(TimeSpan duration)
+	private HeroDisplay AnimStop(TimeSpan duration, Dir? direction = null)
 	{
+		if (direction is not null)
+			_dFrames.KeyFrames.Add(new DiscreteObjectKeyFrame { KeyTime = _time, Value = direction });
 		AddFrame(0, duration);
 		return this;
 	}
 
-	private HeroDisplay AnimDie(TimeSpan duration)
+	private HeroDisplay AnimDie(TimeSpan duration, Dir? direction = null)
 	{
+		if (direction is not null)
+			_dFrames.KeyFrames.Add(new DiscreteObjectKeyFrame { KeyTime = _time, Value = direction });
 		TimeSpan tx = duration / _framesDead.Count;
 		_framesDead.ForEach(f => AddFrame(f, tx));
 		return this;

@@ -69,7 +69,6 @@ namespace Aeon.Base
 	{
 		public int RoundNumber { get; set; }
 		public List<Entry> Entries { get; set; }
-		public bool IsGameOver { get; set; }
 
 		public class Entry
 		{

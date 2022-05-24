@@ -22,9 +22,9 @@ public class PlayerClient : Player
 {
 	public ClientData Data { get; internal set; }
 
-	public Models.ShopUpdate? LastShopUpdate { get; internal set; }
+	public ShopUpdate? LastShopUpdate { get; internal set; }
 	public ShopUpdate GetShopUpdate(ShopUpdate.R response) => LastShopUpdate = new ShopUpdate {
-		Hero = Models.Hero.FromAeon(Hero!),
+		Hero = Converters.FromAeon(Hero!),
 		Offers = Hero!.Shop.Offers.Select((o, id) => o.ToBase(Hero.Stats, id)).ToArray(),
 		Response = response,
 		CloseIn = Game!.ShopCloseTime
@@ -42,6 +42,16 @@ public class PlayerClient : Player
 		HeroID = id;
 		HeroName = name;
 		Hero = hero;
+	}
+
+	internal void Reset()
+	{
+		Game = null;
+		Room = null;
+		Hero = null;
+		HeroName = null;
+		HeroID = null;
+		Data = new ClientData { PlayerName = Data.PlayerName, IsObserver = false, IsReady = false };
 	}
 }
 

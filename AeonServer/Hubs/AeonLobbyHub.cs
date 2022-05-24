@@ -48,7 +48,6 @@ public class AeonLobbyHub : AeonHub<AeonLobbyHub.IClient>
 		await Clients.Caller.RefreshRoomData(null);
 		await NotifyRoom(temp);
 		await UpdateRoomInfo(temp);
-		return;
 	}
 
 	public async Task ReadyCheck()

@@ -43,6 +43,8 @@ public partial class App : Application
 		Game.NewRoundStarted.Subscribe(async r => await NewRound(r));
 		Game.ShopUpdated.Subscribe(u => { if (u.Response == ShopUpdate.R.Closed) SwitchPage<BattleView>(); });
 
+		Game.GameOver.Subscribe(x => SwitchPage<GameResults>(x));
+
 		await General.Connect();
 		await Lobby.Connect();
 
@@ -54,6 +56,14 @@ public partial class App : Application
 	{
 		SwitchPage<Login>();
 		await D();
+	}
+
+	internal async Task LeaveGame()
+	{
+		await Game.LeaveGame();
+		await Game.Disconnect();
+		await Lobby.Connect();
+		SwitchPage<RoomList>();
 	}
 
 	private async Task D()
@@ -78,7 +88,6 @@ public partial class App : Application
 
 	private T SwitchPage<T>() where T : Page, new()
 	{
-		//(Window.Content as IDisposable)?.Dispose();
 		var window = new T();
 		Window.Content = window;
 		return window;

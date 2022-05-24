@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Reactive.Linq;
 using System.Collections.Generic;
 using AeonServer.Models;
-using Aeon.Core;
 
 namespace Aeon.WindowsClient;
 
@@ -24,6 +23,8 @@ class Game : ServerConnection
 			(obs => Connection.On<BattleTurn>("NewBattleTurn", s => obs.OnNext(s)));
 		NewRoundSummary = Observable.Create<RoundScoreSummary>
 			(obs => Connection.On<RoundScoreSummary>("NewRoundSummary", s => obs.OnNext(s)));
+		GameOver = Observable.Create<FinalResult>
+			(obs => Connection.On<FinalResult>("GameOver", s => obs.OnNext(s)));
 
 		ShopUpdated.Subscribe(s => LastShopUpdate = s);
 		NewRoundStarted.Subscribe(s => LastRoundInfo = s);
@@ -36,11 +37,13 @@ class Game : ServerConnection
 	public IObservable<RoundInfo> NewRoundStarted { get; }
 	public IObservable<BattleTurn> NewBattleTurn { get; }
 	public IObservable<RoundScoreSummary> NewRoundSummary { get; }
+	public IObservable<FinalResult> GameOver { get; }
 
 	public async Task<HeroInfo[]> GetAvailiableHeroes() => await Request<HeroInfo[]>("GetAvailiableHeroes");
 	public async Task SelectHero(int heroID) => await Call("SelectHero", heroID);
 	public async Task BuyOffer(object id) => await Call("BuyOffer", id);
 	public async Task DoneShopping() => await Call("DoneShopping");
+	public async Task LeaveGame() => await Call("LeaveGame");
 
 	public ShopUpdate? LastShopUpdate { get; private set; }
 	public RoundInfo? LastRoundInfo { get; private set; }

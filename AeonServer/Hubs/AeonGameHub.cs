@@ -34,6 +34,14 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 		}
 	}
 
+	public async Task LeaveGame()
+	{
+		GameState? game = Player.Game;
+		if (game is null) return;
+		game.PlayerLeft(Player);
+		Player.Reset();
+	}
+
 	public Task<HeroInfo[]> GetAvailiableHeroes() => Task.FromResult(_heroes.GetHeroesInfo());
 
 	public async Task SelectHero(int HeroID)
@@ -82,5 +90,6 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 		Task NewRound(RoundInfo round);
 		Task NewBattleTurn(BattleTurn turn);
 		Task NewRoundSummary(RoundScoreSummary summary);
+		Task GameOver(FinalResult result);
 	}
 }

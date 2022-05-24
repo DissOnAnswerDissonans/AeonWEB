@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aeon.WindowsClient", "Aeon.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aeon.Base", "Aeon.Base\Aeon.Base.csproj", "{D3939994-60DF-41E7-93DE-04E6A31B6438}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{635D73B1-A954-4695-883F-20BD4B14A9D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{D3939994-60DF-41E7-93DE-04E6A31B6438}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3939994-60DF-41E7-93DE-04E6A31B6438}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3939994-60DF-41E7-93DE-04E6A31B6438}.Release|Any CPU.Build.0 = Release|Any CPU
+		{635D73B1-A954-4695-883F-20BD4B14A9D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{635D73B1-A954-4695-883F-20BD4B14A9D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{635D73B1-A954-4695-883F-20BD4B14A9D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{635D73B1-A954-4695-883F-20BD4B14A9D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

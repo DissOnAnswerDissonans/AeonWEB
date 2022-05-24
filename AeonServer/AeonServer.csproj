@@ -4,10 +4,14 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>d5b15a9a-743e-46a9-adcb-d795ab503fac</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
 	<PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.4" />
+	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
 	<PackageReference Include="OpenIddict" Version="3.1.1" />
 	<PackageReference Include="OpenIddict.EntityFrameworkCore" Version="3.1.1" />
 	<PackageReference Include="OpenIddict.Server" Version="3.1.1" />

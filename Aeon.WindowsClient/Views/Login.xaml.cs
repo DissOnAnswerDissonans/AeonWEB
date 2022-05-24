@@ -13,6 +13,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Aeon.WindowsClient.Views.HeroDisplay;
 
 namespace Aeon.WindowsClient.Views;
 /// <summary>
@@ -24,7 +25,7 @@ public partial class Login : Page
 	{
 		InitializeComponent();
 		AnimTest.HeroName = _vs[Random.Shared.Next(_vs.Count)];
-		AnimTest.Move(3000, 3).Stop(300).Attack(500).Stop(300).Attack(500).Move(1000).Die(500).StartAnim();
+		AnimTest.Move(3000, 3, Dir.NE).Stop(300, Dir.E).Attack(500, Dir.SE).Stop(300, Dir.S).Attack(500, Dir.SW).Move(1000).Die(500).StartAnim();
 	}
 
 	private void PasswordChanged(object sender, RoutedEventArgs e)
