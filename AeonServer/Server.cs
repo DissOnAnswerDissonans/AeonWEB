@@ -62,13 +62,15 @@ if (app.Environment.IsDevelopment()) {
 	app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/test", x => x.Response.WriteAsync($"This port works ({x.Connection.RemotePort}:{x.Connection.LocalPort})"));
 
 app.MapHub<AeonGeneralHub>("/aeon");
 app.MapHub<AeonLobbyHub>("/aeon/lobby");

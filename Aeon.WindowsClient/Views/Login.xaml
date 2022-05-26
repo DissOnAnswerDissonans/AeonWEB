@@ -47,7 +47,7 @@
       </local:HeroDisplay.RenderTransform>
     </local:HeroDisplay>
     <Image Grid.Column="2" Grid.RowSpan="2" Margin="16" Source="/Resources/image/aeon2.png"/>
-    <StackPanel Grid.Row="2" Grid.Column="2">
+    <StackPanel Grid.Row="2" Grid.Column="2" Grid.RowSpan="2">
       <DockPanel>
         <TextBlock FontSize="28" Text="{Binding TrText}" VerticalAlignment="Center"/>
         <Button HorizontalAlignment="Right" Command="{Binding Reg}"
@@ -69,18 +69,28 @@
                  d:Text="Это сообщение об ошибке. Уууупс, у нас произошло какое-то говно…"/>
 
     </StackPanel>
+    
+    
+    
     <StackPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
-                Orientation="Horizontal">
-      <Button Content="«Debug» [1]" Command="{Binding Debug}" Margin="4" Padding="4">
+                Orientation="Horizontal" VerticalAlignment="Center">
+      <Button Content="[1]" Command="{Binding Debug}" Margin="4" Padding="8">
         <Button.CommandParameter>
           <b:LoginModel b:Name="tupotrof" b:Password="otstoynik"/>
         </Button.CommandParameter>
       </Button>
-      <Button Content="«Debug» [2]" Command="{Binding Debug}" Margin="4" Padding="4">
+      <Button Content="[2]" Command="{Binding Debug}" Margin="4" Padding="8">
         <Button.CommandParameter>
           <b:LoginModel b:Name="otstoynik" b:Password="tupotrof"/>
         </Button.CommandParameter>
       </Button>
+      <Border VerticalAlignment="Center" Style="{StaticResource BaseBorder}" Padding="5" Background="{StaticResource DarkBG}">
+        <StackPanel Orientation="Horizontal">
+          <TextBox Width="172" Text="{Binding Address}" d:Text="000.000.000.000" TextAlignment="Right" />
+          <TextBlock Text=":" />
+          <TextBox Width="68" Text="{Binding Port}" d:Text="00000" />
+        </StackPanel>
+      </Border>
     </StackPanel>
   </Grid>
 </Page>

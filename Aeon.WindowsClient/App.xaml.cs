@@ -23,7 +23,7 @@ public partial class App : Application
 	public static App Inst => Current as App ?? throw new AppDomainUnloadedException();
 	public static Window Window => Current.MainWindow;
 
-	internal string ServerUrl { get; } = @"https://localhost:2366";
+	internal string? ServerUrl { get; private set; }
 
 	internal static AeonGeneral General { get; private set; } = null!;
 	internal static Lobby Lobby { get; private set; } = null!;
@@ -32,11 +32,12 @@ public partial class App : Application
 
 	internal static AccountInfo Account { get; private set; } = null!;
 
-	internal async Task Connect(string? token)
+	internal async Task Connect(string url, string? token)
 	{
-		General = new(token, ServerUrl);
-		Lobby = new(token, ServerUrl);
-		Game = new(token, ServerUrl);
+		ServerUrl = url;
+		General = new(token, url);
+		Lobby = new(token, url);
+		Game = new(token, url);
 
 		General.OnGameStart.Subscribe(async d => await Start(d));
 

@@ -26,6 +26,8 @@ class Game : ServerConnection
 		GameOver = Observable.Create<FinalResult>
 			(obs => Connection.On<FinalResult>("GameOver", s => obs.OnNext(s)));
 
+		HeroSelectedAnyone.Subscribe(s => LastHeroSelection = s);
+		PickPhaseStarted.Subscribe(s => LastHeroInfo = s);
 		ShopUpdated.Subscribe(s => LastShopUpdate = s);
 		NewRoundStarted.Subscribe(s => LastRoundInfo = s);
 		NewRoundSummary.Subscribe(s => LastSummary = s);
@@ -45,6 +47,8 @@ class Game : ServerConnection
 	public async Task DoneShopping() => await Call("DoneShopping");
 	public async Task LeaveGame() => await Call("LeaveGame");
 
+	public List<HeroSelection>? LastHeroSelection { get; private set; }
+	public HeroInfo[]? LastHeroInfo { get; private set; }
 	public ShopUpdate? LastShopUpdate { get; private set; }
 	public RoundInfo? LastRoundInfo { get; private set; }
 	public RoundScoreSummary? LastSummary { get; private set; }

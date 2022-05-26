@@ -4,6 +4,8 @@ services:
   aeonserver:
     image: ${DOCKER_REGISTRY-}aeonserver
     ports:
+      - 8001:80
+      - 44301:443
       - 2366:2366
       - 2363:2363
     build:
@@ -18,3 +20,5 @@ services:
       POSTGRES_DB: auth
       POSTGRES_USER: tupotrof
       POSTGRES_PASSWORD: otstoynik
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data

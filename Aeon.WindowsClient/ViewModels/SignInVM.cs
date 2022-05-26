@@ -21,7 +21,7 @@ internal class SignInVM : INotifyPropertyChanged
 	});
 
 	public TrofCommand Fire => _cmdFire ??= new(async () => {
-		var url = @"https://localhost:2366";
+		var url = $@"http://{Address}:{Port}";
 		using var http = new HttpClient();
 		var model = new LoginModel { Name = NickName, Password = Password };
 		if (IsRegister) {
@@ -40,8 +40,7 @@ internal class SignInVM : INotifyPropertyChanged
 	});
 
 	public TrofCommand<LoginModel> Debug => _cmdDebug ??= new TrofCommand<LoginModel>(async arg => {
-		NickName = "[DEBUG]";
-		await Login(new HttpClient(), @"https://localhost:2366", arg);
+		await Login(new HttpClient(), $@"http://{Address}:{Port}", arg);
 	}, arg => true);
 
 	private TrofCommand<LoginModel>? _cmdDebug = null;
@@ -58,6 +57,9 @@ internal class SignInVM : INotifyPropertyChanged
 	public bool IsRegister { get; set; } = false;
 	public string ErrorMessage { get; set; } = "";
 
+	public string Address { get; set; } = "45.8.248.157";
+	public string Port { get; set; } = "2363";
+
 	public Visibility ConfVisibility => IsRegister ? Visibility.Visible : Visibility.Collapsed;
 	public string TrText => IsRegister ? "Регистрация" : "Вход";
 	public string ModeButtonText => IsRegister ? "Вход" : "Регистрация";
@@ -66,13 +68,18 @@ internal class SignInVM : INotifyPropertyChanged
 
 	private async Task Register(HttpClient http, string url, LoginModel model)
 	{
-		ErrorMessage = "Регистрация…";
-		var resp = await HttpClientJsonExtensions.PostAsJsonAsync(http, $@"{url}/api/Account/Register", model);
-		if (resp.StatusCode == System.Net.HttpStatusCode.BadRequest) {
-			ErrorMessage = await resp.Content.ReadAsStringAsync();
+		try {
+			ErrorMessage = "Регистрация…";
+			var resp = await HttpClientJsonExtensions.PostAsJsonAsync(http, $@"{url}/api/Account/Register", model);
+			if (resp.StatusCode == System.Net.HttpStatusCode.BadRequest) {
+				ErrorMessage = await resp.Content.ReadAsStringAsync();
+			}
+			else if (resp.StatusCode == System.Net.HttpStatusCode.OK) {
+				await Login(http, url, model);
+			}
 		}
-		else if (resp.StatusCode == System.Net.HttpStatusCode.OK) {
-			await Login(http, url, model);
+		catch (Exception ex) {
+			ErrorMessage = ex.Message + "\n" + ex.InnerException?.Message;
 		}
 	}
 
@@ -83,10 +90,10 @@ internal class SignInVM : INotifyPropertyChanged
 			var resp = await HttpClientJsonExtensions.PostAsJsonAsync(http, $@"{url}/api/Account/Login", model);
 			var result = await resp.Content.ReadFromJsonAsync<TokenResultVM>();
 			if (result!.Ok) {
-				await App.Inst.Connect(result.Token);
+				await App.Inst.Connect(url, result.Token);
 			} else ErrorMessage = result.Errors.Aggregate((a, b) => a + "\n" + b);
 		} catch (Exception ex) {
-			ErrorMessage = ex.Message;
+			ErrorMessage = ex.Message + "\n" + ex.InnerException?.Message;
 		}
 	}
 }

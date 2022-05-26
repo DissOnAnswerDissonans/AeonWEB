@@ -28,13 +28,23 @@ public partial class HeroSelect : Page
 		InitializeComponent();
 		VM = (HeroSelectVM) DataContext;
 
-		App.Game.PickPhaseStarted.Subscribe(o => {
-			VM.Heroes = new(o.Select(o => new HeroPickerVM(o, VM)));
-			VM.PickAvailiable = true;
-		});
+		App.Game.PickPhaseStarted.Subscribe(OnPickPhase);
+		App.Game.HeroSelectedAnyone.Subscribe(OnSelection);
+		OnPickPhase(App.Game.LastHeroInfo);
+		OnSelection(App.Game.LastHeroSelection);
 
-		App.Game.HeroSelectedAnyone.Subscribe(o => {
-			VM.Players = new(o.Select(o => new PlayerPicksVM(o, VM.IsPicked)));
-		});
+		void OnPickPhase(HeroInfo[]? info)
+		{
+			if (info is not null) {
+				VM.Heroes = new(info.Select(o => new HeroPickerVM(o, VM)));
+				VM.PickAvailiable = true;
+			}
+		}
+
+		void OnSelection(List<HeroSelection>? s)
+		{
+			if (s is not null)
+				VM.Players = new(s.Select(o => new PlayerPicksVM(o, VM.IsPicked)));
+		}
 	}
 }
