@@ -28,9 +28,8 @@ public partial class BattleView : Page
 	{
 		InitializeComponent();
 		VM = (BattleVM) DataContext;
-		App.Game.NewBattleTurn.Subscribe(OnNewTurn);
-		App.Game.NewRoundSummary.Subscribe(s => VM.Summary = s);
-		VM.Summary = App.Game.LastSummary ?? new();
+		App.Game.NewBattleTurn.On(OnNewTurn);
+		App.Game.NewRoundSummary.On(s => VM.Summary = s);
 	}
 
 	private void OnNewTurn(BattleTurn turn)

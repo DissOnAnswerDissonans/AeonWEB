@@ -78,6 +78,16 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 			Player.Game!.ShopCTS!.Cancel();
 	}
 
+	public async Task UseAbility()
+	{
+		bool? result = Player.Hero?.UseAbility();
+		await Clients.Caller.ShopUpdated(Player.GetShopUpdate(result switch {
+			true => ShopUpdate.R.AbilityOK,
+			false => ShopUpdate.R.AbilityError,
+			null => ShopUpdate.R.OtherError
+		}));
+	}
+
 	//////
 
 
@@ -87,7 +97,7 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 		Task PickPhaseStarted(HeroInfo[] heroes);
 		Task HeroSelectedAnyone(IEnumerable<HeroSelection> selections);
 		Task ShopUpdated(ShopUpdate shop);
-		Task NewRound(RoundInfo round);
+		Task NewRoundStarted(RoundInfo round);
 		Task NewBattleTurn(BattleTurn turn);
 		Task NewRoundSummary(RoundScoreSummary summary);
 		Task GameOver(FinalResult result);

@@ -25,6 +25,11 @@ internal class ShopPageVM : INotifyPropertyChanged
 	public PositionVM? SelectedPosition { get; set; }
 	public int SelectedID { get; set; } = 0;
 	public string MoneyText => $"{Hero?.Money}₽";
+	public string AbilityText { get; set; } = "No Ability";
+
+
+	public Visibility StatSel => SelectedPosition switch { null => Visibility.Collapsed, _ => Visibility.Visible };
+	public Visibility HeroSel => SelectedPosition switch { null => Visibility.Visible, _ => Visibility.Collapsed };
 
 
 	internal void OnShopUpd(ShopUpdate upd)
@@ -38,6 +43,7 @@ internal class ShopPageVM : INotifyPropertyChanged
 		SelectedPosition = Positions[id];
 		OtherStats = new(upd.Hero.Stats.Where(s => s.StatId.StartsWith(Hero.HeroId))
 			.Select(s => new HeroStatVM { Stat = s, Name = s.StatId[Hero.HeroId.Length..]}));
+		AbilityText = upd.AbilityText;
 	}
 
 	internal class HeroStatVM
@@ -52,6 +58,8 @@ internal class ShopPageVM : INotifyPropertyChanged
 		public string Name { get; set; } = null!;
 		public List<OfferVM> Offers { get; set; } = null!;
 		public Visibility ConvertedVis => Stat.RawValue == Stat.Value ? Visibility.Collapsed : Visibility.Visible;
+
+		public string DescCode => "str:Stat:Test:Desc";
 	}
 
 	internal class OfferVM

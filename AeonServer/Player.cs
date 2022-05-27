@@ -27,7 +27,8 @@ public class PlayerClient : Player
 		Hero = Converters.FromAeon(Hero!),
 		Offers = Hero!.Shop.Offers.Select((o, id) => o.ToBase(Hero.Stats, id)).ToArray(),
 		Response = response,
-		CloseIn = Game!.ShopCloseTime
+		CloseIn = Game!.ShopCloseTime,
+		AbilityText = Hero.AbilityText
 	};
 
 	public PlayerClient(string id, string? nickname)

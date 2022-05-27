@@ -6,7 +6,8 @@
 		public OfferData[] Offers { get; set; }
 		public R Response { get; set; }
 		public System.DateTimeOffset CloseIn { get; set; }
+		public string AbilityText { get; set; }
 
-		public enum R { None, Opened, Closed, OK, NotEnough, AbilityOn, AbilityOff, AbilityError, OtherError }
+		public enum R { None, Opened, Closed, OK, NotEnough, AbilityOK, AbilityError, OtherError }
 	}
 }

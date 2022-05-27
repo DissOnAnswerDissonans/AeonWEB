@@ -45,27 +45,27 @@ internal class RoomListVM : INotifyPropertyChanged
 		: ActiveRoom?.Countdown is null ? "Ready" : "Game is starting…";
 
 	public TrofCommand Refresh => _cmdRefresh ??= new TrofCommand(async () => {
-		var rooms = await App.Lobby.GetRoomsList();
+		var rooms = await App.Lobby.GetRoomsList.Request();
 		Rooms = new(rooms.Select(r => new RoomVM(r) { IsSelected = ActiveRoomName == r.RoomName }));
 	}, () => true);
 	private TrofCommand? _cmdRefresh = null;
 
-	public TrofCommand NewRoom => _cmdNewRoom ??= new TrofCommand(async () => {
+	public TrofCommand NewRoom => _cmdNewRoom ??= new TrofCommand(() => {
 		if (string.IsNullOrEmpty(NewRoomName))
 			NewRoomName = $"{SelectedMode}_{Random.Shared.Next(1000, 10000)}";
-		await App.Lobby.CreateRoom(NewRoomName, SelectedMode);
+		App.Lobby.CreateRoom.Send(NewRoomName, SelectedMode);
 	}, () => NotInRoom);
 	private TrofCommand? _cmdNewRoom = null;
 
-	public TrofCommand<RoomShortData> Join => _cmdJoin ??= new TrofCommand<RoomShortData>(async arg => {
+	public TrofCommand<RoomShortData> Join => _cmdJoin ??= new TrofCommand<RoomShortData>(arg => {
 		if (NotInRoom)
-			await App.Lobby.JoinRoom(arg.RoomName);
+			App.Lobby.JoinRoom.Send(arg.RoomName);
 		NewRoomName = ActiveRoomName!;
 	}, arg => NotInRoom);
 	private TrofCommand<RoomShortData>? _cmdJoin = null;
 
-	public TrofCommand Leave => _cmdLeave ??= new TrofCommand(async () => {
-		await App.Lobby.LeaveRoom();
+	public TrofCommand Leave => _cmdLeave ??= new TrofCommand(() => {
+		App.Lobby.LeaveRoom.Send();
 		NewRoomName = "";
 	}, () => !NotInRoom && !IsReady);
 	private TrofCommand? _cmdLeave = null;
@@ -75,8 +75,8 @@ internal class RoomListVM : INotifyPropertyChanged
 	}, () => !IsReady);
 	private TrofCommand? _cmdDisconnect = null;
 
-	public TrofCommand Ready => _cmdReady ??= new TrofCommand(async () => {
-		await App.Lobby.ReadyCheck();
+	public TrofCommand Ready => _cmdReady ??= new TrofCommand(() => {
+		App.Lobby.ReadyCheck.Send();
 	}, () => !NotInRoom && ActiveRoom?.PlayersCount >= ActiveRoom?.MinPlayers);
 	private TrofCommand? _cmdReady = null;
 }

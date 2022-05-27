@@ -35,10 +35,10 @@ internal class HeroSelectVM : INotifyPropertyChanged
 			Name = hero.Name;
 			ID = hero.ID;
 			Assembly = hero.AssemblyName;
-			Pick = new(async () => {
+			Pick = new(() => {
 				vm.IsPicked = true;
 				vm.PickAvailiable = false;
-				await App.Game.SelectHero(ID);
+				App.Game.SelectHero.Send(ID);
 			});
 		}
 	}

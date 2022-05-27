@@ -38,12 +38,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.4" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\TrofExperimental\Trof.Connection.Client\Trof.Connection.Client.csproj" />
     <ProjectReference Include="..\Aeon.Base\Aeon.Base.csproj" />
   </ItemGroup>
 

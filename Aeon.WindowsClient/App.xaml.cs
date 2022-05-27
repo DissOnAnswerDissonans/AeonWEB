@@ -5,11 +5,8 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Runtime.CompilerServices;
-using System.Diagnostics;
-using System.Reactive;
 using AeonServer.Models;
-using System.IO;
+using Trof.Connection.Client;
 
 namespace Aeon.WindowsClient;
 /// <summary>
@@ -35,21 +32,21 @@ public partial class App : Application
 	internal async Task Connect(string url, string? token)
 	{
 		ServerUrl = url;
-		General = new(token, url);
-		Lobby = new(token, url);
-		Game = new(token, url);
+		General = ServerConnection.Make<AeonGeneral>(token, $"{url}/aeon");
+		Lobby = ServerConnection.Make<Lobby>(token, $"{url}/aeon/lobby");
+		Game = ServerConnection.Make<Game>(token, $"{url}/aeon/game");
 
-		General.OnGameStart.Subscribe(async d => await Start(d));
+		General.StartGame.On(async d => await Start(d));
 
-		Game.NewRoundStarted.Subscribe(async r => await NewRound(r));
-		Game.ShopUpdated.Subscribe(u => { if (u.Response == ShopUpdate.R.Closed) SwitchPage<BattleView>(); });
+		Game.NewRoundStarted.On(async r => await NewRound(r));
+		Game.ShopUpdated.On(u => { if (u.Response == ShopUpdate.R.Closed) SwitchPage<BattleView>(); });
 
-		Game.GameOver.Subscribe(x => SwitchPage<GameResults>(x));
+		Game.GameOver.On(x => SwitchPage<GameResults>(x));
 
 		await General.Connect();
 		await Lobby.Connect();
 
-		Account = await General.GetAccountInfo();
+		Account = await General.GetAccountInfo.Request();
 		SwitchPage<RoomList>();
 	}
 
@@ -61,7 +58,7 @@ public partial class App : Application
 
 	internal async Task LeaveGame()
 	{
-		await Game.LeaveGame();
+		Game.LeaveGame.Send();
 		await Game.Disconnect();
 		await Lobby.Connect();
 		SwitchPage<RoomList>();

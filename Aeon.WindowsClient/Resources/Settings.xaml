@@ -19,4 +19,6 @@
   <SolidColorBrush x:Key="Rooms_Open" Color="#090"/>
   <SolidColorBrush x:Key="Rooms_Closed" Color="#b00"/>
 
+  <sys:String x:Key="str:Stat:Test:Desc">Тест описания характеристики / Stat description test</sys:String>
+
 </ResourceDictionary>

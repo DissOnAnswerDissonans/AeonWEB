@@ -32,10 +32,8 @@ public partial class ShopPage : Page
 		VM = (ShopPageVM) DataContext;
 		VM.Round = r;
 
-		App.Game.ShopUpdated.Subscribe(VM.OnShopUpd);
-		App.Game.ShopUpdated.Subscribe(SetTimer);
-		if (App.Game.LastShopUpdate is not null) 
-			VM.OnShopUpd(App.Game.LastShopUpdate);
+		App.Game.ShopUpdated.On(VM.OnShopUpd);
+		App.Game.ShopUpdated.On(SetTimer);
 	}
 
 	private void SetTimer(ShopUpdate upd)
@@ -49,14 +47,24 @@ public partial class ShopPage : Page
 			timer.SetTime(0);
 	}
 
-	private async void Button_Click(object sender, RoutedEventArgs e)
+	private void Button_Click(object sender, RoutedEventArgs e)
 	{
 		var offer = (OfferVM) (sender as Button)!.DataContext;
-		await App.Game.BuyOffer(offer.Offer.ID);
+		App.Game.BuyOffer.Send(offer.Offer.ID);
 	}
 
-	private async void EndShoppingButton(object sender, RoutedEventArgs e)
+	private void EndShoppingButton(object sender, RoutedEventArgs e)
 	{
-		await App.Game.DoneShopping();
+		App.Game.DoneShopping.Send();
+	}
+
+	private void HeroButton_Click(object sender, RoutedEventArgs e)
+	{
+		VM.SelectedPosition = null;
+	}
+
+	private void AbilityButton_Click(object sender, RoutedEventArgs e)
+	{
+
 	}
 }

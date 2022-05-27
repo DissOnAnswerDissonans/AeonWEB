@@ -110,7 +110,7 @@ public class GameState
 	private async Task NewRoundStart()
 	{
 		NewRound();
-		await _gameHub.Clients.Group($"GAME_{Name}").NewRound(GetRound());
+		await _gameHub.Clients.Group($"GAME_{Name}").NewRoundStarted(GetRound());
 		await StartShopping();
 	}
 

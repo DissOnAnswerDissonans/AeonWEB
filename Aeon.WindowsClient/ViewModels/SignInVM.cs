@@ -57,7 +57,7 @@ internal class SignInVM : INotifyPropertyChanged
 	public bool IsRegister { get; set; } = false;
 	public string ErrorMessage { get; set; } = "";
 
-	public string Address { get; set; } = "45.8.248.157";
+	public string Address { get; set; } = "localhost"; //"45.8.248.157";
 	public string Port { get; set; } = "2363";
 
 	public Visibility ConfVisibility => IsRegister ? Visibility.Visible : Visibility.Collapsed;

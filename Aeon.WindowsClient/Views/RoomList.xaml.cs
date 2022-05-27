@@ -27,8 +27,8 @@ public partial class RoomList : Page
 	{
 		InitializeComponent();
 
-		App.Lobby.RefreshRoomData.Subscribe(RefreshRoom);
-		App.Lobby.UpdSingleRoomInList.Subscribe(UpdSingleRoom);
+		App.Lobby.RefreshRoomData.On(RefreshRoom);
+		App.Lobby.UpdSingleRoomInList.On(UpdSingleRoom);
 
 		VM = (RoomListVM) DataContext;
 		VM.Refresh.Execute();

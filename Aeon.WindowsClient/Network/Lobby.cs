@@ -1,28 +1,20 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Threading.Tasks;
-using System.Reactive.Linq;
-using AeonServer;
+using Trof.Connection.Client;
 
 namespace Aeon.WindowsClient;
 
 class Lobby : ServerConnection
 {
-	public Lobby(string? token, string url) : base(token, $"{url}/aeon/lobby") 
-	{
-		RefreshRoomData = Observable.Create<RoomFullData>
-			(obs => Connection.On<RoomFullData>("RefreshRoomData", s => obs.OnNext(s)));
-		UpdSingleRoomInList = Observable.Create<RoomShortData>
-			(obs => Connection.On<RoomShortData>("UpdSingleRoomInList", s => obs.OnNext(s)));
-	}
+	public ClientTx<string, string> CreateRoom { get; } = null!;
+	public ClientTx<string> JoinRoom { get; } = null!;
+	public ClientTx LeaveRoom { get; } = null!;
+	public ClientTx ReadyCheck { get; } = null!;
 
-	public IObservable<RoomFullData> RefreshRoomData { get; }
-	public IObservable<RoomShortData> UpdSingleRoomInList { get; }
+	public ClientReq<RoomShortData[]> GetRoomsList { get; } = null!;
+	public ClientReq<string, ClientData> GetPlayersList { get; } = null!;
 
-	public async Task CreateRoom(string roomName, string rules) => await Connection.SendAsync("CreateRoom", roomName, rules);
-	public async Task JoinRoom(string roomName) => await Call("JoinRoom", roomName);
-	public async Task LeaveRoom() => await Call("LeaveRoom");
-	public async Task ReadyCheck() => await Call("ReadyCheck");
-	public async Task<RoomShortData[]> GetRoomsList() => await Request<RoomShortData[]>("GetRoomsList");
-	public async Task<ClientData[]> GetPlayersList(string room) => await Request<ClientData[]>("GetPlayersList", room);
+	public ClientRx<RoomFullData> RefreshRoomData { get; } = null!;
+	public ClientRx<RoomShortData> UpdSingleRoomInList { get; } = null!;
 }

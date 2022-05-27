@@ -28,10 +28,8 @@ public partial class HeroSelect : Page
 		InitializeComponent();
 		VM = (HeroSelectVM) DataContext;
 
-		App.Game.PickPhaseStarted.Subscribe(OnPickPhase);
-		App.Game.HeroSelectedAnyone.Subscribe(OnSelection);
-		OnPickPhase(App.Game.LastHeroInfo);
-		OnSelection(App.Game.LastHeroSelection);
+		App.Game.PickPhaseStarted.On(OnPickPhase);
+		App.Game.HeroSelectedAnyone.On(OnSelection);
 
 		void OnPickPhase(HeroInfo[]? info)
 		{
