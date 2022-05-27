@@ -7,8 +7,11 @@ public class GameState
 {
 	public IReadOnlyList<PlayerClient> Clients => _clients;
 	private List<PlayerClient> _clients;
-	private List<PlayerBot> _bots = new();
+	private List<PlayerBot> _bots;
 	public IReadOnlyList<Player> Players => _clients.Cast<Player>().Concat(_bots).ToList();
+
+	//public IReadOnlyList<Player> Players => _clients;
+	//private List<Player> _clients;
 	private IGameRules _rules;
 
 	private readonly IHubContext<AeonGameHub, AeonGameHub.IClient> _gameHub;
@@ -30,7 +33,8 @@ public class GameState
 		Services.IBalanceProvider balance, ILoggerFactory loggerFactory)
 	{
 		Name = room.Name;
-		_clients = room.Players;
+		_clients = room.Players.OfType<PlayerClient>().ToList(); // говнокод
+		_bots = room.Players.OfType<PlayerBot>().ToList();
 		_rules = room.Rules;
 		_balance = balance;
 		_gameHub = hub;
@@ -41,13 +45,12 @@ public class GameState
 
 	public enum P { Init, Pick, Shop, Battle, End }
 
-	public void AddDummy(string name) => _bots.Add(new(name));
-
-	internal void Pick()
+	internal void Pick(HeroInfo[] heroes, Services.HeroesProvider _heroes)
 	{
 		if (Phase != P.Init) return;
 		Phase = P.Pick;
 		_logger.LogInformation("Pick started");
+		_bots.ForEach(b => b.AutoSelectHero(heroes, _heroes));
 	}
 
 	internal void NewRound()
@@ -82,7 +85,9 @@ public class GameState
 
 			await Task.Delay(100, CTS.Token);
 
-			IEnumerable<Task> tasks = _rules.GetBattles(this).Select(x => StartBattle(x));
+			var b = _rules.GetBattles(this);
+
+			IEnumerable<Task> tasks = b.Select(x => StartBattle(x));
 			await Task.WhenAll(tasks);
 			await Task.Delay(3_000, CTS.Token);
 		}
@@ -116,17 +121,19 @@ public class GameState
 
 	private async Task StartShopping()
 	{
-		foreach (PlayerClient player in Players) {
+		foreach (PlayerClient player in Clients) {
 			ShopUpdate upd = player.GetShopUpdate(ShopUpdate.R.Opened);
 			await _gameHub.Clients.User(player.ID).ShopUpdated(upd);
 		}
+		foreach (PlayerBot bot in _bots)
+			bot.AutoBuy();
 	}
 
 
 	private async Task StartBattle(RoundInfo.Battle battle)
 	{
-		Player? p1 = _clients.Find(p => p.ID == battle.First.PlayerName);
-		Player? p2 = _clients.Find(p => p.ID == battle.Second.PlayerName);
+		Player p1 = Players.Where(p => p.ID == battle.First.PlayerName).First();
+		Player p2 = Players.Where(p => p.ID == battle.Second.PlayerName).First();
 		var logger = new BattleLogger(this, p1, p2, _logger);
 		_logger.LogInformation("Battle [{p1} vs {p2}] started", p1, p2);
 

@@ -20,6 +20,12 @@ public class AeonLobbyHub : AeonHub<AeonLobbyHub.IClient>
 	private Room? UserRoom => _state.IDtoPlayers[UserID].Room;
 
 
+	public override async Task OnConnectedAsync()
+	{
+		await base.OnConnectedAsync();
+		await Clients.Caller.RefreshRoomData(UserRoom?.ToFullData());
+	}
+
 	public async Task CreateRoom(string roomName, string rules)
 	{
 		await Groups.AddToGroupAsync(Context.ConnectionId, $"ROOM_{roomName}");
@@ -60,6 +66,22 @@ public class AeonLobbyHub : AeonHub<AeonLobbyHub.IClient>
 		} else {
 			UserRoom.ResetCountdown();
 		}
+		await UpdateRoomInfo(UserRoomName!);
+		await NotifyRoom(UserRoomName!);
+	}
+
+	public async Task AddBot()
+	{
+		if (UserRoom is null) return;
+		UserRoom.AddBot();
+		await UpdateRoomInfo(UserRoomName!);
+		await NotifyRoom(UserRoomName!);
+	}
+
+	public async Task RemoveBot()
+	{
+		if (UserRoom is null) return;
+		UserRoom.RemoveBot();
 		await UpdateRoomInfo(UserRoomName!);
 		await NotifyRoom(UserRoomName!);
 	}

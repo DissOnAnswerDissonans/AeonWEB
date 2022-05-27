@@ -8,10 +8,12 @@ namespace AeonServer;
 [Authorize]
 public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 {
+	private readonly ServerState _state;
 	private readonly GameProvider _games;
 	private readonly HeroesProvider _heroes;
-	public AeonGameHub(GameProvider games, HeroesProvider heroes)
+	public AeonGameHub(ServerState state, GameProvider games, HeroesProvider heroes)
 	{
+		_state = state;
 		_games = games;
 		_heroes = heroes;
 	}
@@ -28,8 +30,9 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 		await base.OnConnectedAsync();
 
 		if (Player.Room.Players.All(p => p.Game is not null)) {
-			Player.Game.Pick();
-			await Clients.Group(Player.Game.SRGroup).PickPhaseStarted(await GetAvailiableHeroes());
+			HeroInfo[] heroes = await GetAvailiableHeroes();
+			Player.Game.Pick(heroes, _heroes);
+			await Clients.Group(Player.Game.SRGroup).PickPhaseStarted(heroes);
 			await PicksUpdate(Player.Game);
 		}
 	}
@@ -39,6 +42,7 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 		GameState? game = Player.Game;
 		if (game is null) return;
 		game.PlayerLeft(Player);
+		_state.LeaveRoom(Player.ID);
 		Player.Reset();
 	}
 
@@ -47,7 +51,7 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 	public async Task SelectHero(int HeroID)
 	{
 		if (Player.Game?.Phase == GameState.P.Pick && Player.Hero is null) {
-			Player.SelectHero(HeroID, _heroes.HeroesList[HeroID], _heroes.GetHero(HeroID));
+			Player.SelectHero(_heroes.GetHero(HeroID));
 			await PicksUpdate(Player.Game);
 			if (Player.Game.Players.All(p => p.Hero is not null))
 				_ = Player.Game.GameStart();
@@ -57,7 +61,7 @@ public class AeonGameHub : AeonHub<AeonGameHub.IClient>
 	public async Task PicksUpdate(GameState game) => await Clients.Group(game.SRGroup).HeroSelectedAnyone(
 		game.Clients.Select(p => new HeroSelection {
 			Nickname = p.Data.PlayerName,
-			Hero = _heroes.GetHeroInfo(p.HeroID)
+			Hero = _heroes.GetHeroInfo(p.HeroName)
 		}));
 
 

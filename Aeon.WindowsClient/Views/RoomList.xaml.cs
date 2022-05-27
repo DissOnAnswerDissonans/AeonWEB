@@ -26,12 +26,12 @@ public partial class RoomList : Page
 	public RoomList()
 	{
 		InitializeComponent();
+		VM = (RoomListVM) DataContext; 
+		VM.Refresh.Execute();
 
 		App.Lobby.RefreshRoomData.On(RefreshRoom);
 		App.Lobby.UpdSingleRoomInList.On(UpdSingleRoom);
 
-		VM = (RoomListVM) DataContext;
-		VM.Refresh.Execute();
 		CommandManager.InvalidateRequerySuggested();
 	}
 
@@ -59,4 +59,7 @@ public partial class RoomList : Page
 			(DataContext as RoomListVM)?.Join.Execute((e.AddedItems[0] as RoomVM)!.Data);
 		CommandManager.InvalidateRequerySuggested();
 	}
+
+	private void RemoveBot(object sender, RoutedEventArgs e) => App.Lobby.RemoveBot.Send();
+	private void AddBot(object sender, RoutedEventArgs e) => App.Lobby.AddBot.Send();
 }

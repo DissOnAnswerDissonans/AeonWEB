@@ -66,7 +66,6 @@ public class ServerState
 		}
 
 		IGameRules GetRules(string rulesName) => rulesName switch {
-			"SingleDebug" => new SingleTestRules(),
 			"Vanilla" => new VanillaRules(),
 			"Tournament" => new NewRules(),
 			_ => throw new ArgumentException()
@@ -88,7 +87,7 @@ public class ServerState
 		if (room is null) return;
 		room.RemovePlayer(IDtoPlayers[id]);
 		_logger.LogInformation("Player {player} left room {room}", id, room.Name);
-		if (room.Players.Count == 0)
+		if (room.Players.Count <= room.TotalBots)
 			_ = DisposeRoom(room);
 	}
 
@@ -118,7 +117,7 @@ public class ServerState
 
 		await _generalHub.RoomClients(room).StartGame(room.ToFullData());
 
-		room.Players.ForEach(p => p.Data.IsReady = false);
+		room.Players.ForEach(p => p.OnGameStart(s));
 	}
 
 	internal async Task EndGame(string roomName)

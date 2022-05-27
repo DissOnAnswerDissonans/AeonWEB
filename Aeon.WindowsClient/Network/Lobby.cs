@@ -11,6 +11,8 @@ class Lobby : ServerConnection
 	public ClientTx<string> JoinRoom { get; } = null!;
 	public ClientTx LeaveRoom { get; } = null!;
 	public ClientTx ReadyCheck { get; } = null!;
+	public ClientTx AddBot { get; } = null!;
+	public ClientTx RemoveBot { get; } = null!;
 
 	public ClientReq<RoomShortData[]> GetRoomsList { get; } = null!;
 	public ClientReq<string, ClientData> GetPlayersList { get; } = null!;

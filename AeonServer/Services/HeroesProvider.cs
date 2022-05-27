@@ -39,22 +39,22 @@ public class HeroesProvider
 	internal HeroInfo[] GetHeroesInfo()
 	{
 		var test = new HeroInfo[_names.Length];
-		for (int i = 0; i < _names.Length; i++) 
-			test[i] = GetHeroInfo(i)!;	
+		for (int i = 0; i < _names.Length; i++) {
+			test[i] = GetHeroInfo(_names[i])!;
+			test[i].ID = i;
+		}
 		return test;
 	}
 
-	internal HeroInfo? GetHeroInfo(int? heroID) => !heroID.HasValue? null 
-		: _names[heroID.Value].StartsWith(":") 
+	internal HeroInfo? GetHeroInfo(string? heroID) => string.IsNullOrEmpty(heroID)? null 
+		: heroID.StartsWith(":") 
 		? new() {
-			ID = heroID.Value,
-			Name = _names[heroID.Value].TrimStart(':'),
+			Name = heroID.TrimStart(':'),
 			AssemblyName = "",
 		}
 		: new() { 
-			ID = heroID.Value, 
-			Name = _names[heroID.Value].Split(':')[1],
-			AssemblyName = _names[heroID.Value].Split(':')[0],
+			Name = heroID.Split(':')[1],
+			AssemblyName = heroID.Split(':')[0],
 		};
 
 }

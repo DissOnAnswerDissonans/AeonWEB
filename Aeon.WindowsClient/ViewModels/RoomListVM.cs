@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -32,12 +33,13 @@ internal class RoomListVM : INotifyPropertyChanged
 	public RoomFullData? ActiveRoom { get; set; }
 
 	public bool NotInRoom => ActiveRoomName is null;
+	public Visibility RoomVis => NotInRoom ? Visibility.Collapsed : Visibility.Visible;
 	public bool IsReady => ActiveRoom?.Players.Where(p => p.PlayerName == PlayerName).FirstOrDefault()?.IsReady ?? false;
 
 	public string NewRoomName { get; set; } = "";
 	public string SelectedMode { get; set; } = "Vanilla";
 
-	public ObservableCollection<string> Modes { get; } = new(){ "SingleDebug", "Vanilla", "Tournament" };
+	public ObservableCollection<string> Modes { get; } = new(){ "Vanilla", "Tournament" };
 
 	public string PlayerName => App.Account.NickName;
 

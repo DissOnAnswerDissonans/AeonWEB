@@ -67,21 +67,33 @@
     <Button Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="3" Margin="12" 
             Content="{Binding ReadyText}" Command="{Binding Ready}" />
 
-    <ItemsControl Grid.Column="3" Grid.Row="1" ItemsSource="{Binding RoomSlots}"
-             d:ItemsSource="{d:SampleData ItemCount=8}" Padding="4"
-             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-             HorizontalContentAlignment="Stretch" VerticalAlignment="Bottom">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <Border Style="{StaticResource BaseBorder}" Margin="1" Padding="5 0">
-            <DockPanel>
-              <TextBlock d:Text="X" Text="{Binding ReadySignal}" DockPanel.Dock="Right"/>
-              <TextBlock Text="{Binding Name}" Foreground="{Binding NickBrush}" d:Foreground="White"/>
-            </DockPanel>
-          </Border>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <DockPanel Grid.Column="3" Grid.Row="1" LastChildFill="False" 
+               Visibility="{Binding RoomVis}" d:Visibility="Visible">
+      <ItemsControl ItemsSource="{Binding RoomSlots}" DockPanel.Dock="Bottom"
+               d:ItemsSource="{d:SampleData ItemCount=8}" Padding="4"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Style="{StaticResource BaseBorder}" Margin="1" Padding="5 0">
+              <DockPanel>
+                <TextBlock d:Text="X" Text="{Binding ReadySignal}" DockPanel.Dock="Right"/>
+                <TextBlock Text="{Binding Name}" Foreground="{Binding NickBrush}" d:Foreground="White"/>
+              </DockPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <Grid DockPanel.Dock="Bottom">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0" Content="-" Click="RemoveBot" />
+        <TextBlock Grid.Column="1" Text="Bots" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Button Grid.Column="2" Content="+" Click="AddBot"/>
+      </Grid>
+    </DockPanel>
 
     <Button Grid.Column="3" Grid.Row="2" Margin="12" Content="Leave"
             Command="{Binding Leave}"/>

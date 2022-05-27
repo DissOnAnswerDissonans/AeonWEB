@@ -15,34 +15,10 @@ public interface IGameRules
 	void BeforeGame(GameState gameState);
 }
 
-public class SingleTestRules : IGameRules
-{
-	public int MinPlayers => 1;
-	public int MaxPlayers => 1;
-
-	public void BeforeGame(GameState gameState)
-	{
-		gameState.AddDummy("debug");
-	}
-
-	public int GetBaseWage(GameState game) => 100;
-	public IEnumerable<RoundInfo.Battle> GetBattles(GameState game) => new List<RoundInfo.Battle>() {
-		new () {
-			Prize = 20,
-			First = game.Players[0].Contender,
-			Second = game.Players[1].Contender,
-		}
-	};
-
-	public int GetScore(Player player) => 0;
-	public List<(Player Player, int Score)> GetScores(IReadOnlyList<Player> players) => new();
-	public Player? GetWinner(GameState game) => null;
-	public void LogBattleResult(Player p1, Player p2, int winner, int turns) { }
-}
 
 public class VanillaRules : IGameRules
 {
-	const int NEED_WIN = 5;
+	const int NEED_WIN = 1;
 	public int MinPlayers => 2;
 	public int MaxPlayers => 2;
 

@@ -8,9 +8,10 @@ public class Room
 {
 	public string Name { get; }
 	public IGameRules Rules { get; }
-	public List<PlayerClient> Players { get; } = new();
+	public List<Player> Players { get; } = new();
 	public int NeedPlayers => Rules.MinPlayers;
 	public int? RoomSize => Rules.MaxPlayers;
+	public int TotalBots { get; private set; } = 0;
 	public RoomStatus Status { get; private set; } = RoomStatus.Open;
 
 	private DateTimeOffset? _timer = null;
@@ -47,6 +48,27 @@ public class Room
 		return true;
 	}
 
+	internal bool AddBot()
+	{
+		if (IsFull) return false;
+		TotalBots++;
+		Players.Add(new PlayerBot($"B{TotalBots}", this));
+		if (IsFull)
+			Status |= RoomStatus.Full;
+		return true;
+	}
+
+	internal bool RemoveBot()
+	{
+		Player? bot = Players.Where(p => p.ID.StartsWith("<BOT>") 
+				&& p.ID.Contains($"B{TotalBots}")).FirstOrDefault();
+		if (bot is null) return false;
+		Players.Remove(bot);
+		TotalBots--;
+		Status &= ~RoomStatus.Full;
+		return true;
+	}
+
 	internal async Task SetCountdown(double seconds, Action<Room>? action)
 	{
 		Status |= RoomStatus.Countdown;
@@ -77,6 +99,7 @@ public class Room
 		await Task.Delay(10);
 		Game?.CTS.Cancel();
 		Players.ForEach(p => p.Room = null);
+		Players.Clear();
 	}
 
 	internal RoomShortData ToShortData() => new() { 
